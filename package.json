@@ -6,6 +6,16 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:hpyer/hpyer-server.git"
+  },
+  "keywords": [
+    "hpyer",
+    "server",
+    "nodejs",
+    "koa"
+  ],
   "dependencies": {
     "bluebird": "^3.5.4",
     "cross-env": "^5.2.0",
