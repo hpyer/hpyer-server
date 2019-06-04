@@ -423,6 +423,23 @@ Hpyer.start = async (cfg = null) => {
   const DefaultConfig = require('./DefaultConfig');
   Hpyer.config = Hpyer.merge(DefaultConfig, cfg || {});
 
+  if (!Hpyer.config.root.apps) {
+    throw new Error('NOT set app root');
+  }
+  if (!Hpyer.config.root.models) {
+    throw new Error('NOT set model root');
+  }
+  if (!Hpyer.config.root.services) {
+    throw new Error('NOT set service root');
+  }
+  if (!Hpyer.config.root.errors) {
+    throw new Error('NOT set error root');
+  }
+  Hpyer.config.root.apps = Hpyer.rtrim(Hpyer.config.root.apps, '\\/+') + '/';
+  Hpyer.config.root.models = Hpyer.rtrim(Hpyer.config.root.models, '\\/+') + '/';
+  Hpyer.config.root.services = Hpyer.rtrim(Hpyer.config.root.services, '\\/+') + '/';
+  Hpyer.config.root.errors = Hpyer.rtrim(Hpyer.config.root.errors, '\\/+') + '/';
+
   // 系统请求处理方法
   KoaRouter.use(require('./middlewares/request'));
   // 自定义路由
