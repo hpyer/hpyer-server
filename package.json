@@ -1,6 +1,6 @@
 {
   "name": "hpyer-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An App-MVC framework for Node.js",
   "author": "Hpyer",
   "license": "MIT",
