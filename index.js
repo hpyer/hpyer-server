@@ -245,6 +245,14 @@ Hpyer.ControllerHandler = async (app, controller, action, ctx = null, next = nul
 };
 
 /**
+ * 获取模版操作对象
+ * @return object
+ */
+Hpyer.getTemplater = () => {
+  return Templater;
+}
+
+/**
  * 获取缓存操作实例
  * @param  string  provider  缓存驱动，可选
  * @return object
