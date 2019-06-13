@@ -130,7 +130,7 @@ module.exports = class {
    * @param  boolean  autoDelete  是否自动删除文件，默认：true
    * @return void
    */
-  download (file, filename = null, autoDelete = true) {
+  async download (file, filename = null, autoDelete = true) {
     if (!filename) {
       filename = file;
       if (file.indexOf('/') > -1) {
