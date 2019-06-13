@@ -1,6 +1,8 @@
 'use strict';
 
 const Templater = require('./Templater');
+const KoaSend = require('koa-send');
+const Fs = require('fs');
 
 module.exports = class {
   constructor () {
@@ -120,4 +122,24 @@ module.exports = class {
       return false;
     }
   }
+
+  /**
+   * 文件下载
+   * @param  string  file  文件路径
+   * @param  string  filename  文件名，默认：自动提取 file 的文件名
+   * @param  boolean  autoDelete  是否自动删除文件，默认：true
+   * @return void
+   */
+  download (file, filename = null, autoDelete = true) {
+    if (!filename) {
+      filename = file;
+      if (file.indexOf('/') > -1) {
+        filename = file.substr(file.lastIndexOf('/') + 1);
+      }
+    }
+    this.ctx.attachment(filename);
+    await KoaSend(this.ctx, file);
+    if (autoDelete) Fs.unlink(file, _ => {});
+  }
+
 };
