@@ -23,7 +23,7 @@ const XssHandler = function (item) {
 }
 
 module.exports = async function (ctx, next) {
-  Hpyer.log('Request URL:', ctx.request.url);
+  Hpyer.log('[' + Hpyer.getClientIp(ctx.request) + ']', ctx.request.url);
 
   ctx.request.get = {};
   ctx.request.get_raw = {};
