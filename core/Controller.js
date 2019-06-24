@@ -14,9 +14,9 @@ module.exports = class {
 
   /**
    * 添加模版参数
-   * @param  string  name  参数名
-   * @param  [mixed]  value  参数值
-   * @return void
+   * @param  {string} name 参数名
+   * @param  {any} value 参数值
+   * @return {void}
    */
   assign (name, value) {
     if (name && Hpyer.isObject(name)) {
@@ -31,9 +31,9 @@ module.exports = class {
 
   /**
    * 输出内容
-   * @param  string  content  内容
-   * @param  string  type  参数值，mime类型，默认：text/html
-   * @return void
+   * @param  {string} content 内容
+   * @param  {string} type 参数值，mime类型，默认：text/html
+   * @return {void}
    */
   displayContent (content, type = 'text/html') {
     this.ctx.type = type;
@@ -42,9 +42,9 @@ module.exports = class {
 
   /**
    * 输出模版内容
-   * @param  string  file  模版名称，默认：${app}/${viewDir}/${controller}/${action}.html
-   * @param  object  params  参数，键值对
-   * @return void
+   * @param  {string} file 模版名称，默认：${app}/${viewDir}/${controller}/${action}.html
+   * @param  {object} params 参数，键值对
+   * @return {void}
    */
   display (file = null, params = null) {
     if (!file) {
@@ -67,8 +67,8 @@ module.exports = class {
 
   /**
    * 输出json数据
-   * @param  object  res  json对象
-   * @return void
+   * @param  {object} res json对象
+   * @return {void}
    */
   json (res) {
     this.ctx.type = 'application/json';
@@ -77,9 +77,9 @@ module.exports = class {
 
   /**
    * 输出成功时的结果，ajax请求则输出json，否则输出html
-   * @param  [mixed]  data  数据
-   * @param  string  message  消息
-   * @return void
+   * @param  {any} data 数据
+   * @param  {string} message 消息
+   * @return {void}
    */
   success (data = '', message = 'ok') {
     if (this.isAjax()) {
@@ -100,10 +100,10 @@ module.exports = class {
 
   /**
    * 输出失败时的结果，ajax请求则输出json，否则输出html
-   * @param  string  message  错误信息
-   * @param  string/integer  code  错误代码
-   * @param  [mixed]  data  数据
-   * @return false 为了阻止
+   * @param  {string} message 错误信息
+   * @param  {string} code 错误代码
+   * @param  {any} data 数据
+   * @return {boolean} false表示不再继续执行
    */
   fail (message, code = 1, data = null) {
     if (this.isAjax()) {
@@ -125,10 +125,10 @@ module.exports = class {
 
   /**
    * 文件下载
-   * @param  string  file  文件路径
-   * @param  string  filename  文件名，默认：自动提取 file 的文件名
-   * @param  boolean  autoDelete  是否自动删除文件，默认：true
-   * @return void
+   * @param  {string} file 文件路径
+   * @param  {string} filename 文件名，默认：自动提取 file 的文件名
+   * @param  {boolean} autoDelete 是否自动删除文件，默认：true
+   * @return {void}
    */
   async download (file, filename = null, autoDelete = true) {
     if (!filename) {

@@ -20,8 +20,8 @@ const Templater = require('./core/Templater');
 
 /**
  * 是否ajax请求
- * @param  object  ctx  koa的上下文
- * @return boolean
+ * @param  {object}  ctx  koa的上下文
+ * @return {boolean}
  */
 const isAjax = function (ctx) {
   let isAjax = false;
@@ -36,20 +36,20 @@ global.Hpyer = Object.create(Helper);
 
 /**
  * 是否生产环境
- * @var boolean
+ * @var {boolean}
  */
 Hpyer.version = require('./package.json').version;
 
 /**
  * 是否生产环境
- * @var boolean
+ * @var {boolean}
  */
 Hpyer.isProduction = process.env.NODE_ENV == 'production';
 
 /**
  * 输出日志信息
- * @param  [mixed]  ...args  参数，同console.log
- * @return void
+ * @param  {any} args 参数，同console.log
+ * @return {void}
  */
 Hpyer.log = (...args) => {
   if (typeof args[0] != 'string') args[0] = JSON.stringify(args[0]);
@@ -59,8 +59,8 @@ Hpyer.log = (...args) => {
 
 /**
  * 输出错误信息，控制台中会显示红色
- * @param  [mixed]  ...args  参数，同console.log
- * @return void
+ * @param  {any} args 参数，同console.log
+ * @return {void}
  */
 Hpyer.error = (...args) => {
   if (typeof args[0] != 'string') args[0] = JSON.stringify(args[0]);
@@ -70,8 +70,8 @@ Hpyer.error = (...args) => {
 
 /**
  * 获取db实例对象
- * @param  string  provider  数据库驱动
- * @return object
+ * @param  {string} provider 数据库驱动
+ * @return {object}
  */
 Hpyer.getDB = async (provider) => {
   if (!Hpyer.config.db.enable) return null;
@@ -83,8 +83,8 @@ Hpyer.parseWhere = Db.parseWhere;
 
 /**
  * 执行数据库事务
- * @param  function  callback  事务处理方法，该方法回传入db实例对象
- * @return boolean
+ * @param  {function} callback 事务处理方法，该方法回传入db实例对象
+ * @return {boolean}
  */
 Hpyer.transaction = async (callback) => {
   let db = await Hpyer.getDB();
@@ -98,9 +98,9 @@ Hpyer.transaction = async (callback) => {
 let modelInstances = {};
 /**
  * 获取model实例
- * @param  string  name  服务名称
- * @param  string  app  应用名称
- * @return object
+ * @param  {string} name 服务名称
+ * @param  {string} app 应用名称
+ * @return {object}
  */
 Hpyer.model = (name, app=null) => {
   try {
@@ -137,8 +137,8 @@ Hpyer.model = (name, app=null) => {
 let serviceInstances = {};
 /**
  * 获取service实例
- * @param  string  name  服务名称
- * @return object
+ * @param  {string} name 服务名称
+ * @return {object}
  */
 Hpyer.service = (name) => {
   try {
@@ -157,9 +157,9 @@ Hpyer.service = (name) => {
 
 /**
  * Koa的控制器处理方法
- * @param  object  ctx  koa的上下文
- * @param  function  next  koa的下一中间件
- * @return boolean
+ * @param  {object} ctx koa的上下文
+ * @param  {function} next koa的下一中间件
+ * @return {boolean}
  */
 Hpyer.KoaHandler = async (ctx, next) => {
   let app = ctx.params.app || Hpyer.config.defaultAppName;
@@ -171,12 +171,12 @@ Hpyer.KoaHandler = async (ctx, next) => {
 
 /**
  * 控制器处理方法
- * @param  string  app  应用名称
- * @param  string  controller  控制器名称
- * @param  string  action  方法名称
- * @param  object  ctx  koa的上下文
- * @param  function  next  koa的下一中间件
- * @return boolean
+ * @param  {string} app 应用名称
+ * @param  {string} controller 控制器名称
+ * @param  {string} action 方法名称
+ * @param  {object} ctx koa的上下文
+ * @param  {function} next  oa的下一中间件
+ * @return {boolean}
  */
 Hpyer.ControllerHandler = async (app, controller, action, ctx = null, next = null) => {
   app = app || Hpyer.config.defaultAppName;
@@ -246,7 +246,7 @@ Hpyer.ControllerHandler = async (app, controller, action, ctx = null, next = nul
 
 /**
  * 获取模版操作对象
- * @return object
+ * @return {object}
  */
 Hpyer.getTemplater = () => {
   return Templater;
@@ -254,8 +254,8 @@ Hpyer.getTemplater = () => {
 
 /**
  * 获取缓存操作实例
- * @param  string  provider  缓存驱动，可选
- * @return object
+ * @param  {string} provider 缓存驱动，可选
+ * @return {object}
  */
 Hpyer.getCacher = (provider=null) => {
   if (!Hpyer.config.cache.enable) return null;
@@ -265,9 +265,9 @@ Hpyer.getCacher = (provider=null) => {
 
 /**
  * 获取缓存值
- * @param  string  name   缓存名称
- * @param  string  provider   缓存驱动，可选
- * @return [mixed]
+ * @param  {string} name 缓存名称
+ * @param  {string} provider 缓存驱动，可选
+ * @return {any}
  */
 Hpyer.getCache = async (name, provider=null) => {
   let cacher = Hpyer.getCacher(provider);
@@ -277,11 +277,11 @@ Hpyer.getCache = async (name, provider=null) => {
 
 /**
  * 设置缓存
- * @param  string  name   缓存名称
- * @param  [mixed]  value   缓存值
- * @param  integer  expireIn   时效，过期秒数，单位：秒，可选
- * @param  string  provider   缓存驱动，可选
- * @return boolean
+ * @param  {string} name 缓存名称
+ * @param  {any} value 缓存值
+ * @param  {integer} expireIn 时效，过期秒数，单位：秒，可选
+ * @param  {string} provider 缓存驱动，可选
+ * @return {boolean}
  */
 Hpyer.setCache = async (name, value = null, expireIn = 0, provider=null) => {
   let cacher = Hpyer.getCacher(provider);
@@ -291,9 +291,9 @@ Hpyer.setCache = async (name, value = null, expireIn = 0, provider=null) => {
 
 /**
  * 删除缓存
- * @param  string  name   缓存名称
- * @param  string  provider   缓存驱动，可选
- * @return boolean
+ * @param  {string} name 缓存名称
+ * @param  {string} provider 缓存驱动，可选
+ * @return {boolean}
  */
 Hpyer.removeCache = async (name, provider=null) => {
   let cacher = Hpyer.getCacher(provider);
@@ -303,9 +303,9 @@ Hpyer.removeCache = async (name, provider=null) => {
 
 /**
  * 在redis中执行lua脚本
- * @param  string  file_name   脚本名称
- * @param  array  params [{key: 'test', value: 10}, {key: 'test', value: 10}]
- * @return boolean
+ * @param  {string} file_name 脚本名称
+ * @param  {array} params [{key: 'test', value: 10}, {key: 'test', value: 10}]
+ * @return {boolean}
  */
 Hpyer.runLuaInRedis = async (file_name, params) => {
   try {
@@ -337,7 +337,7 @@ Hpyer.runLuaInRedis = async (file_name, params) => {
 
 /**
  * 执行计划任务
- * @return void
+ * @return {void}
  */
 Hpyer.runCron = () => {
   if (!Hpyer.config.cron.enable) {
@@ -385,9 +385,9 @@ Hpyer.runCron = () => {
 
 /**
  * 执行系统命令
- * @param  string  cmd   命令
- * @param  array  args   参数，可选
- * @return promise
+ * @param  {string} cmd 命令
+ * @param  {array} args 参数，可选
+ * @return {promise}
  */
 Hpyer.runCmd = (cmd, args = []) => {
   return new Promise((resolve, reject) => {
@@ -424,8 +424,8 @@ Hpyer.runCmd = (cmd, args = []) => {
 
 /**
  * 框架启动方法
- * @param  object  cfg   配置项，可选
- * @return void
+ * @param  {object} cfg 配置项，可选
+ * @return {void}
  */
 Hpyer.start = async (cfg = null) => {
   const DefaultConfig = require('./DefaultConfig');

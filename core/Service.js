@@ -6,9 +6,9 @@ module.exports = class {
 
   /**
    * 返回成功时的结果
-   * @param  [mixed]  data  数据
-   * @param  string  message  消息
-   * @return object
+   * @param  {any} data 数据
+   * @param  {string} message 消息
+   * @return {object}
    */
   success (data = '', message = 'ok') {
     return Hpyer.jsonSuccess(data, message);
@@ -16,10 +16,10 @@ module.exports = class {
 
   /**
    * 返回失败时的结果
-   * @param  string  message  错误信息
-   * @param  string/integer  code  错误代码
-   * @param  [mixed]  data  数据
-   * @return object
+   * @param  {string} message 错误信息
+   * @param  {string} code 错误代码
+   * @param  {any} data 数据
+   * @return {object}
    */
   fail (message, code = 1, data = null) {
     return Hpyer.jsonError(message, code, data);
