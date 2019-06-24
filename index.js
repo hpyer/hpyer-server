@@ -501,8 +501,6 @@ Hpyer.start = async (cfg = null) => {
 
     Hpyer.app.keys = [Hpyer.config.key];
 
-    var tmp_dir = Os.platform() === 'linux' ? '/dev/shm' : '/tmp/upload'
-
     Hpyer.app.use(KoaBody(Hpyer.config.koa.body));
 
     Hpyer.app.use(KoaSession(Hpyer.config.koa.session, Hpyer.app));
