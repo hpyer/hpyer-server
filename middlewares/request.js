@@ -6,14 +6,14 @@ const XssHandler = function (item) {
     for (let k in item) {
       k = Hpyer.xssFilter(k);
       if (!k) continue;
-      newItem[k] = handle(item[k]);
+      newItem[k] = XssHandler(item[k]);
     }
     return newItem;
   }
   else if (Hpyer.isArray(item)) {
     let newItem = [];
     for (let i=0; i<item.length; i++) {
-      newItem[i] = handle(item[i]);
+      newItem[i] = XssHandler(item[i]);
     }
     return newItem;
   }
