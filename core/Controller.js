@@ -46,7 +46,7 @@ module.exports = class {
    * @param  {object} params 参数，键值对
    * @return {void}
    */
-  display (file = null, params = null) {
+  displayTemplate(file = null, params = null) {
     if (!file) {
       file = this.app + '/' + Hpyer.config.defaultViewDir + '/' + this.controller + '/' + this.action + '.html';
     }
@@ -60,9 +60,23 @@ module.exports = class {
       this.displayContent(Templater.render(file, params));
     }
     catch (e) {
-      console.log('The template file `' + file + '` not found.', e);
+      Hpyer.error('The template file `' + file + '` not found.', e);
     }
     return;
+  }
+
+  /**
+   * 输出当前应用的模版内容
+   * @param  {string} file 模版名称，默认：${controller}/${action}.html
+   * @param  {object} params 参数，键值对
+   * @return {void}
+   */
+  display (file = null, params = null) {
+    if (!file) {
+      file = this.controller + '/' + this.action + '.html';
+    }
+    file = this.app + '/' + Hpyer.config.defaultViewDir + '/' + file;
+    return this.displayTemplate(file, params);
   }
 
   /**
