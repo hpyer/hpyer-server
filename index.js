@@ -8,7 +8,6 @@ const NodeSchedule = require('node-schedule');
 const ChildProcess = require('child_process');
 const Path = require('path');
 const Fs = require('fs');
-const Os = require('os');
 
 const Koa = require('koa');
 const KoaBody = require('koa-body');
@@ -35,7 +34,7 @@ const isAjax = function (ctx) {
 global.Hpyer = Object.create(Helper);
 
 /**
- * 是否生产环境
+ * 版本号
  * @var {boolean}
  */
 Hpyer.version = require('./package.json').version;
@@ -325,7 +324,7 @@ Hpyer.runLuaInRedis = async (file_name, params) => {
     else {
       args.push(0);
     }
-    let redis = Hpyer.getRedis();
+    let redis = Hpyer.getCacher('redis');
     let res = await redis.evalAsync(...args);
     return res;
   }
