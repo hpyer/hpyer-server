@@ -46,6 +46,8 @@ module.exports = {
     services: './services/',
     // 错误页面所在目录
     errors: Path.resolve(__dirname + '/errors/') + '/',
+    // lua脚本所在目录（用redis执行）
+    luas: './luas/',
   },
 
   // koa 相关配置

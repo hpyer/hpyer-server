@@ -308,7 +308,8 @@ Hpyer.removeCache = async (name, provider=null) => {
  */
 Hpyer.runLuaInRedis = async (file_name, params) => {
   try {
-    let file = Path.resolve(__dirname + '/../lua/' + file_name + '.lua');
+    let path = Hpyer.config.root.luas = Hpyer.rtrim(Hpyer.config.root.luas, '\\/+') + '/';
+    let file = Path.resolve(path + file_name + '.lua');
     let script = Fs.readFileSync(file);
     if (!script) throw new Error('NO lua script');
     let args = [script];
