@@ -2,6 +2,17 @@
 
 const Path = require('path');
 
+// 接口中间件
+const MiddlewareApi = async function (ctx, next) {
+  // 输出 json 格式
+  ctx.request.isAjax = true;
+
+  // TODO: 其他操作等；如果需要终止，则 return false; 即可
+
+  // 执行下一中间件
+  await next();
+};
+
 module.exports = {
   // 当前启动脚本（即启动服务的脚本），仅影响计划任务的执行。未配置时，系统会尝试自动获取，建议配置为：__filename
   entry: '',
@@ -61,8 +72,12 @@ module.exports = {
     },
     // 需要加载的静态资源目录，路径数组
     statics: [
-
-    ]
+      '/public/',
+    ],
+    // 自定义路由
+    routers: [
+      { path: '/api/*', middleware: MiddlewareApi },
+    ],
   },
 
   // 数据库相关配置
