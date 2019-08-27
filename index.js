@@ -349,7 +349,7 @@ Hpyer.runCron = () => {
   let crons = Hpyer.config.cron.jobs || [];
   let callback = function (cron) {
     let cmd = Path.resolve('./node_modules/.bin/cross-env');
-    let args = ['NODE_ENV=' + Hpyer.config('env'), 'node', Path.resolve(Hpyer.config.entry), cron.path];
+    let args = ['NODE_ENV=' + Hpyer.config.env, 'node', Path.resolve(Hpyer.config.entry), cron.path];
     Hpyer.log('Run cron', cmd, args);
     let job = ChildProcess.spawn(cmd, args);
     // let data_buffers = [];
