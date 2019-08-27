@@ -51,10 +51,18 @@ module.exports = class Model {
     return res;
   }
 
-  async create (data, auto_get_last_id = true) {
+  async create (data, fetch_last_id = true) {
     let db = await Hpyer.getDB();
     if (!db) return false;
-    let res = await db.create(this.table, data, auto_get_last_id);
+    let res = await db.create(this.table, data, fetch_last_id);
+    db.disconnect();
+    return res;
+  }
+
+  async insert (data, fetch_last_id = false) {
+    let db = await Hpyer.getDB();
+    if (!db) return false;
+    let res = await db.insert(this.table, data, fetch_last_id);
     db.disconnect();
     return res;
   }
