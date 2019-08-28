@@ -43,7 +43,7 @@ module.exports = class Model {
     return res;
   }
 
-  async findCount (where = null, field = 'COUNT(id)') {
+  async findCount (where = null, field = 'COUNT(0)') {
     let db = await Hpyer.getDB();
     if (!db) return 0;
     let res = await db.findCount(this.table, where, field);
