@@ -1,8 +1,8 @@
 'use strict';
 
-const Helper = require('./lib/helper.js');
-const Db = require('./lib/database');
-const Cache = require('./lib/cache');
+const Helper = require(__dirname + '/lib/helper.js');
+const Db = require(__dirname + '/lib/database');
+const Cache = require(__dirname + '/lib/cache');
 
 const NodeSchedule = require('node-schedule');
 const ChildProcess = require('child_process');
@@ -15,7 +15,7 @@ const KoaSession = require('koa-session');
 const KoaStatic = require('koa-static');
 const KoaRouter = require('koa-router')();
 
-const Templater = require('./core/Templater');
+const Templater = require(__dirname + '/core/Templater');
 
 /**
  * 是否ajax请求
