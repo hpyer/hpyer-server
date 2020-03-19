@@ -1,6 +1,6 @@
 'use strict';
 
-const Templater = require('./Templater');
+const Templater = require(__dirname + '/Templater');
 const KoaSend = require('koa-send');
 const Fs = require('fs');
 

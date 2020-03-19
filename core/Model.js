@@ -1,6 +1,6 @@
 'use strict';
 
-const DB = require('../lib/database');
+const DB = require(__dirname + '/../lib/database');
 
 module.exports = class Model {
   constructor () {
