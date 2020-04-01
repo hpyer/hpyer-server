@@ -263,6 +263,18 @@ Hpyer.getCacher = (provider=null) => {
 }
 
 /**
+ * 判断缓存是否存在
+ * @param  {string} name 缓存名称
+ * @param  {string} provider 缓存驱动，可选
+ * @return {boolean}
+ */
+Hpyer.hasCache = async (name, provider=null) => {
+  let cacher = Hpyer.getCacher(provider);
+  if (!cacher) return null;
+  return await cacher.contains(name);
+}
+
+/**
  * 获取缓存值
  * @param  {string} name 缓存名称
  * @param  {string} provider 缓存驱动，可选
