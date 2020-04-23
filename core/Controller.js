@@ -89,6 +89,18 @@ module.exports = class {
     this.ctx.body = res;
   }
 
+  forceAjax () {
+    this.ctx.request.isAjax = true;
+    return this;
+  }
+
+  isAjax () {
+    if (this.ctx.request.isAjax || (this.ctx.request.header['x-requested-with'] && this.ctx.request.header['x-requested-with'] == 'XMLHttpRequest')) {
+      return true;
+    }
+    return false;
+  }
+
   /**
    * 输出成功时的结果，ajax请求则输出json，否则输出html
    * @param  {any} data 数据
