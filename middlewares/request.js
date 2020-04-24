@@ -23,6 +23,10 @@ const XssHandler = function (item) {
 }
 
 module.exports = async function (ctx, next) {
+  if (ctx.path == '/favicon.ico') {
+    return false;
+  }
+
   Hpyer.log('[' + Hpyer.getClientIp(ctx.request) + ']', ctx.request.url);
 
   ctx.request.get = {};
