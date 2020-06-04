@@ -54,10 +54,12 @@ module.exports = {
   koa: {
     // koa-body 相关配置，详见：https://www.npmjs.com/package/koa-body
     body: {
+      includeUnparsed: false, // 开启后，可从ctx.request.rawBody获取原始报文（不支持multipart/form-data）
       multipart: true,
       jsonLimit: '10mb',
       formLimit: '20mb',
       textLimit: '20mb',
+      xmlLimit: '20mb',
     },
     // koa-session 相关配置，详见：https://www.npmjs.com/package/koa-session
     session: {

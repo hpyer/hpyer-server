@@ -10,7 +10,7 @@ const Path = require('path');
 const Fs = require('fs');
 
 const Koa = require('koa');
-const KoaBody = require('koa-body');
+const KoaBody = require(__dirname + '/lib/koa-body');
 const KoaSession = require('koa-session');
 const KoaStatic = require('koa-static');
 const KoaRouter = require('koa-router')();
