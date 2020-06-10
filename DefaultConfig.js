@@ -50,6 +50,14 @@ module.exports = {
     luas: './luas/',
   },
 
+  // redis 唯一id相关配置
+  uniqueId: {
+    // redis 的hash键名
+    cacheKey: 'HpyerUniqueId',
+    // 世纪，用于减少生成的id数字大小，单位：毫秒，如：1300000000000
+    epoch: 0,
+  },
+
   // koa 相关配置
   koa: {
     // koa-body 相关配置，详见：https://www.npmjs.com/package/koa-body

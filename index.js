@@ -17,6 +17,8 @@ const KoaRouter = require('koa-router')();
 
 const Templater = require(__dirname + '/core/Templater');
 
+const BN = require('bn.js');
+
 /**
  * 是否ajax请求
  * @param  {object}  ctx  koa的上下文
@@ -432,6 +434,75 @@ Hpyer.runCmd = (cmd, args = []) => {
     //   }
     // });
   });
+};
+
+/**
+ * 生成唯一id（雪花算法 Snowflake）
+ * @param {int} second 秒数，13位
+ * @param {int} microSecond 毫秒数，3位
+ * @param {int} machineId 机器id，可理解为不同业务场景，2^8，可选值：0~255
+ * @param {int} count 计数，2^14，可选值：0~16383
+ * @return {string}
+ */
+Hpyer.buildUniqueId = function (second, microSecond, machineId, count) {
+  let miliSecond = second * 1000 + microSecond - Hpyer.config.uniqueId.epoch;
+  // 0 + 41位毫秒时间戳 + 8机器id + 14位自增序列
+  let base = '0' + Hpyer.pad(miliSecond.toString(2), 41, '0', true) + Hpyer.pad(machineId.toString(2), 8, '0', true) + Hpyer.pad(count.toString(2), 14, '0', true);
+  var id_bit = new BN(base, 2);
+  return id_bit.toString();
+};
+
+/**
+ * 获取唯一id（雪花算法 Snowflake）
+ * @param {int} machineId 机器id，可理解为不同业务场景，2^8，可选值：0~255
+ * @return {string}
+ */
+Hpyer.getUniqueId = async function (machineId = 0) {
+  let luaScript = `redis.replicate_commands()
+
+local STEP = 1;
+local MAX_COUNT = 16384;
+local MAX_MACHINES = 256;
+
+local now = redis.call('TIME');
+local tag = KEYS[1];
+local machineId;
+
+if ARGV[1] == nil then
+  machineId = 0;
+else
+  machineId = ARGV[1] % MAX_MACHINES;
+end
+
+local count;
+count = tonumber(redis.call('HINCRBY', tag, machineId, STEP));
+if count >= MAX_COUNT then
+  count = 0;
+  redis.call('HSET', tag, machineId, count);
+end
+
+return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
+
+  let args = [luaScript, 1, Hpyer.config.uniqueId.cacheKey, machineId];
+  let segments = await Hpyer.getCacher('redis').getClient().evalAsync(...args);
+  // redis的毫秒是6位的，取前3位
+  segments[1] = parseInt(segments[1] / 1000);
+  return Hpyer.buildUniqueId(...segments);
+};
+
+/**
+ * 从唯一id中解析出时间戳（雪花算法 Snowflake）
+ * @param {string} id id
+ * @return {timestamp}
+ */
+Hpyer.parseUniqueId = function (id) {
+  let id_bit = new BN(id, 10);
+  // 回填为64位
+  let base = Hpyer.pad(id_bit.toString(2), 64, '0', true);
+  let timestamp = parseInt(base.substr(1, 41), 2) + Hpyer.config.uniqueId.epoch;
+  let machineId = parseInt(base.substr(42, 8), 2);
+  let count = parseInt(base.substr(50, 14), 2);
+  return { timestamp, machineId, count };
 };
 
 /**
