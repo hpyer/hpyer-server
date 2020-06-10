@@ -337,7 +337,7 @@ Hpyer.runLuaInRedis = async (file_name, params) => {
     else {
       args.push(0);
     }
-    let redis = Hpyer.getCacher('redis');
+    let redis = Hpyer.getCacher('redis').getClient();
     let res = await redis.evalAsync(...args);
     return res;
   }
