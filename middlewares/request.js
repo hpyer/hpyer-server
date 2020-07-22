@@ -27,7 +27,9 @@ module.exports = async function (ctx, next) {
     return false;
   }
 
-  Hpyer.log('[' + Hpyer.getClientIp(ctx.request) + ']', ctx.request.url);
+  ctx.request.client_ip = Hpyer.getClientIp(ctx.request);
+
+  Hpyer.log('[' + ctx.request.client_ip + ']', ctx.request.url);
 
   ctx.request.get = {};
   ctx.request.get_raw = {};
