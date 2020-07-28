@@ -152,20 +152,24 @@ module.exports = class {
   /**
    * 文件下载
    * @param  {string} file 文件路径
-   * @param  {string} filename 文件名，默认：自动提取 file 的文件名
-   * @param  {boolean} autoDelete 是否自动删除文件，默认：true
+   * @param  {object} options { autoDelete: 是否自动删除文件，默认：true, root: 文件所在根目录 }
    * @return {void}
    */
-  async download (file, filename = null, autoDelete = true) {
-    if (!filename) {
-      filename = file;
-      if (file.indexOf('/') > -1) {
-        filename = file.substr(file.lastIndexOf('/') + 1);
-      }
+  async download(file, options = null) {
+    options = Hpyer.merge({
+      autoDelete: true,
+      root: '',
+    }, options);
+    let filename = '';
+    filename = file;
+    if (file.indexOf('/') > -1) {
+      filename = file.substr(file.lastIndexOf('/') + 1);
     }
     this.ctx.attachment(filename);
-    await KoaSend(this.ctx, file);
-    if (autoDelete) Fs.unlink(file, _ => {});
+    await KoaSend(this.ctx, file, {
+      root: options.root,
+    });
+    if (options.autoDelete) Fs.unlink(file, _ => { });
   }
 
 };
