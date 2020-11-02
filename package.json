@@ -1,6 +1,6 @@
 {
   "name": "hpyer-server",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "An App-MVC framework for Node.js",
   "author": "Hpyer",
   "license": "MIT",
@@ -17,12 +17,12 @@
     "koa"
   ],
   "dependencies": {
+    "axios": "^0.21.0",
     "bluebird": "^3.7.1",
     "bn.js": "^5.1.2",
     "co-body": "^6.0.0",
     "cross-env": "^6.0.3",
     "formidable": "^1.2.2",
-    "got": "^11.0.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.11.0",
     "koa-router": "^7.4.0",
