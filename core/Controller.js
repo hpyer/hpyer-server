@@ -48,7 +48,7 @@ module.exports = class {
    */
   displayTemplate(file = null, params = null) {
     if (!file) {
-      file = this.app + '/' + Hpyer.config.defaultViewDir + '/' + this.controller + '/' + this.action + '.html';
+      file = this.app + '/' + Hpyer.config.defaultViewDir + '/' + this.controller + '/' + this.action + Hpyer.config.template.tplExtention;
     }
     if (params) {
       params = Hpyer.extend({}, this.viewParams, params);
@@ -69,13 +69,20 @@ module.exports = class {
    * 输出当前应用的模版内容
    * @param  {string} file 模版名称，默认：${controller}/${action}.html
    * @param  {object} params 参数，键值对
+   * @param  {string} ext 参数，扩展名
    * @return {void}
    */
-  display (file = null, params = null) {
+  display (file = null, params = null, ext = '') {
     if (!file) {
-      file = this.controller + '/' + this.action + '.html';
+      file = this.controller + '/' + this.action + Hpyer.config.template.tplExtention;
     }
     file = this.app + '/' + Hpyer.config.defaultViewDir + '/' + file;
+    if (ext) {
+      if (ext.substr(0, 1) != '.') {
+        ext = '.' + ext;
+      }
+      file += ext;
+    }
     return this.displayTemplate(file, params);
   }
 

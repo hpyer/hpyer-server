@@ -139,6 +139,8 @@ module.exports = {
   template: {
     // 默认的错误页面模版
     defaultMessageTpl: 'message.html',
+    // 模版文件扩展名
+    tplExtention: '.njk',
     autoescape: true,
     tags: { // 修改定界符相关的参数
       blockStart: '{%',
