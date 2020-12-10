@@ -2,3 +2,5 @@
 .gitignore
 .npmignore
 yarn.lock
+src
+test
