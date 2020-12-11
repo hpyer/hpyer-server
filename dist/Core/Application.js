@@ -31,10 +31,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const axios_1 = __importDefault(require("axios"));
-const loglevel_1 = __importDefault(require("loglevel"));
+const child_process_1 = __importDefault(require("child_process"));
 const Utils = __importStar(require("../Support/Utils"));
 const DefaultConfig_1 = __importDefault(require("../Support/DefaultConfig"));
 const Model_1 = __importDefault(require("./Model"));
@@ -45,9 +43,10 @@ const KoaBody_1 = __importDefault(require("../Support/KoaBody"));
 const koa_session_1 = __importDefault(require("koa-session"));
 const koa_static_1 = __importDefault(require("koa-static"));
 const koa_router_1 = __importDefault(require("koa-router"));
+const axios_1 = __importDefault(require("axios"));
+const loglevel_1 = __importDefault(require("loglevel"));
 const ioredis_1 = __importDefault(require("ioredis"));
-const node_schedule_1 = __importDefault(require("node-schedule"));
-const child_process_1 = __importDefault(require("child_process"));
+const bn_js_1 = __importDefault(require("bn.js"));
 let modelInstances = {};
 let serviceInstances = {};
 class Application {
@@ -76,6 +75,42 @@ class Application {
          * koa实例
          */
         this.server = null;
+        /**
+         * 执行系统命令
+         * @param  {string} cmd 命令
+         * @param  {array} args 参数，可选
+         * @return {promise}
+         */
+        this.runCmd = (cmd, args = []) => {
+            return new Promise((resolve, reject) => {
+                let logger = this.log;
+                logger.info('Run command', cmd, args);
+                let job = child_process_1.default.spawn(cmd, args);
+                let data_buffers = [];
+                let error_buffers = [];
+                job.stdout.on('data', function (data) {
+                    data_buffers.push(data);
+                });
+                job.stderr.on('data', function (data) {
+                    error_buffers.push(data);
+                });
+                job.on('exit', function (code) {
+                    let data = Buffer.concat(data_buffers).toString();
+                    let error = Buffer.concat(error_buffers).toString();
+                    logger.info('After run command', data);
+                    if (error) {
+                        reject(error);
+                    }
+                    resolve(data);
+                });
+            });
+        };
+        if (this.isProduction) {
+            this.log.setLevel(this.log.levels.INFO);
+        }
+        else {
+            this.log.setLevel(this.log.levels.DEBUG);
+        }
     }
     /**
      * 是否ajax请求
@@ -106,7 +141,7 @@ class Application {
             return returnResponse ? res : res.data;
         }).catch(err => {
             let end_time = (new Date).getTime();
-            this.log.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, err);
+            this.log.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, err.response.status, err.response.data);
         });
     }
     /**
@@ -212,46 +247,6 @@ class Application {
         });
     }
     /**
-     * 在redis中执行lua脚本
-     * @param  {string} file_name 脚本名称（含扩展名）
-     * @param  {array} params [{key: 'test', value: 10}, {key: 'test', value: 10}]
-     * @return {boolean}
-     */
-    runLuaInRedis(file_name, params) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                let path = Utils.rtrim(this.config.root.luas, '\\/+') + '/';
-                let file = path_1.default.resolve(path + file_name);
-                let script = fs_1.default.readFileSync(file).toString();
-                if (!script)
-                    throw new Error('NO lua script');
-                let args = [script];
-                if (params && params.length > 0) {
-                    let keys = [], values = [];
-                    for (let i in params) {
-                        if (params[i].key) {
-                            keys.push(params[i].key);
-                            values.push(params[i].value || '');
-                        }
-                    }
-                    args.push(keys.length);
-                    args = args.concat(keys, values);
-                }
-                else {
-                    args.push(0);
-                }
-                let redis = this.getRedis();
-                let res = yield redis.eval(args);
-                return res;
-            }
-            catch (e) {
-                this.log.error(`Fail to run lua script in redis.`, e);
-            }
-            ;
-            return false;
-        });
-    }
-    /**
      * 获取model实例
      * @param  {string} name 服务名称
      * @param  {string} module 模块名称
@@ -265,12 +260,12 @@ class Application {
             if (!modelInstances[tag]) {
                 let modelClass;
                 try {
+                    let path = this.config.root.models;
                     if (module) {
-                        modelClass = require(this.config.root.modules + '/' + module + '/' + this.config.defaultModelDir + '/' + name);
+                        path = this.config.root.modules + '/' + module + '/' + this.config.defaultModelDir + '/';
                     }
-                    else {
-                        modelClass = require(this.config.root.models + name);
-                    }
+                    this.log.debug('model', path + name);
+                    modelClass = require(path + name);
                 }
                 catch (e) {
                     modelClass = class extends Model_1.default {
@@ -314,14 +309,14 @@ class Application {
     ;
     /**
      * Koa的控制器处理方法
-     * @param  ctx koa的上下文
-     * @param  next koa的下一中间件
      */
-    KoaHandler(ctx, next) {
-        let module = ctx.params.module || this.config.defaultModuleName;
-        let controller = ctx.params.controller || this.config.defaultControllerName;
-        let action = ctx.params.action || this.config.defaultActionName;
-        return this.ControllerHandler(module, controller, action, ctx, next);
+    KoaHandler() {
+        return (ctx, next) => {
+            let module = ctx.params.module || this.config.defaultModuleName;
+            let controller = ctx.params.controller || this.config.defaultControllerName;
+            let action = ctx.params.action || this.config.defaultActionName;
+            return this.ControllerHandler(module, controller, action, ctx, next);
+        };
     }
     /**
      * 控制器处理方法
@@ -339,6 +334,7 @@ class Application {
             let instance;
             try {
                 let path = path_1.default.resolve(this.config.root.modules + '/' + module + '/' + this.config.defaultControllerDir + '/') + '/';
+                this.log.debug('controller', path + controller);
                 instance = new (require(path + controller));
             }
             catch (e) {
@@ -367,9 +363,6 @@ class Application {
                     res = yield instance.__before();
                     if (false === res)
                         return next ? next() : false;
-                }
-                if (!Utils.isFunction(instance[action])) {
-                    throw new Error('Action not exists.');
                 }
                 yield instance[action + 'Action']();
                 if (Utils.isFunction(instance.__after)) {
@@ -400,59 +393,133 @@ class Application {
         });
     }
     /**
-     * 执行计划任务
-     * @return {void}
+     * 在redis中执行lua脚本
+     * @param  content 脚本内容
+     * @param  params [{key: 'test', value: 10}, {key: 'test', value: 10}]
      */
-    runCron() {
-        if (!this.config.cron.enable) {
-            this.log.info('Cron not enabled');
-            return;
-        }
-        this.log.info('Cron is starting...');
-        let crons = this.config.cron.jobs || [];
-        let callback = function (cron) {
-            let cmd = path_1.default.resolve('./node_modules/.bin/cross-env');
-            let args = ['NODE_ENV=' + this.config.env, 'node', path_1.default.resolve(this.config.entry), cron.path];
-            this.log.info('Run cron', cmd, args);
-            let job = child_process_1.default.spawn(cmd, args);
-            // let data_buffers = [];
-            let error_buffers = [];
-            job.stdout.on('data', function (data) {
-                // data_buffers.push(data);
-                console.log(data.toString());
-            });
-            job.stderr.on('data', function (data) {
-                error_buffers.push(data);
-            });
-            job.on('exit', function (code) {
-                console.log('After run cron', cmd, args, code);
-            });
-        };
-        crons.map((cron, i) => {
-            if (!cron.enable)
-                return true;
-            node_schedule_1.default.scheduleJob(cron.time, function () {
-                callback(cron);
-            });
-            if (cron.immediate) {
-                callback(cron);
+    runLuaInRedis(script, params = null) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!script)
+                    throw new Error('NO lua script');
+                let args = [script];
+                if (params && params.length > 0) {
+                    let keys = [], values = [];
+                    for (let i in params) {
+                        if (params[i].key) {
+                            keys.push(params[i].key);
+                            values.push(params[i].value || '');
+                        }
+                    }
+                    args.push(keys.length);
+                    args = args.concat(keys, values);
+                }
+                else {
+                    args.push(0);
+                }
+                let redis = this.getRedis();
+                let res = yield redis.eval(args);
+                return res;
             }
+            catch (e) {
+                this.log.error(`Fail to run lua script in redis.`, e);
+            }
+            ;
+            return false;
         });
     }
+    /**
+     * 生成唯一id（雪花算法 Snowflake）
+     * @param second 秒数，13位
+     * @param microSecond 毫秒数，3位
+     * @param machineId 机器id，可理解为不同业务场景，2^8，可选值：0~255
+     * @param count 计数，2^14，可选值：0~16383
+     */
+    buildUniqueId(second, microSecond, machineId, count) {
+        let miliSecond = second * 1000 + microSecond - this.config.uniqueId.epoch;
+        // 0 + 41位毫秒时间戳 + 8机器id + 14位自增序列
+        let base = '0' + this.utils.pad(miliSecond.toString(2), 41, '0', true) + this.utils.pad(machineId.toString(2), 8, '0', true) + this.utils.pad(count.toString(2), 14, '0', true);
+        var id_bit = new bn_js_1.default(base, 2);
+        return id_bit.toString();
+    }
+    ;
+    /**
+     * 获取唯一id（雪花算法 Snowflake）
+     * @param machineId 机器id，可理解为不同业务场景，2^8，可选值：0~255
+     */
+    getUniqueId(machineId = 0) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let luaScript = `redis.replicate_commands()
+local STEP = 1;
+local MAX_COUNT = 16384;
+local MAX_MACHINES = 256;
+local now = redis.call('TIME');
+local tag = KEYS[1];
+local machineId;
+if ARGV[1] == nil then
+  machineId = 0;
+else
+  machineId = ARGV[1] % MAX_MACHINES;
+end
+local count;
+count = tonumber(redis.call('HINCRBY', tag, machineId, STEP));
+if count >= MAX_COUNT then
+  count = 0;
+  redis.call('HSET', tag, machineId, count);
+end
+return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
+            let segments = yield this.runLuaInRedis(luaScript, [
+                { key: this.config.uniqueId.cacheKey, value: machineId.toString() }
+            ]);
+            // redis的毫秒是6位的，取前3位
+            segments[1] = parseInt((segments[1] / 1000).toString());
+            return this.buildUniqueId.call(this, segments);
+        });
+    }
+    /**
+     * 从唯一id中解析出时间戳（雪花算法 Snowflake）
+     * @param id id
+     */
+    parseUniqueId(id) {
+        let id_bit = new bn_js_1.default(id, 10);
+        // 回填为64位
+        let base = this.utils.pad(id_bit.toString(2), 64, '0', true);
+        let timestamp = parseInt(base.substr(1, 41), 2) + this.config.uniqueId.epoch;
+        let machineId = parseInt(base.substr(42, 8), 2);
+        let count = parseInt(base.substr(50, 14), 2);
+        return { timestamp, machineId, count };
+    }
+    /**
+     * 启动服务
+     * @param cfg 配置项
+     */
     start(cfg = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.config = Utils.extend({}, DefaultConfig_1.default, cfg);
+            if (cfg)
+                for (let k in cfg) {
+                    if (cfg[k] === null)
+                        continue;
+                    if (Utils.isObject(cfg[k])) {
+                        this.config[k] = Utils.extend({}, DefaultConfig_1.default[k], cfg[k]);
+                    }
+                    else if (Utils.isArray(cfg[k])) {
+                        this.config[k] = Utils.extend([], DefaultConfig_1.default[k], cfg[k]);
+                    }
+                    else {
+                        this.config[k] = cfg[k];
+                    }
+                }
             if (!this.config.root.modules) {
-                throw new Error('NOT set module root');
+                throw new Error('NOT set modules root');
             }
             if (!this.config.root.models) {
-                throw new Error('NOT set model root');
+                throw new Error('NOT set models root');
             }
             if (!this.config.root.services) {
-                throw new Error('NOT set service root');
+                throw new Error('NOT set services root');
             }
             if (!this.config.root.errors) {
-                throw new Error('NOT set error root');
+                throw new Error('NOT set errors root');
             }
             this.config.root.modules = Utils.rtrim(this.config.root.modules, '\\/+') + '/';
             this.config.root.models = Utils.rtrim(this.config.root.models, '\\/+') + '/';
@@ -477,17 +544,17 @@ class Application {
                     }
                 });
             // 系统路由
-            koaRouter.all('/', this.KoaHandler);
-            koaRouter.all('/:app/:controller/:action', this.KoaHandler);
-            koaRouter.all('/:controller/:action', this.KoaHandler);
+            koaRouter.all('/', this.KoaHandler());
+            koaRouter.all('/:module/:controller/:action', this.KoaHandler());
+            koaRouter.all('/:controller/:action', this.KoaHandler());
             let argv2 = process.argv[2];
             if (argv2 && /^\/?[a-z]\w*/i.test(argv2)) {
                 let matched = koaRouter.match(argv2, 'GET');
                 if (matched.path.length > 0) {
                     matched = Utils.matchAll(/\/([^\/]*)/gi, argv2);
-                    let app = '', controller = '', action = '';
+                    let module = '', controller = '', action = '';
                     if (matched.length > 2) {
-                        app = matched[0][1];
+                        module = matched[0][1];
                         controller = matched[1][1];
                         action = matched[2][1];
                     }
@@ -495,7 +562,7 @@ class Application {
                         controller = matched[0][1];
                         action = matched[1][1];
                     }
-                    this.ControllerHandler(app, controller, action).then(() => {
+                    this.ControllerHandler(module, controller, action).then(() => {
                         process.exit(0);
                     });
                 }
@@ -514,56 +581,28 @@ class Application {
                     });
                 this.server.use(koaRouter.routes()).use(koaRouter.allowedMethods());
                 // 404
-                this.server.use(function (ctx, next) {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        if (ctx.status === 404) {
-                            if (this.isAjax(ctx)) {
-                                ctx.type = 'application/json';
-                                ctx.body = this.jsonError('Server Error', 500);
-                            }
-                            else {
-                                ctx.type = 'text/html';
-                                ctx.body = (new Templater_1.default(this)).renderError({
-                                    success: false,
-                                    message: 'Page not found.',
-                                    code: 404,
-                                    waitSecond: 0,
-                                    jumpUrl: ''
-                                });
-                            }
+                this.server.use((ctx, next) => __awaiter(this, void 0, void 0, function* () {
+                    if (ctx.status === 404) {
+                        if (this.isAjax(ctx)) {
+                            ctx.type = 'application/json';
+                            ctx.body = this.utils.jsonError('Server Error', '500');
                         }
-                    });
-                });
-                // 如果未配置入口文件，则尝试提取
-                if (!this.config.entry) {
-                    try {
-                        throw new Error('');
-                    }
-                    catch (err) {
-                        const stack = err.stack;
-                        const stackArr = stack.split('\n');
-                        for (let i = 0; i < stackArr.length; i++) {
-                            if (stackArr[i].indexOf('Object.<anonymous>') > 0 && i + 1 < stackArr.length) {
-                                let res = stackArr[i].match(/\(([^\:]*)\:/);
-                                if (res && res[1]) {
-                                    this.config.entry = res[1];
-                                }
-                                break;
-                            }
+                        else {
+                            ctx.type = 'text/html';
+                            ctx.body = (new Templater_1.default(this)).renderError({
+                                success: false,
+                                message: 'Page not found.',
+                                code: 404,
+                                waitSecond: 0,
+                                jumpUrl: ''
+                            });
                         }
                     }
-                    if (!this.config.entry) {
-                        this.log.error('Can not detect entry file, please set `entry` in configration');
-                        return;
-                    }
-                }
+                }));
                 this.server.listen(this.config.port, () => {
                     this.log.info('Current ENV: ' + this.config.env);
                     this.log.info('Framework version: ' + this.version);
                     this.log.info('Listen port: ' + this.config.port);
-                    if (this.config.cron.enable) {
-                        this.runCron();
-                    }
                 });
             }
         });

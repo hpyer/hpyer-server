@@ -34,11 +34,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DefaultCacheFileOptions = void 0;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-// import BlueBird from 'bluebird';
 const loglevel_1 = __importDefault(require("loglevel"));
 const Utils = __importStar(require("../../Utils"));
 const ContractCache_1 = __importDefault(require("../Contracts/ContractCache"));
-// const _Fs = BlueBird.promisifyAll(Fs);
 exports.DefaultCacheFileOptions = {
     path: '',
     dirMode: 0o777,

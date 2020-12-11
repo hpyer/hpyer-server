@@ -32,29 +32,25 @@ export declare enum HpyerCacheProvider {
 export declare enum HpyerTemplateProvider {
     NUNJUCKS = "nunjucks"
 }
-export interface HpyerConfigRoot {
+export interface HpyerServerConfigRoot {
     /**
      * modules 所在目录
      */
-    modules?: string;
+    modules: string;
     /**
      * 公用 model 所在目录
      */
-    models?: string;
+    models: string;
     /**
      * 公用 service 所在目录
      */
-    services?: string;
+    services: string;
     /**
      * 错误页面所在目录
      */
-    errors?: string;
-    /**
-     * lua脚本所在目录
-     */
-    luas?: string;
+    errors: string;
 }
-export interface HpyerConfigUniqueId {
+export interface HpyerServerConfigUniqueId {
     /**
      * redis 的hash键名
      */
@@ -62,9 +58,9 @@ export interface HpyerConfigUniqueId {
     /**
      * 世纪，用于减少生成的id数字大小，单位：毫秒，如：1300000000000
      */
-    epoch?: string | number;
+    epoch?: number;
 }
-export interface HpyerConfigKoaBody {
+export interface HpyerServerConfigKoaBody {
     /**
      * 是否返回原始报文
      */
@@ -102,7 +98,7 @@ export interface HpyerConfigKoaBody {
      */
     xmlLimit?: string;
 }
-export interface HpyerConfigKoaSession {
+export interface HpyerServerConfigKoaSession {
     key?: string;
     maxAge?: number;
     overwrite?: boolean;
@@ -111,19 +107,19 @@ export interface HpyerConfigKoaSession {
     rolling?: boolean;
     renew?: boolean;
 }
-export interface HpyerConfigKoaRouter {
+export interface HpyerServerConfigKoaRouter {
     path?: string;
     middleware?: Function;
     method?: string;
     handler?: Function;
 }
-export interface HpyerConfigKoa {
-    body?: HpyerConfigKoaBody;
-    session?: HpyerConfigKoaSession;
+export interface HpyerServerConfigKoa {
+    body?: HpyerServerConfigKoaBody;
+    session?: HpyerServerConfigKoaSession;
     statics?: Array<string>;
-    routers?: Array<HpyerConfigKoaRouter>;
+    routers?: Array<HpyerServerConfigKoaRouter>;
 }
-export interface HpyerConfigDb {
+export interface HpyerServerConfigDb {
     /**
      * 是否启用
      */
@@ -137,7 +133,7 @@ export interface HpyerConfigDb {
      */
     mysql?: ConnectionConfig;
 }
-export interface HpyerConfigDbQueryOption {
+export interface HpyerServerConfigDbQueryOption {
     /**
      * 查询字段
      */
@@ -159,7 +155,7 @@ export interface HpyerConfigDbQueryOption {
      */
     lock?: boolean;
 }
-export interface HpyerConfigCacheFileOptions {
+export interface HpyerServerConfigCacheFileOptions {
     /**
      * 缓存文件存储位置
      */
@@ -177,7 +173,7 @@ export interface HpyerConfigCacheFileOptions {
      */
     ext: string;
 }
-export interface HpyerConfigCache {
+export interface HpyerServerConfigCache {
     /**
      * 是否启用
      */
@@ -189,16 +185,16 @@ export interface HpyerConfigCache {
     /**
      * 文件缓存的选项
      */
-    file: HpyerConfigCacheFileOptions;
+    file: HpyerServerConfigCacheFileOptions;
     /**
-     * redis缓存选项，详见: https://www.npmjs.com/package/redis#options-object-properties
+     * redis缓存选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new
      */
     redis: RedisOptions;
 }
 /**
  * 模版配置项
  */
-export interface HpyerConfigTemplate {
+export interface HpyerServerConfigTemplate {
     /**
      * 模版提供商
      */
@@ -217,47 +213,9 @@ export interface HpyerConfigTemplate {
     nunjucks: ConfigureOptions;
 }
 /**
- * 计划任务配置项
- */
-export interface HpyerConfigCronJob {
-    /**
-     * 定时时间，同 linux 的 cronjob
-     */
-    time: string;
-    /**
-     * 要执行的任务的路由地址
-     */
-    path: string;
-    /**
-     * 是否在服务启动时立即执行
-     */
-    immediate: boolean;
-    /**
-     * 任务是否有效
-     */
-    enable: boolean;
-}
-/**
- * 计划任务模块配置
- */
-export interface HpyerConfigCron {
-    /**
-     * 默认的错误页面模版
-     */
-    enable: boolean;
-    /**
-     * 模版文件扩展名
-     */
-    jobs: Array<HpyerConfigCronJob>;
-}
-/**
  * 框架配置
  */
-export interface HpyerConfig {
-    /**
-     * 当前启动脚本（即启动服务的脚本），仅影响计划任务的执行。未配置时，系统会尝试自动获取，建议配置为：__filename
-     */
-    entry: string;
+export interface HpyerServerConfig {
     /**
      * 服务端口
      */
@@ -297,29 +255,25 @@ export interface HpyerConfig {
     /**
      * 各主要目录
      */
-    root: HpyerConfigRoot;
+    root: HpyerServerConfigRoot;
     /**
      * redis 唯一id相关配置
      */
-    uniqueId: HpyerConfigUniqueId;
+    uniqueId: HpyerServerConfigUniqueId;
     /**
      * koa 相关配置
      */
-    koa: HpyerConfigKoa;
+    koa: HpyerServerConfigKoa;
     /**
      * 数据库相关配置
      */
-    db: HpyerConfigDb;
+    db: HpyerServerConfigDb;
     /**
      * 缓存相关配置
      */
-    cache: HpyerConfigCache;
+    cache: HpyerServerConfigCache;
     /**
      * 模版相关选项
      */
-    template: HpyerConfigTemplate;
-    /**
-     * 计划任务相关配置
-     */
-    cron: HpyerConfigCron;
+    template: HpyerServerConfigTemplate;
 }

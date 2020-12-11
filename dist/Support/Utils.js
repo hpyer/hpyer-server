@@ -32,9 +32,8 @@ const Xss = __importStar(require("xss"));
 const UrlEncode = __importStar(require("urlencode"));
 /**
  * 扩展对象
- * @param {object} target 目标对象
- * @param {object} args 任意个对象
- * @return {object}
+ * @param target 目标对象
+ * @param args 任意个对象
  */
 exports.extend = (target = {}, ...args) => {
     let i = 0;
@@ -72,8 +71,7 @@ exports.extend = (target = {}, ...args) => {
 };
 /**
  * 克隆变量
- * @param {any} obj 原变量
- * @return {any}
+ * @param obj 原变量
  */
 exports.clone = function (obj) {
     // Handle the 3 simple types, and null or undefined
@@ -106,9 +104,8 @@ exports.clone = function (obj) {
 };
 /**
  * 过滤xss
- * @param {string} str 原字符串
- * @param {XSS.IWhiteList} whiteList 允许的标签
- * @return {string} 过滤后的字符串
+ * @param str 原字符串
+ * @param whiteList 允许的标签
  */
 exports.xssFilter = function (str, whiteList = {}) {
     let myxss = new Xss.FilterXSS({
@@ -120,11 +117,10 @@ exports.xssFilter = function (str, whiteList = {}) {
 };
 /**
  * 格式化时间
- * @param {string} format 输出格式
- * @param {Moment.MomentInput} datetime 时间对象、字符串等
- * @param {number} offset 时间偏移量数值，正数表示增加，负数表示减少
- * @param {Moment.unitOfTime.DurationConstructor} offsetUnit 时间偏移量单位，默认：'seconds'
- * @return {string} 格式化后的时间字符串
+ * @param format 输出格式
+ * @param datetime 时间对象、字符串等
+ * @param offset 时间偏移量数值，正数表示增加，负数表示减少
+ * @param offsetUnit 时间偏移量单位，默认：'seconds'
  */
 exports.getFormatTime = function (format = '', datetime = null, offset = 0, offsetUnit = 'seconds') {
     format = format || 'YYYY-MM-DD HH:mm:ss';
@@ -153,8 +149,7 @@ exports.getFormatTime = function (format = '', datetime = null, offset = 0, offs
 };
 /**
  * 判断是否时间字符串
- * @param {string} datetime 时间字符串
- * @return {boolean} True 表示格式正确
+ * @param datetime 时间字符串
  */
 exports.isDateString = function (datetime) {
     if (!datetime)
@@ -163,92 +158,81 @@ exports.isDateString = function (datetime) {
 };
 /**
  * 获取 Moment 类
- * @return {Function} Moment 类
  */
 exports.getMoment = function () {
     return moment_1.default;
 };
 /**
  * 获取 UUID
- * @return {string} version 版本，可选：v1、v2、v3、v4，默认：v1
+ * @param version 版本，可选：v1、v2、v3、v4，默认：v1
  */
 exports.getUuid = function (version = 'v1') {
     return Uuid[version]();
 };
 /**
  * 判断是否 UUID
- * @param {string} version 版本，可选：v1、v2、v3、v4，默认：v1
- * @return {boolean} True 表示格式正确
+ * @param str 字符串
  */
 exports.isUuid = (str) => {
     return str && exports.isString(str) && exports.isMatch(/^[a-z0-9]{8}(-[a-z0-9]{4}){3}-[a-z0-9]{12}$/i, str);
 };
 /**
  * 转成字符串
- * @param {any} args 要转化的数据
- * @return {string} 转化后的字符串
+ * @param data 要转化的数据
  */
 exports.toString = Object.prototype.toString;
 /**
  * 判断是否字符串
- * @param {any} data 要判断的数据
- * @return {boolean} True 表示格式正确
+ * @param data 要判断的数据
  */
 exports.isString = (data) => {
     return data && exports.toString.call(data) == '[object String]';
 };
 /**
  * 判断是否数字
- * @param {any} data 要判断的数据
- * @return {boolean} True 表示格式正确
+ * @param data 要判断的数据
  */
 exports.isNumber = (data) => {
     return data && exports.toString.call(data) == '[object Number]';
 };
 /**
  * 判断是否数字字符串
- * @param {any} data 要判断的数据
- * @return {boolean} True 表示格式正确
+ * @param data 要判断的数据
  */
 exports.isNumberString = (data) => {
     return exports.isString(data) && exports.isMatch(/^(-?\d+)(\.\d+)?$/i, data);
 };
 /**
  * 判断是否对象
- * @param {any} data 要判断的数据
- * @return {boolean} True 表示格式正确
+ * @param data 要判断的数据
  */
 exports.isObject = (data) => {
     return data && exports.toString.call(data) == '[object Object]';
 };
 /**
  * 判断是否数组
- * @param {any} data 要判断的数据
- * @return {boolean} True 表示格式正确
+ * @param data 要判断的数据
  */
 exports.isArray = (data) => {
     return data && exports.toString.call(data) == '[object Array]';
 };
 /**
  * 判断是否函数
- * @param {any} data 要判断的数据
- * @return {boolean} True 表示格式正确
+ * @param data 要判断的数据
  */
 exports.isFunction = (data) => {
-    return data && exports.toString.call(data) == '[object Function]' || exports.toString.call(data) == '[object AsyncFunction]';
+    return data && (exports.toString.call(data) == '[object Function]' || exports.toString.call(data) == '[object AsyncFunction]');
 };
 /**
  * 判断是否日期对象
- * @param {any} data 要判断的数据
- * @return {boolean} True 表示格式正确
+ * @param data 要判断的数据
  */
 exports.isDate = (data) => {
     return data && exports.toString.call(data) == '[object Date]';
 };
 /**
  * 判断是否为空
- * @param {any} data 要判断的数据
- * @return {boolean} True 表示格式正确
+ * @param data 要判断的数据
  */
 exports.isEmpty = (obj) => {
     if (obj === undefined || obj === null || obj === '')
@@ -265,19 +249,17 @@ exports.isEmpty = (obj) => {
 };
 /**
  * 判断是否符合正则
- * @param {RegExp} reg 正则对象
- * @param {string} str 要验证的字符串
- * @return {boolean} True 表示符合
+ * @param reg 正则对象
+ * @param str 要验证的字符串
  */
 exports.isMatch = (reg, str) => {
     return !!('' + str).match(reg);
 };
 /**
  * 判断是否存在数组重
- * @param {any} data 要查找的数据
- * @param {array} arr 被查找的数组
- * @param {boolean} strict 是否严格模式
- * @return {boolean} True 表示存在
+ * @param data 要查找的数据
+ * @param arr 被查找的数组
+ * @param strict 是否严格模式
  */
 exports.inArray = (data, arr, strict = false) => {
     if (!exports.isArray(arr))
@@ -298,9 +280,8 @@ exports.inArray = (data, arr, strict = false) => {
 };
 /**
  * 去除字符串左右的符号
- * @param {string} str 原字符串
- * @param {string} chars 要去除的符号，正则字符串，默认空白符
- * @return {string} 过滤后的字符串
+ * @param str 原字符串
+ * @param chars 要去除的符号，正则字符串，默认空白符
  */
 exports.trim = (str, chars = '\\s+') => {
     if (!str || !exports.isString(str))
@@ -309,9 +290,8 @@ exports.trim = (str, chars = '\\s+') => {
 };
 /**
  * 去除字符串左边的符号
- * @param {string} str 原字符串
- * @param {string} chars 要去除的符号，正则字符串，默认空白符
- * @return {string} 过滤后的字符串
+ * @param str 原字符串
+ * @param chars 要去除的符号，正则字符串，默认空白符
  */
 exports.ltrim = (str, chars = '\\s+') => {
     if (!str || !exports.isString(str))
@@ -320,9 +300,8 @@ exports.ltrim = (str, chars = '\\s+') => {
 };
 /**
  * 去除字符串右边的符号
- * @param {string} str 原字符串
- * @param {string} chars 要去除的符号，正则字符串，默认空白符
- * @return {string} 过滤后的字符串
+ * @param str 原字符串
+ * @param chars 要去除的符号，正则字符串，默认空白符
  */
 exports.rtrim = (str, chars = '\\s+') => {
     if (!str || !exports.isString(str))
@@ -331,20 +310,18 @@ exports.rtrim = (str, chars = '\\s+') => {
 };
 /**
  * 将字符串复制为多份
- * @param {string} str 要复制的字符串
- * @param {number} num 要复制的次数
- * @return {string} 处理后的字符串
+ * @param str 要复制的字符串
+ * @param num 要复制的次数
  */
 exports.repeat = (str, num) => {
     return new Array(num + 1).join(str);
 };
 /**
  * 给字符串填充字符
- * @param {string} str 原字符串
- * @param {number} len 要填充到的字符串长度
- * @param {char} chr 要填充的字符
- * @param {boolean} leftJustify Ture 表示左侧填充，否则反之
- * @return {string} 处理后的字符串
+ * @param str 原字符串
+ * @param len 要填充到的字符串长度
+ * @param chr 要填充的字符
+ * @param leftJustify Ture 表示左侧填充，否则反之
  */
 exports.pad = function (str, len, chr = ' ', leftJustify = true) {
     let padding = (str.length >= len) ? '' : exports.repeat(chr, len - str.length >>> 0);
@@ -352,9 +329,8 @@ exports.pad = function (str, len, chr = ' ', leftJustify = true) {
 };
 /**
  * 字符串转换驼峰格式
- * @param {string} str 原字符串
- * @param {string} separator 单词分隔符
- * @return {string} 处理后的字符串
+ * @param str 原字符串
+ * @param separator 单词分隔符
  */
 exports.toCamelCase = (str, separator = '[-|\\_]') => {
     let reg = new RegExp(separator + '(\\w)', 'g');
@@ -364,18 +340,16 @@ exports.toCamelCase = (str, separator = '[-|\\_]') => {
 };
 /**
  * 字符串转分割线格式
- * @param {string} str 原字符串
- * @param {string} separator 单词分隔符
- * @return {string} 处理后的字符串
+ * @param str 原字符串
+ * @param separator 单词分隔符
  */
 exports.toLineCase = (str, separator = '-') => {
     return str.replace(/([A-Z])/g, separator + "$1").toLowerCase();
 };
 /**
  * 获取匹配到的所有字符串
- * @param {RegExp} reg 正则表达式
- * @param {string} str 原字符串
- * @return {array} 匹配到的结果
+ * @param reg 正则表达式
+ * @param str 原字符串
  */
 exports.matchAll = function (reg, string) {
     let matched = [];
@@ -387,8 +361,7 @@ exports.matchAll = function (reg, string) {
 };
 /**
  * 休眠，暂停代码执行
- * @param {number} time 毫秒数
- * @return {Promise<void>} 无
+ * @param time 毫秒数
  */
 exports.sleep = function (time = 0) {
     return new Promise((resolve, reject) => {
@@ -399,8 +372,7 @@ exports.sleep = function (time = 0) {
 };
 /**
  * base64 编码
- * @param {string} str 原字符串
- * @return {string} 处理后的字符串
+ * @param str 原字符串
  */
 exports.base64Encode = function (str) {
     let buffer = Buffer.from(str);
@@ -408,8 +380,7 @@ exports.base64Encode = function (str) {
 };
 /**
  * base64 解码
- * @param {string} str 原字符串
- * @return {string} 处理后的字符串
+ * @param str 原字符串
  */
 exports.base64Decode = function (str) {
     let buffer = Buffer.from(str, 'base64');
@@ -417,9 +388,8 @@ exports.base64Decode = function (str) {
 };
 /**
  * 生成 min 到 max 之间的随机数
- * @param {number} max 最大值（不包含）
- * @param {number} min 最小值（包含），默认：0
- * @return {number} 随机数
+ * @param max 最大值（不包含）
+ * @param min 最小值（包含），默认：0
  */
 exports.getRandomNumber = function (max, min = 0) {
     if (max <= 0 || min <= 0) {
@@ -433,9 +403,8 @@ exports.getRandomNumber = function (max, min = 0) {
 };
 /**
  * 生成随机字符串
- * @param {number} len 生成的随机字符串长度
- * @param {string} type 生成方式，可选：string/password、code/number，默认：string
- * @return {string} 随机字符串
+ * @param len 生成的随机字符串长度
+ * @param type 生成方式，可选：string/password、code/number，默认：string
  */
 exports.getRandomString = function (len = 16, type = 'string') {
     let chars = '';
@@ -457,28 +426,25 @@ exports.getRandomString = function (len = 16, type = 'string') {
 };
 /**
  * 计算哈希字符串
- * @param {string} str 原文字符串
- * @param {string} type 哈希方式，可选：sha1、md5等待，默认：sha1
- * @param {string} target 生成的目标类型，可选：latin1、hex、base64，默认：hex
- * @return {string} 哈希字符串
+ * @param str 原文字符串
+ * @param type 哈希方式，可选：sha1、md5等待，默认：sha1
+ * @param target 生成的目标类型，可选：latin1、hex、base64，默认：hex
  */
 exports.createHash = function (str, type = 'sha1', target = 'hex') {
     return crypto_1.default.createHash(type).update(str).digest(target);
 };
 /**
  * 计算加密字符串
- * @param {string} str 原文字符串
- * @param {string} type 加密方式，可选：sha256等待，默认：sha256
- * @param {string} target 生成的目标类型，可选：latin1、hex、base64，默认：hex
- * @return {string} 加密字符串
+ * @param str 原文字符串
+ * @param type 加密方式，可选：sha256等待，默认：sha256
+ * @param target 生成的目标类型，可选：latin1、hex、base64，默认：hex
  */
 exports.createHmac = function (str, key, type = 'sha256', target = 'hex') {
     return crypto_1.default.createHmac(type, key).update(str).digest(target);
 };
 /**
  * 计算文件的 md5 值
- * @param {string | Stream.Readable} path 文件路径或文件可读流
- * @return {Promise<string>} md5字符串
+ * @param path 文件路径或文件可读流
  */
 exports.md5File = function (path) {
     return new Promise((reslove, reject) => {
@@ -502,8 +468,7 @@ exports.md5File = function (path) {
 };
 /**
  * 编码html特殊符号
- * @param {string} text 原字符串
- * @return {string} 处理后的字符串
+ * @param text 原字符串
  */
 exports.htmlEscape = function (text) {
     return text.replace(/[<>"&]/g, function (match) {
@@ -522,59 +487,52 @@ exports.htmlEscape = function (text) {
 };
 /**
  * 解码html特殊符号
- * @param {string} text 原字符串
- * @return {string} 处理后的字符串
+ * @param text 原字符串
  */
 exports.htmlUnescape = function (text) {
     return text.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"');
 };
 /**
  * url 编码
- * @param {string} args 原字符串
- * @return {string} 处理后的字符串
+ * @param args 原字符串
  */
 exports.urlEncode = function () {
     return UrlEncode.encode.apply(null, arguments);
 };
 /**
  * url 解码
- * @param {string} args 原字符串
- * @return {string} 处理后的字符串
+ * @param args 原字符串
  */
 exports.urlDecode = function () {
     return UrlEncode.decode.apply(null, arguments);
 };
 /**
  * 构建 querystring 字符串
- * @param {object} args 参数
- * @return {string} 处理后的字符串
+ * @param args 参数
  */
 exports.buildQueryString = function () {
     return UrlEncode.stringify.apply(null, arguments);
 };
 /**
  * 解析 querystring 字符串
- * @param {string} args string
- * @return {object} 解析后的参数对象
+ * @param args string
  */
 exports.parseQueryString = function () {
     return UrlEncode.parse.apply(null, arguments);
 };
 /**
  * 构建成功时的json对象
- * @param {any} data 成功时要返回的数据，默认：null
- * @param {string} message 成功时要返回的消息，默认：'ok'
- * @return {object} json对象
+ * @param data 成功时要返回的数据，默认：null
+ * @param message 成功时要返回的消息，默认：'ok'
  */
 exports.jsonSuccess = (data, message = 'ok') => {
     return { success: true, code: 0, data, message };
 };
 /**
  * 构建失败时的json对象
- * @param {string} message 失败时的错误消息
- * @param {string} code 失败时的错误代码，默认：'1'
- * @param {any} data 失败时要返回的数据，默认：null
- * @return {object} json对象
+ * @param message 失败时的错误消息
+ * @param code 失败时的错误代码，默认：'1'
+ * @param data 失败时要返回的数据，默认：null
  */
 exports.jsonError = (message, code = '1', data = null) => {
     return { success: false, code, data, message };

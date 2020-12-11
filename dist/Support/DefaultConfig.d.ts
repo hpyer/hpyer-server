@@ -1,3 +1,3 @@
-import { HpyerConfig } from "./Types/Hpyer";
-declare const DefaultConfig: HpyerConfig;
+import Config from './Config';
+declare const DefaultConfig: Config;
 export default DefaultConfig;

@@ -61,7 +61,7 @@ function default_1(ctx, next) {
         if (ctx.path == '/favicon.ico') {
             return false;
         }
-        ctx.client_ip = request_ip_1.default(ctx.request);
+        ctx.client_ip = request_ip_1.default.getClientIp(ctx.request);
         loglevel_1.default.info('[' + ctx.client_ip + ']', ctx.request.url);
         ctx.request['query_raw'] = {};
         if (ctx.request.query) {

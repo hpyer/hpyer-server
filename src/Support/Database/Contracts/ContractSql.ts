@@ -1,6 +1,6 @@
 'use strict';
 
-import { HpyerConfigDbQueryOption } from "../../Types/Hpyer";
+import { HpyerServerConfigDbQueryOption } from "../../Types/Hpyer";
 
 export default class ContractSql {
 
@@ -25,7 +25,7 @@ export default class ContractSql {
    * @param where 查询条件
    * @param options 查询选项
    */
-  findAll(table: string, where: object | Array<string | boolean> | string, options: HpyerConfigDbQueryOption): Promise<any> {
+  findAll(table: string, where: object | Array<string | boolean> | string, options: HpyerServerConfigDbQueryOption): Promise<any> {
     return null;
   }
 
@@ -35,7 +35,7 @@ export default class ContractSql {
    * @param where 查询条件
    * @param options 查询选项
    */
-  findOne(table: string, where: object | Array<string | boolean> | string, options: HpyerConfigDbQueryOption): Promise<any> {
+  findOne(table: string, where: object | Array<string | boolean> | string, options: HpyerServerConfigDbQueryOption): Promise<any> {
     return null;
   }
 

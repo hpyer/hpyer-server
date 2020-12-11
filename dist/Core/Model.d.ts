@@ -1,4 +1,4 @@
-import { HpyerConfigDbQueryOption } from '../Support/Types/Hpyer';
+import { HpyerServerConfigDbQueryOption } from '../Support/Types/Hpyer';
 import Application from './Application';
 export default class Model {
     /**
@@ -29,13 +29,13 @@ export default class Model {
      * @param where 查询条件
      * @param options 查询选项
      */
-    findAll(where?: object | Array<string | boolean> | string, options?: HpyerConfigDbQueryOption): Promise<any>;
+    findAll(where?: object | Array<string | boolean> | string, options?: HpyerServerConfigDbQueryOption): Promise<any>;
     /**
      * 查询单条
      * @param where 查询条件
      * @param options 查询选项
      */
-    findOne(where?: object | Array<string | boolean> | string, options?: HpyerConfigDbQueryOption): Promise<any>;
+    findOne(where?: object | Array<string | boolean> | string, options?: HpyerServerConfigDbQueryOption): Promise<any>;
     /**
      * 查询统计
      * @param where 查询条件

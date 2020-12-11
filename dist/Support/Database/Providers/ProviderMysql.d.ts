@@ -1,7 +1,7 @@
 import { PoolConnection } from 'mysql';
 import ContractSql from '../Contracts/ContractSql';
-import { HpyerConfigDbQueryOption } from '../../Types/Hpyer';
-export declare const DefaultQueryOptions: HpyerConfigDbQueryOption;
+import { HpyerServerConfigDbQueryOption } from '../../Types/Hpyer';
+export declare const DefaultQueryOptions: HpyerServerConfigDbQueryOption;
 declare class ProviderMysql extends ContractSql {
     conn: PoolConnection;
     constructor(conn: PoolConnection);
@@ -15,8 +15,8 @@ declare class ProviderMysql extends ContractSql {
     startTrans(): Promise<any>;
     commit(): Promise<any>;
     rollback(): Promise<any>;
-    findAll(table: string, where?: object | Array<string | boolean> | string, options?: HpyerConfigDbQueryOption): Promise<any>;
-    findOne(table: string, where?: object | Array<string | boolean> | string, options?: HpyerConfigDbQueryOption): Promise<any>;
+    findAll(table: string, where?: object | Array<string | boolean> | string, options?: HpyerServerConfigDbQueryOption): Promise<any>;
+    findOne(table: string, where?: object | Array<string | boolean> | string, options?: HpyerServerConfigDbQueryOption): Promise<any>;
     findCount(table: string, where?: object | Array<string | boolean> | string, field?: string): Promise<any>;
     create(table: string, data: object, fetch_last_id?: boolean): Promise<any>;
     replace(table: string, data: object): Promise<any>;

@@ -1,6 +1,6 @@
 'use strict';
 
-import { HpyerConfigDbQueryOption } from '../Support/Types/Hpyer';
+import { HpyerServerConfigDbQueryOption } from '../Support/Types/Hpyer';
 import Application from './Application';
 
 export default class Model {
@@ -48,7 +48,7 @@ export default class Model {
    * @param where 查询条件
    * @param options 查询选项
    */
-  async findAll(where: object | Array<string | boolean> | string = null, options: HpyerConfigDbQueryOption = null) {
+  async findAll(where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption = null) {
     let db = await this.app.getDB();
     if (!db) return null;
     let res = await db.findAll(this.table, where, options);
@@ -61,7 +61,7 @@ export default class Model {
    * @param where 查询条件
    * @param options 查询选项
    */
-  async findOne(where: object | Array<string | boolean> | string = null, options: HpyerConfigDbQueryOption = null) {
+  async findOne(where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption = null) {
     let db = await this.app.getDB();
     if (!db) return null;
     let res = await db.findOne(this.table, where, options);

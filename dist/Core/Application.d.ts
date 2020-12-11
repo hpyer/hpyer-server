@@ -1,11 +1,11 @@
-import { HashMap, HpyerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider } from '../Support/Types/Hpyer';
-import LogLevel from 'loglevel';
+import { HashMap, HpyerServerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider } from '../Support/Types/Hpyer';
 import * as Utils from '../Support/Utils';
 import Model from './Model';
 import Service from './Service';
 import ContractSql from '../Support/Database/Contracts/ContractSql';
 import ContractCache from '../Support/Cache/Contracts/ContractCache';
 import Koa from 'koa';
+import LogLevel from 'loglevel';
 import IORedis from 'ioredis';
 declare class Application {
     /**
@@ -27,11 +27,12 @@ declare class Application {
     /**
      * 配置项
      */
-    config: HpyerConfig;
+    config: HpyerServerConfig;
     /**
      * koa实例
      */
     server: Koa;
+    constructor();
     /**
      * 是否ajax请求
      * @param  {object}  ctx  koa的上下文
@@ -87,13 +88,6 @@ declare class Application {
      */
     removeCache(name: string, provider?: HpyerCacheProvider): Promise<boolean>;
     /**
-     * 在redis中执行lua脚本
-     * @param  {string} file_name 脚本名称（含扩展名）
-     * @param  {array} params [{key: 'test', value: 10}, {key: 'test', value: 10}]
-     * @return {boolean}
-     */
-    runLuaInRedis(file_name: string, params: Array<HpyerLuaParams>): Promise<any>;
-    /**
      * 获取model实例
      * @param  {string} name 服务名称
      * @param  {string} module 模块名称
@@ -108,10 +102,8 @@ declare class Application {
     service(name: string): Service;
     /**
      * Koa的控制器处理方法
-     * @param  ctx koa的上下文
-     * @param  next koa的下一中间件
      */
-    KoaHandler(ctx: Koa.Context, next: Koa.Next): Promise<Koa.Next>;
+    KoaHandler(): Function;
     /**
      * 控制器处理方法
      * @param  module 应用名称
@@ -122,10 +114,40 @@ declare class Application {
      */
     ControllerHandler(module: string, controller: string, action: string, ctx?: Koa.Context, next?: Koa.Next): Promise<Koa.Next>;
     /**
-     * 执行计划任务
-     * @return {void}
+     * 在redis中执行lua脚本
+     * @param  content 脚本内容
+     * @param  params [{key: 'test', value: 10}, {key: 'test', value: 10}]
      */
-    runCron(): void;
-    start(cfg?: HpyerConfig): Promise<void>;
+    runLuaInRedis(script: string, params?: Array<HpyerLuaParams>): Promise<any>;
+    /**
+     * 执行系统命令
+     * @param  {string} cmd 命令
+     * @param  {array} args 参数，可选
+     * @return {promise}
+     */
+    runCmd: (cmd: any, args?: any[]) => Promise<unknown>;
+    /**
+     * 生成唯一id（雪花算法 Snowflake）
+     * @param second 秒数，13位
+     * @param microSecond 毫秒数，3位
+     * @param machineId 机器id，可理解为不同业务场景，2^8，可选值：0~255
+     * @param count 计数，2^14，可选值：0~16383
+     */
+    buildUniqueId(second: number, microSecond: number, machineId: number | string, count: number): string;
+    /**
+     * 获取唯一id（雪花算法 Snowflake）
+     * @param machineId 机器id，可理解为不同业务场景，2^8，可选值：0~255
+     */
+    getUniqueId(machineId?: number | string): Promise<string>;
+    /**
+     * 从唯一id中解析出时间戳（雪花算法 Snowflake）
+     * @param id id
+     */
+    parseUniqueId(id: string): object;
+    /**
+     * 启动服务
+     * @param cfg 配置项
+     */
+    start(cfg?: HpyerServerConfig): Promise<void>;
 }
 export default Application;

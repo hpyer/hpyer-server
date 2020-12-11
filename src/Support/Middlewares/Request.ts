@@ -32,7 +32,7 @@ export default async function (ctx: Context, next: Next) {
     return false;
   }
 
-  ctx.client_ip = RequestIp(ctx.request);
+  ctx.client_ip = RequestIp.getClientIp(ctx.request);
 
   LogLevel.info('[' + ctx.client_ip + ']', ctx.request.url);
 

@@ -112,7 +112,7 @@ export default class Controller {
       this.displayContent((new Templater(this.app)).render(file, params));
     }
     catch (e) {
-      this.app.log.error('The template file `' + file + '` not found.', e);
+      this.app.log.error(`Fail to render template '${file}'.`, e.message);
     }
     return;
   }

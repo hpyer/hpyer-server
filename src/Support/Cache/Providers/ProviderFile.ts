@@ -2,15 +2,12 @@
 
 import Path from 'path';
 import Fs from 'fs';
-// import BlueBird from 'bluebird';
 import LogLevel from 'loglevel';
 import * as Utils from '../../Utils';
 import ContractCache from '../Contracts/ContractCache';
-import { HpyerConfigCacheFileOptions } from '../../Types/Hpyer'
+import { HpyerServerConfigCacheFileOptions } from '../../Types/Hpyer'
 
-// const _Fs = BlueBird.promisifyAll(Fs);
-
-export const DefaultCacheFileOptions: HpyerConfigCacheFileOptions = {
+export const DefaultCacheFileOptions: HpyerServerConfigCacheFileOptions = {
   path: '',
   dirMode: 0o777,
   fileMode: 0o666,
@@ -19,12 +16,12 @@ export const DefaultCacheFileOptions: HpyerConfigCacheFileOptions = {
 
 class ProviderFile extends ContractCache {
 
-  options: HpyerConfigCacheFileOptions = null;
+  options: HpyerServerConfigCacheFileOptions = null;
 
-  constructor(options: HpyerConfigCacheFileOptions) {
+  constructor(options: HpyerServerConfigCacheFileOptions) {
     super();
 
-    this.options = Utils.extend({}, DefaultCacheFileOptions, options) as HpyerConfigCacheFileOptions;
+    this.options = Utils.extend({}, DefaultCacheFileOptions, options) as HpyerServerConfigCacheFileOptions;
     this.options.path = Path.resolve(this.options.path);
     try {
       Fs.accessSync(this.options.path, Fs.constants.R_OK & Fs.constants.W_OK);

@@ -3,11 +3,11 @@
 import * as Utils from '../../Utils';
 import { MysqlError, Pool, PoolConnection } from 'mysql';
 import ContractSql from '../Contracts/ContractSql';
-import { HpyerConfigDbQueryOption } from '../../Types/Hpyer';
+import { HpyerServerConfigDbQueryOption } from '../../Types/Hpyer';
 
 const mysql = require('mysql');
 
-export const DefaultQueryOptions: HpyerConfigDbQueryOption = {
+export const DefaultQueryOptions: HpyerServerConfigDbQueryOption = {
   fields: '*',
   offset: 0,
   limit: 0,
@@ -258,7 +258,7 @@ class ProviderMysql extends ContractSql {
     });
   }
 
-  findAll(table: string, where: object | Array<string | boolean> | string = null, options: HpyerConfigDbQueryOption = {}) {
+  findAll(table: string, where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption = {}) {
     where = this.parseWhere(where);
     options = Utils.extend({}, DefaultQueryOptions, options);
     let limit = '', order = '';
@@ -275,7 +275,7 @@ class ProviderMysql extends ContractSql {
     return this.execute(sql);
   }
 
-  async findOne(table: string, where: object | Array<string | boolean> | string = null, options: HpyerConfigDbQueryOption = {}) {
+  async findOne(table: string, where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption = {}) {
     options.offset = 0;
     options.limit = 1;
     let rows = await this.findAll(table, where, options);
@@ -286,7 +286,7 @@ class ProviderMysql extends ContractSql {
   }
 
   async findCount(table: string, where: object | Array<string | boolean> | string = null, field: string = 'COUNT(0)') {
-    let options: HpyerConfigDbQueryOption = {
+    let options: HpyerServerConfigDbQueryOption = {
       fields: field + ' AS qty',
     }
     let row = await this.findOne(table, where, options);
