@@ -8,6 +8,9 @@ import { HashMap } from '../Support/Types/Hpyer';
 import { Context } from 'koa';
 import Application from './Application';
 
+/**
+ * 控制器基类
+ */
 export default class Controller {
 
   /**

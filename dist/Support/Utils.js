@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jsonError = exports.jsonSuccess = exports.parseQueryString = exports.buildQueryString = exports.urlDecode = exports.urlEncode = exports.htmlUnescape = exports.htmlEscape = exports.md5File = exports.createHmac = exports.createHash = exports.getRandomString = exports.getRandomNumber = exports.base64Decode = exports.base64Encode = exports.sleep = exports.matchAll = exports.toLineCase = exports.toCamelCase = exports.pad = exports.repeat = exports.rtrim = exports.ltrim = exports.trim = exports.inArray = exports.isMatch = exports.isEmpty = exports.isDate = exports.isFunction = exports.isArray = exports.isObject = exports.isNumberString = exports.isNumber = exports.isString = exports.toString = exports.isUuid = exports.getUuid = exports.getMoment = exports.isDateString = exports.getFormatTime = exports.xssFilter = exports.clone = exports.extend = void 0;
+exports.jsonError = exports.jsonSuccess = exports.parseQueryString = exports.buildQueryString = exports.urlDecode = exports.urlEncode = exports.htmlUnescape = exports.htmlEscape = exports.md5File = exports.createHmac = exports.createHash = exports.getRandomString = exports.getRandomNumber = exports.base64Decode = exports.base64Encode = exports.sleep = exports.matchAll = exports.toLineCase = exports.toCamelCase = exports.toStudlyCase = exports.toLowerFirstLetter = exports.toUpperFirstLetter = exports.pad = exports.repeat = exports.rtrim = exports.ltrim = exports.trim = exports.inArray = exports.isMatch = exports.isEmpty = exports.isDate = exports.isFunction = exports.isArray = exports.isObject = exports.isNumberString = exports.isNumber = exports.isString = exports.toString = exports.isUuid = exports.getUuid = exports.getMoment = exports.isDateString = exports.getFormatTime = exports.xssFilter = exports.clone = exports.extend = void 0;
 const moment_1 = __importDefault(require("moment"));
 const crypto_1 = __importDefault(require("crypto"));
 const fs_1 = __importDefault(require("fs"));
@@ -328,15 +328,39 @@ exports.pad = function (str, len, chr = ' ', leftJustify = true) {
     return leftJustify ? padding + str : str + padding;
 };
 /**
- * 字符串转换驼峰格式
- * @param str 原字符串
- * @param separator 单词分隔符
+ * 将单词（句子）首字母转成大写，'hello word' => 'Hello World'
+ * @param str 要转换的单词（句子）
  */
-exports.toCamelCase = (str, separator = '[-|\\_]') => {
-    let reg = new RegExp(separator + '(\\w)', 'g');
-    return str.replace(reg, function (all, letter) {
+exports.toUpperFirstLetter = function (str) {
+    return str.replace(/\b[a-z]/gi, function (letter) {
         return letter.toUpperCase();
     });
+};
+/**
+ * 将单词（句子）首字母转成小写，'Hello World' => 'hello word'
+ * @param str 要转换的单词（句子）
+ */
+exports.toLowerFirstLetter = function (str) {
+    return str.replace(/\b[a-z]/gi, function (letter) {
+        return letter.toLowerCase();
+    });
+};
+/**
+ * 字符串驼峰格式（首字母大写），'hello word' => 'HelloWorld'
+ * @param str 要转换的字符串
+ * @param separator 单词分隔符，默认：'[\\-|\\_]'
+ */
+exports.toStudlyCase = function (str, separator = '[\\-|\\_]') {
+    let reg = new RegExp(separator + '(\\w)', 'gi');
+    return exports.toUpperFirstLetter(str.replace(reg, ' ')).replace(/\s/gi, '');
+};
+/**
+ * 字符串驼峰格式（首字母小写），'hello word' => 'HelloWorld'
+ * @param str 要转换的字符串
+ * @param separator 单词分隔符，默认：'[\\-|\\_]'
+ */
+exports.toCamelCase = (str, separator = '[-|\\_]') => {
+    return exports.toLowerFirstLetter(exports.toStudlyCase(str, separator));
 };
 /**
  * 字符串转分割线格式

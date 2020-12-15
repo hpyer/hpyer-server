@@ -5,12 +5,16 @@ export default class ContractSql {
      */
     disconnect(): void;
     /**
+     * 获取连接
+     */
+    getConnection(): void;
+    /**
      * 执行sql语句
      * @param sql 要执行的sql语句
      * @param values sql的参数
-     * @param fetch_last_id 是否获取自增id
+     * @param fetch_last_id 是否获取自增id，默认：false
      */
-    execute(sql: string, values: object, fetch_last_id: boolean): Promise<any>;
+    execute(sql: string, values: object, fetch_last_id?: boolean): Promise<any>;
     /**
      * 查询所有
      * @param table 表名
@@ -29,16 +33,16 @@ export default class ContractSql {
      * 查询统计
      * @param table 表名
      * @param where 查询条件
-     * @param field 统计字段
+     * @param field 统计字段，默认：COUNT(1)
      */
     findCount(table: string, where: object | Array<string | boolean> | string, field: string): Promise<number>;
     /**
      * 新增记录
      * @param table 表名
      * @param data 数据
-     * @param fetch_last_id 是否获取自增id
+     * @param fetch_last_id 是否获取自增id，默认：false
      */
-    create(table: string, data: object, fetch_last_id: boolean): Promise<any>;
+    create(table: string, data: object, fetch_last_id?: boolean): Promise<any>;
     /**
      * 替换记录
      * @param table 表名

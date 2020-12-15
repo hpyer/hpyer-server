@@ -9,8 +9,23 @@ const Controller_1 = __importDefault(require("./Core/Controller"));
 const Model_1 = __importDefault(require("./Core/Model"));
 const Service_1 = __importDefault(require("./Core/Service"));
 const Config_1 = __importDefault(require("./Support/Config"));
+/**
+ * 框架
+ */
 exports.HpyerApplication = Application_1.default;
+/**
+ * 控制器基类
+ */
 exports.HpyerController = Controller_1.default;
+/**
+ * 模型基类
+ */
 exports.HpyerModel = Model_1.default;
+/**
+ * 服务基类
+ */
 exports.HpyerService = Service_1.default;
+/**
+ * 配置基类
+ */
 exports.HpyerConfig = Config_1.default;

@@ -1,12 +1,16 @@
-import { HashMap, HpyerServerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider } from '../Support/Types/Hpyer';
+import { HpyerServerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider } from '../Support/Types/Hpyer';
 import * as Utils from '../Support/Utils';
 import Model from './Model';
 import Service from './Service';
 import ContractSql from '../Support/Database/Contracts/ContractSql';
 import ContractCache from '../Support/Cache/Contracts/ContractCache';
 import Koa from 'koa';
+import { AxiosRequestConfig } from 'axios';
 import LogLevel from 'loglevel';
 import IORedis from 'ioredis';
+/**
+ * 框架
+ */
 declare class Application {
     /**
      * 版本号
@@ -36,39 +40,39 @@ declare class Application {
     /**
      * 是否ajax请求
      * @param  {object}  ctx  koa的上下文
-     * @return {boolean}
      */
     isAjax(ctx: Koa.Context): boolean;
-    doRequest(payload: HashMap, returnResponse?: boolean): Promise<any>;
+    /**
+     * 发起http请求
+     * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
+     * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
+     */
+    doRequest(payload: AxiosRequestConfig, returnResponse?: boolean): Promise<any>;
     /**
      * 获取数据库操作实例
      * @param {string} provider 数据库供应商
-     * @return {object}
      */
-    getDB(provider?: HpyerDbProvider): Promise<ContractSql>;
+    getDB(provider?: HpyerDbProvider): ContractSql;
     /**
      * 获取redis操作实例
-     * @param  options 缓存驱动，可选
+     * @param  options redis选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new
      */
     getRedis(options?: IORedis.RedisOptions): IORedis.Redis;
     /**
      * 获取缓存操作实例
-     * @param  {string} provider 缓存驱动，可选
-     * @return {object}
+     * @param  {string} provider 缓存驱动，可选值：file, redis
      */
     getCacher(provider?: HpyerCacheProvider): ContractCache;
     /**
      * 判断缓存是否存在
      * @param  {string} name 缓存名称
-     * @param  {string} provider 缓存驱动，可选
-     * @return {boolean}
+     * @param  {string} provider 缓存驱动，可选值：file, redis
      */
     hasCache(name: string, provider?: HpyerCacheProvider): Promise<boolean>;
     /**
      * 获取缓存值
      * @param  {string} name 缓存名称
-     * @param  {string} provider 缓存驱动，可选
-     * @return {any}
+     * @param  {string} provider 缓存驱动，可选值：file, redis
      */
     getCache(name: string, provider?: HpyerCacheProvider): Promise<any>;
     /**
@@ -76,28 +80,24 @@ declare class Application {
      * @param  {string} name 缓存名称
      * @param  {any} value 缓存值
      * @param  {integer} expireIn 时效，过期秒数，单位：秒，可选
-     * @param  {string} provider 缓存驱动，可选
-     * @return {boolean}
+     * @param  {string} provider 缓存驱动，可选值：file, redis
      */
     setCache(name: string, value?: any, expireIn?: number, provider?: HpyerCacheProvider): Promise<boolean>;
     /**
      * 删除缓存
      * @param  {string} name 缓存名称
-     * @param  {string} provider 缓存驱动，可选
-     * @return {boolean}
+     * @param  {string} provider 缓存驱动，可选值：file, redis
      */
     removeCache(name: string, provider?: HpyerCacheProvider): Promise<boolean>;
     /**
      * 获取model实例
      * @param  {string} name 服务名称
      * @param  {string} module 模块名称
-     * @return {object}
      */
     model(name: string, module?: string): Model;
     /**
      * 获取service实例
      * @param  {string} name 服务名称
-     * @return {object}
      */
     service(name: string): Service;
     /**
@@ -123,7 +123,6 @@ declare class Application {
      * 执行系统命令
      * @param  {string} cmd 命令
      * @param  {array} args 参数，可选
-     * @return {promise}
      */
     runCmd: (cmd: any, args?: any[]) => Promise<unknown>;
     /**

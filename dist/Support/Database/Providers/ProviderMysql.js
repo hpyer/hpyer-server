@@ -33,6 +33,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DefaultQueryOptions = void 0;
 const Utils = __importStar(require("../../Utils"));
+const loglevel_1 = __importDefault(require("loglevel"));
 const ContractSql_1 = __importDefault(require("../Contracts/ContractSql"));
 const mysql = require('mysql');
 exports.DefaultQueryOptions = {
@@ -43,15 +44,13 @@ exports.DefaultQueryOptions = {
     lock: false,
 };
 class ProviderMysql extends ContractSql_1.default {
-    constructor(conn) {
+    constructor(pool, options) {
         super();
+        this.pool = null;
         this.conn = null;
-        this.conn = conn;
-        // this.conn.on('error', (err) => {
-        //    if (err.code === 'ETIMEDOUT') {
-        //       this.conn.connect();
-        //    }
-        // });
+        this.options = {};
+        this.pool = pool;
+        this.options = options;
     }
     escape(str) {
         if (typeof str == 'object') {
@@ -185,10 +184,26 @@ class ProviderMysql extends ContractSql_1.default {
         }
         return true;
     }
+    getConnection() {
+        return new Promise((resolve, reject) => {
+            pool.getConnection((err, conn) => {
+                if (err) {
+                    loglevel_1.default.error('mysql.connect fail. ' + this.options.user + '@' + this.options.host + '.' + this.options.database + ' [password:' + (this.options.password ? 'YES' : 'NO') + ']');
+                    reject(err);
+                }
+                else {
+                    resolve(conn);
+                }
+            });
+        });
+    }
     execute(sql, values = null, fetch_last_id = false) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('mysql.execute: ', sql, values);
+                if (!this.conn) {
+                    this.conn = yield this.getConnection();
+                }
+                loglevel_1.default.info('mysql.execute: ', sql, values);
                 return new Promise((resolve, reject) => {
                     let callback = (e, results, fields) => {
                         if (e)
@@ -214,11 +229,8 @@ class ProviderMysql extends ContractSql_1.default {
                 });
             }
             catch (e) {
-                console.log('mysql.execute: ', e);
+                loglevel_1.default.error('mysql.execute: ', e);
                 throw new Error('mysql.execute: ' + e.message);
-            }
-            finally {
-                yield this.disconnect();
             }
         });
     }
@@ -233,7 +245,7 @@ class ProviderMysql extends ContractSql_1.default {
                 res = yield callback(this);
             }
             catch (e) {
-                console.log('mysql.transaction: ', e);
+                loglevel_1.default.error('mysql.transaction: ', e);
                 res = false;
             }
             if (res === false) {
@@ -249,10 +261,10 @@ class ProviderMysql extends ContractSql_1.default {
         return new Promise((resolve, reject) => {
             this.conn.beginTransaction((e) => {
                 if (e) {
-                    console.log('mysql.startTrans: ', e);
+                    loglevel_1.default.error('mysql.startTrans: ', e);
                     return reject(false);
                 }
-                console.log('mysql.startTrans');
+                loglevel_1.default.info('mysql.startTrans');
                 resolve(true);
             });
         });
@@ -261,10 +273,10 @@ class ProviderMysql extends ContractSql_1.default {
         return new Promise((resolve, reject) => {
             this.conn.commit((e) => {
                 if (e) {
-                    console.log('mysql.commit: ', e);
+                    loglevel_1.default.error('mysql.commit: ', e);
                     return reject(false);
                 }
-                console.log('mysql.commit');
+                loglevel_1.default.info('mysql.commit');
                 resolve(true);
             });
         });
@@ -273,16 +285,17 @@ class ProviderMysql extends ContractSql_1.default {
         return new Promise((resolve, reject) => {
             this.conn.rollback((e) => {
                 if (e) {
-                    console.log('mysql.rollback: ', e);
+                    loglevel_1.default.error('mysql.rollback: ', e);
                     return reject(false);
                 }
-                console.log('mysql.rollback');
+                loglevel_1.default.info('mysql.rollback');
                 resolve(true);
             });
         });
     }
     findAll(table, where = null, options = {}) {
         where = this.parseWhere(where);
+        options = options || {};
         options = Utils.extend({}, exports.DefaultQueryOptions, options);
         let limit = '', order = '';
         if (options.limit > 0) {
@@ -299,6 +312,7 @@ class ProviderMysql extends ContractSql_1.default {
     }
     findOne(table, where = null, options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
+            options = options || {};
             options.offset = 0;
             options.limit = 1;
             let rows = yield this.findAll(table, where, options);
@@ -308,7 +322,7 @@ class ProviderMysql extends ContractSql_1.default {
             return rows[0];
         });
     }
-    findCount(table, where = null, field = 'COUNT(0)') {
+    findCount(table, where = null, field = 'COUNT(1)') {
         return __awaiter(this, void 0, void 0, function* () {
             let options = {
                 fields: field + ' AS qty',
@@ -379,30 +393,10 @@ class ProviderMysql extends ContractSql_1.default {
     }
 }
 let pool = null;
-const getConnection = function (options) {
-    return __awaiter(this, void 0, void 0, function* () {
-        options = Utils.extend({
-            host: '127.0.0.1',
-            user: '',
-            password: '',
-            database: '',
-            port: ''
-        }, options);
-        if (!pool) {
-            pool = mysql.createPool(options);
-        }
-        let conn = yield (new Promise((resolve, reject) => {
-            pool.getConnection((err, conn) => {
-                if (err) {
-                    console.log('mysql.connect fail. ' + options.user + '@' + options.host + '.' + options.database + ' [password:' + (options.password ? 'YES' : 'NO') + ']');
-                    reject(err);
-                }
-                else {
-                    resolve(conn);
-                }
-            });
-        }));
-        return new ProviderMysql(conn);
-    });
+const getDbInstance = function (options) {
+    if (!pool) {
+        pool = mysql.createPool(options);
+    }
+    return new ProviderMysql(pool, options);
 };
-exports.default = getConnection;
+exports.default = getDbInstance;

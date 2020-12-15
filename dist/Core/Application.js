@@ -49,6 +49,9 @@ const ioredis_1 = __importDefault(require("ioredis"));
 const bn_js_1 = __importDefault(require("bn.js"));
 let modelInstances = {};
 let serviceInstances = {};
+/**
+ * 框架
+ */
 class Application {
     constructor() {
         /**
@@ -79,7 +82,6 @@ class Application {
          * 执行系统命令
          * @param  {string} cmd 命令
          * @param  {array} args 参数，可选
-         * @return {promise}
          */
         this.runCmd = (cmd, args = []) => {
             return new Promise((resolve, reject) => {
@@ -115,7 +117,6 @@ class Application {
     /**
      * 是否ajax请求
      * @param  {object}  ctx  koa的上下文
-     * @return {boolean}
      */
     isAjax(ctx) {
         let isAjax = false;
@@ -125,10 +126,15 @@ class Application {
         return isAjax;
     }
     ;
+    /**
+     * 发起http请求
+     * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
+     * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
+     */
     doRequest(payload, returnResponse = false) {
         let start_time = (new Date).getTime();
         this.log.info(`doRequest_${start_time}`, payload);
-        return axios_1.default.request(payload).then(res => {
+        return axios_1.default.request(payload).then((res) => {
             let end_time = (new Date).getTime();
             let log_data = res.data;
             if (payload.responseType == 'stream') {
@@ -142,24 +148,29 @@ class Application {
         }).catch(err => {
             let end_time = (new Date).getTime();
             this.log.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, err.response.status, err.response.data);
+            return null;
         });
     }
     /**
      * 获取数据库操作实例
      * @param {string} provider 数据库供应商
-     * @return {object}
      */
     getDB(provider = null) {
         if (!this.config.db.enable)
             return null;
         if (!provider)
             provider = this.config.db.provider;
-        let fetcher = require('../Support/Database/Providers/Provider' + Utils.toCamelCase(provider));
-        return fetcher(this.config.db[provider]);
+        try {
+            let fetcher = require(`../Support/Database/Providers/Provider${Utils.toStudlyCase(provider)}`);
+            return fetcher.default(this.config.db[provider]);
+        }
+        catch (e) {
+            throw new Error(`Fail to instance cache '${provider}'.`);
+        }
     }
     /**
      * 获取redis操作实例
-     * @param  options 缓存驱动，可选
+     * @param  options redis选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new
      */
     getRedis(options = null) {
         if (!options) {
@@ -168,7 +179,7 @@ class Application {
         if (!this.config.cache.enable)
             return null;
         try {
-            return ioredis_1.default(options);
+            return new ioredis_1.default(options);
         }
         catch (e) {
             this.log.error(`Fail to create Redis client.`, e);
@@ -177,22 +188,25 @@ class Application {
     }
     /**
      * 获取缓存操作实例
-     * @param  {string} provider 缓存驱动，可选
-     * @return {object}
+     * @param  {string} provider 缓存驱动，可选值：file, redis
      */
     getCacher(provider = null) {
         if (!this.config.cache.enable)
             return null;
         if (!provider)
             provider = this.config.cache.provider;
-        let fetcher = require('../Support/Database/Providers/Provider' + Utils.toCamelCase(provider));
-        return fetcher(this.config.cache[provider]);
+        try {
+            let fetcher = require(`../Support/Cache/Providers/Provider${Utils.toStudlyCase(provider)}`);
+            return fetcher.default(this.config.cache[provider]);
+        }
+        catch (e) {
+            throw new Error(`Fail to instance cache '${provider}'.`);
+        }
     }
     /**
      * 判断缓存是否存在
      * @param  {string} name 缓存名称
-     * @param  {string} provider 缓存驱动，可选
-     * @return {boolean}
+     * @param  {string} provider 缓存驱动，可选值：file, redis
      */
     hasCache(name, provider = null) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -205,8 +219,7 @@ class Application {
     /**
      * 获取缓存值
      * @param  {string} name 缓存名称
-     * @param  {string} provider 缓存驱动，可选
-     * @return {any}
+     * @param  {string} provider 缓存驱动，可选值：file, redis
      */
     getCache(name, provider = null) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -221,8 +234,7 @@ class Application {
      * @param  {string} name 缓存名称
      * @param  {any} value 缓存值
      * @param  {integer} expireIn 时效，过期秒数，单位：秒，可选
-     * @param  {string} provider 缓存驱动，可选
-     * @return {boolean}
+     * @param  {string} provider 缓存驱动，可选值：file, redis
      */
     setCache(name, value = null, expireIn = 0, provider = null) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -235,8 +247,7 @@ class Application {
     /**
      * 删除缓存
      * @param  {string} name 缓存名称
-     * @param  {string} provider 缓存驱动，可选
-     * @return {boolean}
+     * @param  {string} provider 缓存驱动，可选值：file, redis
      */
     removeCache(name, provider = null) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -250,7 +261,6 @@ class Application {
      * 获取model实例
      * @param  {string} name 服务名称
      * @param  {string} module 模块名称
-     * @return {object}
      */
     model(name, module = null) {
         try {
@@ -289,7 +299,6 @@ class Application {
     /**
      * 获取service实例
      * @param  {string} name 服务名称
-     * @return {object}
      */
     service(name) {
         try {

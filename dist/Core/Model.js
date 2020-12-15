@@ -9,6 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 模型基类
+ */
 class Model {
     constructor() {
         /**
@@ -25,11 +28,11 @@ class Model {
      * 执行sql语句
      * @param sql 要执行的sql语句
      * @param values sql的参数
-     * @param fetch_last_id 是否获取自增id
+     * @param fetch_last_id 是否获取自增id，默认：false
      */
     execute(sql, values = null, fetch_last_id = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = yield this.app.getDB();
+            let db = this.app.getDB();
             if (!db)
                 return null;
             let res = yield db.execute(sql, values, fetch_last_id);
@@ -41,7 +44,7 @@ class Model {
      * execute 方法的别名
      * @param sql 要执行的sql语句
      * @param values sql的参数
-     * @param fetch_last_id 是否获取自增id
+     * @param fetch_last_id 是否获取自增id，默认：false
      */
     findSql(sql, values = null, fetch_last_id = false) {
         return this.execute(sql, values, fetch_last_id);
@@ -53,7 +56,7 @@ class Model {
      */
     findAll(where = null, options = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = yield this.app.getDB();
+            let db = this.app.getDB();
             if (!db)
                 return null;
             let res = yield db.findAll(this.table, where, options);
@@ -68,7 +71,7 @@ class Model {
      */
     findOne(where = null, options = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = yield this.app.getDB();
+            let db = this.app.getDB();
             if (!db)
                 return null;
             let res = yield db.findOne(this.table, where, options);
@@ -79,11 +82,11 @@ class Model {
     /**
      * 查询统计
      * @param where 查询条件
-     * @param field 统计字段，默认：COUNT(0)
+     * @param field 统计字段，默认：COUNT(1)
      */
-    findCount(where = null, field = 'COUNT(0)') {
+    findCount(where = null, field = 'COUNT(1)') {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = yield this.app.getDB();
+            let db = this.app.getDB();
             if (!db)
                 return 0;
             let res = yield db.findCount(this.table, where, field);
@@ -98,7 +101,7 @@ class Model {
      */
     create(data, fetch_last_id = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = yield this.app.getDB();
+            let db = this.app.getDB();
             if (!db)
                 return false;
             let res = yield db.create(this.table, data, fetch_last_id);
@@ -121,7 +124,7 @@ class Model {
      */
     update(data, where = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = yield this.app.getDB();
+            let db = this.app.getDB();
             if (!db)
                 return false;
             let res = yield db.update(this.table, data, where);
@@ -135,7 +138,7 @@ class Model {
      */
     delete(where = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = yield this.app.getDB();
+            let db = this.app.getDB();
             if (!db)
                 return false;
             let res = yield db.delete(this.table, where);
@@ -151,7 +154,7 @@ class Model {
      */
     increase(field, where = null, qty = 1) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = yield this.app.getDB();
+            let db = this.app.getDB();
             if (!db)
                 return false;
             let res = yield db.increase(this.table, field, where, qty);
@@ -167,7 +170,7 @@ class Model {
      */
     discrease(field, where = null, qty = 1) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = yield this.app.getDB();
+            let db = this.app.getDB();
             if (!db)
                 return false;
             let res = yield db.discrease(this.table, field, where, qty);

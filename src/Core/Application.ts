@@ -1,8 +1,7 @@
 'use strict';
 
-import { HashMap, HpyerServerConfig, HpyerLuaParams, HpyerModelMap, HpyerServiceMap, HpyerDbProvider, HpyerCacheProvider } from '../Support/Types/Hpyer';
+import { HpyerServerConfig, HpyerLuaParams, HpyerModelMap, HpyerServiceMap, HpyerDbProvider, HpyerCacheProvider } from '../Support/Types/Hpyer';
 
-import Fs from 'fs';
 import Path from 'path';
 import ChildProcess from 'child_process';
 
@@ -24,7 +23,7 @@ import KoaSession from 'koa-session';
 import KoaStatic from 'koa-static';
 import KoaRouter from 'koa-router';
 
-import Axios from 'axios';
+import Axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import LogLevel from 'loglevel';
 import IORedis from 'ioredis';
 import BN from 'bn.js';
@@ -33,6 +32,9 @@ import BN from 'bn.js';
 let modelInstances: HpyerModelMap = {};
 let serviceInstances: HpyerServiceMap = {};
 
+/**
+ * 框架
+ */
 class Application {
 
   /**
@@ -77,7 +79,6 @@ class Application {
   /**
    * 是否ajax请求
    * @param  {object}  ctx  koa的上下文
-   * @return {boolean}
    */
   isAjax (ctx: Koa.Context) {
     let isAjax = false;
@@ -87,11 +88,16 @@ class Application {
     return isAjax;
   };
 
-  doRequest (payload: HashMap, returnResponse: boolean = false): Promise<any> {
+  /**
+   * 发起http请求
+   * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
+   * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
+   */
+  doRequest(payload: AxiosRequestConfig, returnResponse: boolean = false): Promise<any> {
     let start_time = (new Date).getTime();
     this.log.info(`doRequest_${start_time}`, payload);
 
-    return Axios.request(payload).then(res => {
+    return Axios.request(payload).then((res: AxiosResponse) => {
       let end_time = (new Date).getTime();
       let log_data = res.data;
       if (payload.responseType == 'stream') {
@@ -106,6 +112,7 @@ class Application {
     }).catch(err => {
       let end_time = (new Date).getTime();
       this.log.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, err.response.status, err.response.data);
+      return null;
     });
 
   }
@@ -113,19 +120,23 @@ class Application {
   /**
    * 获取数据库操作实例
    * @param {string} provider 数据库供应商
-   * @return {object}
    */
-  getDB(provider: HpyerDbProvider = null): Promise<ContractSql> {
+  getDB(provider: HpyerDbProvider = null): ContractSql {
     if (!this.config.db.enable) return null;
     if (!provider) provider = this.config.db.provider;
 
-    let fetcher = require('../Support/Database/Providers/Provider' + Utils.toCamelCase(provider));
-    return fetcher(this.config.db[provider]);
+    try {
+      let fetcher = require(`../Support/Database/Providers/Provider${Utils.toStudlyCase(provider)}`);
+      return fetcher.default(this.config.db[provider]);
+    }
+    catch (e) {
+      throw new Error(`Fail to instance cache '${provider}'.`);
+    }
   }
 
   /**
    * 获取redis操作实例
-   * @param  options 缓存驱动，可选
+   * @param  options redis选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new
    */
   getRedis(options: IORedis.RedisOptions = null): IORedis.Redis {
     if (!options) {
@@ -133,7 +144,7 @@ class Application {
     }
     if (!this.config.cache.enable) return null;
     try {
-      return IORedis(options);
+      return new IORedis(options);
     }
     catch (e) {
       this.log.error(`Fail to create Redis client.`, e);
@@ -143,21 +154,24 @@ class Application {
 
   /**
    * 获取缓存操作实例
-   * @param  {string} provider 缓存驱动，可选
-   * @return {object}
+   * @param  {string} provider 缓存驱动，可选值：file, redis
    */
   getCacher(provider: HpyerCacheProvider = null): ContractCache {
     if (!this.config.cache.enable) return null;
     if (!provider) provider = this.config.cache.provider;
-    let fetcher = require('../Support/Database/Providers/Provider' + Utils.toCamelCase(provider));
-    return fetcher(this.config.cache[provider]);
+    try {
+      let fetcher = require(`../Support/Cache/Providers/Provider${Utils.toStudlyCase(provider)}`);
+      return fetcher.default(this.config.cache[provider]);
+    }
+    catch (e) {
+      throw new Error(`Fail to instance cache '${provider}'.`);
+    }
   }
 
   /**
    * 判断缓存是否存在
    * @param  {string} name 缓存名称
-   * @param  {string} provider 缓存驱动，可选
-   * @return {boolean}
+   * @param  {string} provider 缓存驱动，可选值：file, redis
    */
   async hasCache(name: string, provider: HpyerCacheProvider = null): Promise<boolean> {
     let cacher: ContractCache = this.getCacher(provider);
@@ -168,8 +182,7 @@ class Application {
   /**
    * 获取缓存值
    * @param  {string} name 缓存名称
-   * @param  {string} provider 缓存驱动，可选
-   * @return {any}
+   * @param  {string} provider 缓存驱动，可选值：file, redis
    */
   async getCache(name: string, provider: HpyerCacheProvider = null): Promise<any> {
     let cacher: ContractCache = this.getCacher(provider);
@@ -182,8 +195,7 @@ class Application {
    * @param  {string} name 缓存名称
    * @param  {any} value 缓存值
    * @param  {integer} expireIn 时效，过期秒数，单位：秒，可选
-   * @param  {string} provider 缓存驱动，可选
-   * @return {boolean}
+   * @param  {string} provider 缓存驱动，可选值：file, redis
    */
   async setCache(name: string, value: any = null, expireIn: number = 0, provider: HpyerCacheProvider = null): Promise<boolean> {
     let cacher: ContractCache = this.getCacher(provider);
@@ -194,8 +206,7 @@ class Application {
   /**
    * 删除缓存
    * @param  {string} name 缓存名称
-   * @param  {string} provider 缓存驱动，可选
-   * @return {boolean}
+   * @param  {string} provider 缓存驱动，可选值：file, redis
    */
   async removeCache(name: string, provider: HpyerCacheProvider = null): Promise<boolean> {
     let cacher: ContractCache = this.getCacher(provider);
@@ -207,7 +218,6 @@ class Application {
    * 获取model实例
    * @param  {string} name 服务名称
    * @param  {string} module 模块名称
-   * @return {object}
    */
   model(name: string, module: string = null) {
     try {
@@ -246,7 +256,6 @@ class Application {
   /**
    * 获取service实例
    * @param  {string} name 服务名称
-   * @return {object}
    */
   service (name: string) {
     try {
@@ -390,7 +399,6 @@ class Application {
    * 执行系统命令
    * @param  {string} cmd 命令
    * @param  {array} args 参数，可选
-   * @return {promise}
    */
   runCmd = (cmd, args = []) => {
     return new Promise((resolve, reject) => {

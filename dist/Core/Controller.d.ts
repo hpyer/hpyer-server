@@ -1,6 +1,9 @@
 import { HashMap } from '../Support/Types/Hpyer';
 import { Context } from 'koa';
 import Application from './Application';
+/**
+ * 控制器基类
+ */
 export default class Controller {
     /**
      * 应用实例，框架会自动注入

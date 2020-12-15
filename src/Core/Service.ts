@@ -3,6 +3,9 @@
 import * as Utils from '../Support/Utils';
 import Application from './Application';
 
+/**
+ * 服务基类
+ */
 export default class Service {
 
   /**

@@ -13,7 +13,7 @@ class ProviderRedis extends ContractCache {
 
     try {
       if (!client) {
-        client = IORedis(options);
+        client = new IORedis(options);
       }
     }
     catch (e) {
@@ -21,19 +21,15 @@ class ProviderRedis extends ContractCache {
     }
   }
 
-  getClient(): IORedis.Redis {
-    return client;
-  }
-
   async get(id: string): Promise<any> {
-    if (!client) return false;
+    if (!client) return null;
     let content = null;
     try {
       content = JSON.parse(await client.get(id));
     }
     catch (e) {
       LogLevel.info(`Fail to get content via key '${id}'`, e);
-      return false;
+      return null;
     }
     return content;
   }

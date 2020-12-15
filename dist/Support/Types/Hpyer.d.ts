@@ -187,7 +187,7 @@ export interface HpyerServerConfigCache {
      */
     file: HpyerServerConfigCacheFileOptions;
     /**
-     * redis缓存选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new
+     * redis选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new
      */
     redis: RedisOptions;
 }

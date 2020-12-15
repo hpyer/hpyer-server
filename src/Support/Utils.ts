@@ -318,15 +318,42 @@ export const pad = function (str: string, len: number, chr: string = ' ', leftJu
 }
 
 /**
- * 字符串转换驼峰格式
- * @param str 原字符串
- * @param separator 单词分隔符
+ * 将单词（句子）首字母转成大写，'hello word' => 'Hello World'
+ * @param str 要转换的单词（句子）
  */
-export const toCamelCase = (str: string, separator: string = '[-|\\_]'): string => {
-  let reg = new RegExp(separator + '(\\w)', 'g');
-  return str.replace(reg, function (all, letter) {
+export const toUpperFirstLetter = function (str: string): string {
+  return str.replace(/\b[a-z]/gi, function (letter) {
     return letter.toUpperCase();
   });
+};
+
+/**
+ * 将单词（句子）首字母转成小写，'Hello World' => 'hello word'
+ * @param str 要转换的单词（句子）
+ */
+export const toLowerFirstLetter = function (str: string): string {
+  return str.replace(/\b[a-z]/gi, function (letter) {
+    return letter.toLowerCase();
+  });
+};
+
+/**
+ * 字符串驼峰格式（首字母大写），'hello word' => 'HelloWorld'
+ * @param str 要转换的字符串
+ * @param separator 单词分隔符，默认：'[\\-|\\_]'
+ */
+export const toStudlyCase = function (str: string, separator: string = '[\\-|\\_]'): string {
+  let reg = new RegExp(separator + '(\\w)', 'gi');
+  return toUpperFirstLetter(str.replace(reg, ' ')).replace(/\s/gi, '');
+};
+
+/**
+ * 字符串驼峰格式（首字母小写），'hello word' => 'HelloWorld'
+ * @param str 要转换的字符串
+ * @param separator 单词分隔符，默认：'[\\-|\\_]'
+ */
+export const toCamelCase = (str: string, separator: string = '[-|\\_]'): string => {
+  return toLowerFirstLetter(toStudlyCase(str, separator));
 }
 
 /**

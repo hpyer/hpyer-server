@@ -21,27 +21,24 @@ class ProviderRedis extends ContractCache_1.default {
         super();
         try {
             if (!client) {
-                client = ioredis_1.default(options);
+                client = new ioredis_1.default(options);
             }
         }
         catch (e) {
             loglevel_1.default.error(`Fail to create Redis client.`, e);
         }
     }
-    getClient() {
-        return client;
-    }
     get(id) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!client)
-                return false;
+                return null;
             let content = null;
             try {
                 content = JSON.parse(yield client.get(id));
             }
             catch (e) {
                 loglevel_1.default.info(`Fail to get content via key '${id}'`, e);
-                return false;
+                return null;
             }
             return content;
         });

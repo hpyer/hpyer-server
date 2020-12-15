@@ -6,12 +6,16 @@ class ContractSql {
      */
     disconnect() { }
     /**
+     * 获取连接
+     */
+    getConnection() { }
+    /**
      * 执行sql语句
      * @param sql 要执行的sql语句
      * @param values sql的参数
-     * @param fetch_last_id 是否获取自增id
+     * @param fetch_last_id 是否获取自增id，默认：false
      */
-    execute(sql, values, fetch_last_id) {
+    execute(sql, values, fetch_last_id = false) {
         return null;
     }
     /**
@@ -36,7 +40,7 @@ class ContractSql {
      * 查询统计
      * @param table 表名
      * @param where 查询条件
-     * @param field 统计字段
+     * @param field 统计字段，默认：COUNT(1)
      */
     findCount(table, where, field) {
         return null;
@@ -45,9 +49,9 @@ class ContractSql {
      * 新增记录
      * @param table 表名
      * @param data 数据
-     * @param fetch_last_id 是否获取自增id
+     * @param fetch_last_id 是否获取自增id，默认：false
      */
-    create(table, data, fetch_last_id) {
+    create(table, data, fetch_last_id = false) {
         return null;
     }
     /**

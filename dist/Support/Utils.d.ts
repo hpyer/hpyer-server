@@ -136,9 +136,25 @@ export declare const repeat: (str: string, num: number) => string;
  */
 export declare const pad: (str: string, len: number, chr?: string, leftJustify?: boolean) => string;
 /**
- * 字符串转换驼峰格式
- * @param str 原字符串
- * @param separator 单词分隔符
+ * 将单词（句子）首字母转成大写，'hello word' => 'Hello World'
+ * @param str 要转换的单词（句子）
+ */
+export declare const toUpperFirstLetter: (str: string) => string;
+/**
+ * 将单词（句子）首字母转成小写，'Hello World' => 'hello word'
+ * @param str 要转换的单词（句子）
+ */
+export declare const toLowerFirstLetter: (str: string) => string;
+/**
+ * 字符串驼峰格式（首字母大写），'hello word' => 'HelloWorld'
+ * @param str 要转换的字符串
+ * @param separator 单词分隔符，默认：'[\\-|\\_]'
+ */
+export declare const toStudlyCase: (str: string, separator?: string) => string;
+/**
+ * 字符串驼峰格式（首字母小写），'hello word' => 'HelloWorld'
+ * @param str 要转换的字符串
+ * @param separator 单词分隔符，默认：'[\\-|\\_]'
  */
 export declare const toCamelCase: (str: string, separator?: string) => string;
 /**

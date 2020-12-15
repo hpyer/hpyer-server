@@ -1,5 +1,8 @@
 import { HpyerServerConfigDbQueryOption } from '../Support/Types/Hpyer';
 import Application from './Application';
+/**
+ * 模型基类
+ */
 export default class Model {
     /**
      * 应用实例，框架会自动注入
@@ -14,14 +17,14 @@ export default class Model {
      * 执行sql语句
      * @param sql 要执行的sql语句
      * @param values sql的参数
-     * @param fetch_last_id 是否获取自增id
+     * @param fetch_last_id 是否获取自增id，默认：false
      */
     execute(sql: string, values?: object, fetch_last_id?: boolean): Promise<any>;
     /**
      * execute 方法的别名
      * @param sql 要执行的sql语句
      * @param values sql的参数
-     * @param fetch_last_id 是否获取自增id
+     * @param fetch_last_id 是否获取自增id，默认：false
      */
     findSql(sql: string, values?: object, fetch_last_id?: boolean): Promise<any>;
     /**
@@ -39,7 +42,7 @@ export default class Model {
     /**
      * 查询统计
      * @param where 查询条件
-     * @param field 统计字段，默认：COUNT(0)
+     * @param field 统计字段，默认：COUNT(1)
      */
     findCount(where?: object | Array<string | boolean> | string, field?: string): Promise<number>;
     /**

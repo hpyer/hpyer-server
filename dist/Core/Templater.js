@@ -6,6 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const nunjucks_1 = __importDefault(require("nunjucks"));
 const path_1 = __importDefault(require("path"));
 const Hpyer_1 = require("../Support/Types/Hpyer");
+/**
+ * 框架模版
+ */
 class Templater {
     constructor(app) {
         this.app = null;

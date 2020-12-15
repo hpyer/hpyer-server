@@ -20,6 +20,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Utils = __importStar(require("../Support/Utils"));
+/**
+ * 服务基类
+ */
 class Service {
     constructor() {
         /**

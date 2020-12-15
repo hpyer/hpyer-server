@@ -35,6 +35,9 @@ const koa_send_1 = __importDefault(require("koa-send"));
 const fs_1 = __importDefault(require("fs"));
 const Utils = __importStar(require("../Support/Utils"));
 const Templater_1 = __importDefault(require("./Templater"));
+/**
+ * 控制器基类
+ */
 class Controller {
     constructor() {
         /**

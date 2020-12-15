@@ -1,4 +1,7 @@
 import Application from './Application';
+/**
+ * 框架模版
+ */
 export default class Templater {
     app: Application;
     provider: string;

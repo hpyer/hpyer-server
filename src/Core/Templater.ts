@@ -5,6 +5,9 @@ import Path from 'path';
 import { HpyerTemplateProvider } from '../Support/Types/Hpyer';
 import Application from './Application';
 
+/**
+ * 框架模版
+ */
 export default class Templater {
   app: Application = null;
 

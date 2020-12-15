@@ -1,7 +1,8 @@
 'use strict';
 
 import * as Utils from '../../Utils';
-import { MysqlError, Pool, PoolConnection } from 'mysql';
+import LogLevel from 'loglevel';
+import { ConnectionConfig, MysqlError, Pool, PoolConnection } from 'mysql';
 import ContractSql from '../Contracts/ContractSql';
 import { HpyerServerConfigDbQueryOption } from '../../Types/Hpyer';
 
@@ -17,17 +18,15 @@ export const DefaultQueryOptions: HpyerServerConfigDbQueryOption = {
 
 class ProviderMysql extends ContractSql {
 
+  pool: Pool = null;
   conn: PoolConnection = null;
+  options: ConnectionConfig = {};
 
-  constructor(conn: PoolConnection) {
+  constructor(pool: Pool, options: ConnectionConfig) {
     super();
 
-    this.conn = conn;
-    // this.conn.on('error', (err) => {
-    //    if (err.code === 'ETIMEDOUT') {
-    //       this.conn.connect();
-    //    }
-    // });
+    this.pool = pool;
+    this.options = options;
   }
 
 
@@ -166,9 +165,28 @@ class ProviderMysql extends ContractSql {
     return true;
   }
 
+
+  getConnection(): Promise<PoolConnection> {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err: MysqlError, conn: PoolConnection) => {
+        if (err) {
+          LogLevel.error('mysql.connect fail. ' + this.options.user + '@' + this.options.host + '.' + this.options.database + ' [password:' + (this.options.password ? 'YES' : 'NO') + ']')
+          reject(err);
+        }
+        else {
+          resolve(conn);
+        }
+      });
+    });
+  }
+
+
   async execute(sql: string, values: object = null, fetch_last_id: boolean = false): Promise<any> {
     try {
-      console.log('mysql.execute: ', sql, values);
+      if (!this.conn) {
+        this.conn = await this.getConnection();
+      }
+      LogLevel.info('mysql.execute: ', sql, values);
       return new Promise((resolve, reject) => {
         let callback = (e, results: any, fields) => {
           if (e) return reject(e);
@@ -192,11 +210,8 @@ class ProviderMysql extends ContractSql {
       });
     }
     catch (e) {
-      console.log('mysql.execute: ', e);
+      LogLevel.error('mysql.execute: ', e);
       throw new Error('mysql.execute: ' + e.message);
-    }
-    finally {
-      await this.disconnect();
     }
   };
 
@@ -207,7 +222,7 @@ class ProviderMysql extends ContractSql {
     try {
       res = await callback(this);
     } catch (e) {
-      console.log('mysql.transaction: ', e);
+      LogLevel.error('mysql.transaction: ', e);
       res = false;
     }
     if (res === false) {
@@ -223,10 +238,10 @@ class ProviderMysql extends ContractSql {
     return new Promise((resolve, reject) => {
       this.conn.beginTransaction((e: MysqlError) => {
         if (e) {
-          console.log('mysql.startTrans: ', e);
+          LogLevel.error('mysql.startTrans: ', e);
           return reject(false);
         }
-        console.log('mysql.startTrans');
+        LogLevel.info('mysql.startTrans');
         resolve(true);
       })
     });
@@ -236,10 +251,10 @@ class ProviderMysql extends ContractSql {
     return new Promise((resolve, reject) => {
       this.conn.commit((e) => {
         if (e) {
-          console.log('mysql.commit: ', e);
+          LogLevel.error('mysql.commit: ', e);
           return reject(false);
         }
-        console.log('mysql.commit');
+        LogLevel.info('mysql.commit');
         resolve(true);
       })
     });
@@ -249,10 +264,10 @@ class ProviderMysql extends ContractSql {
     return new Promise((resolve, reject) => {
       this.conn.rollback((e) => {
         if (e) {
-          console.log('mysql.rollback: ', e);
+          LogLevel.error('mysql.rollback: ', e);
           return reject(false);
         }
-        console.log('mysql.rollback');
+        LogLevel.info('mysql.rollback');
         resolve(true);
       })
     });
@@ -260,6 +275,7 @@ class ProviderMysql extends ContractSql {
 
   findAll(table: string, where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption = {}) {
     where = this.parseWhere(where);
+    options = options || {};
     options = Utils.extend({}, DefaultQueryOptions, options);
     let limit = '', order = '';
     if (options.limit > 0) {
@@ -276,6 +292,7 @@ class ProviderMysql extends ContractSql {
   }
 
   async findOne(table: string, where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption = {}) {
+    options = options || {};
     options.offset = 0;
     options.limit = 1;
     let rows = await this.findAll(table, where, options);
@@ -285,7 +302,7 @@ class ProviderMysql extends ContractSql {
     return rows[0];
   }
 
-  async findCount(table: string, where: object | Array<string | boolean> | string = null, field: string = 'COUNT(0)') {
+  async findCount(table: string, where: object | Array<string | boolean> | string = null, field: string = 'COUNT(1)') {
     let options: HpyerServerConfigDbQueryOption = {
       fields: field + ' AS qty',
     }
@@ -359,31 +376,12 @@ class ProviderMysql extends ContractSql {
 
 let pool: Pool = null;
 
-const getConnection = async function (options) {
-  options = Utils.extend({
-    host: '127.0.0.1',
-    user: '',
-    password: '',
-    database: '',
-    port: ''
-  }, options);
+const getDbInstance = function (options: ConnectionConfig) {
   if (!pool) {
     pool = mysql.createPool(options);
   }
 
-  let conn: PoolConnection = await (new Promise((resolve, reject) => {
-    pool.getConnection((err: MysqlError, conn: PoolConnection) => {
-      if (err) {
-        console.log('mysql.connect fail. ' + options.user + '@' + options.host + '.' + options.database + ' [password:' + (options.password ? 'YES' : 'NO') + ']')
-        reject(err);
-      }
-      else {
-        resolve(conn);
-      }
-    });
-  }))
-
-  return new ProviderMysql(conn);
+  return new ProviderMysql(pool, options);
 }
 
-export default getConnection;
+export default getDbInstance;
