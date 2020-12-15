@@ -2,5 +2,6 @@
 .gitignore
 .npmignore
 yarn.lock
+tsconfig.json
 src
 test
