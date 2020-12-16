@@ -1,6 +1,10 @@
 declare module 'koa' {
     interface Request {
         /**
+         * 是否ajax请求
+         */
+        is_ajax?: boolean;
+        /**
          * 客户端ip
          */
         client_ip?: string;
