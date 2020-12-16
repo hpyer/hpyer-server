@@ -115,18 +115,6 @@ class Application {
         }
     }
     /**
-     * 是否ajax请求
-     * @param  {object}  ctx  koa的上下文
-     */
-    isAjax(ctx) {
-        let isAjax = false;
-        if (ctx.request.is_ajax || (ctx.request.header['x-requested-with'] && ctx.request.header['x-requested-with'] == 'XMLHttpRequest')) {
-            isAjax = true;
-        }
-        return isAjax;
-    }
-    ;
-    /**
      * 发起http请求
      * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
      * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
@@ -406,7 +394,7 @@ class Application {
             catch (e) {
                 this.log.error('Action `' + action + '` occurred a fatal error.', e);
                 ctx.status = 500;
-                if (this.isAjax(ctx)) {
+                if (Utils.isAjaxRequest(ctx)) {
                     ctx.type = 'application/json';
                     ctx.body = Utils.jsonError('Server Error', '500');
                 }
@@ -559,11 +547,7 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
             this.config.root.errors = Utils.rtrim(this.config.root.errors, '\\/+') + '/';
             // 系统请求处理方法
             let koaRouter = new koa_router_1.default;
-            try {
-                koaRouter.use(Request_1.default);
-            }
-            catch (e) { }
-            ;
+            koaRouter.use(Request_1.default);
             // 自定义路由
             if (this.config.koa.routers && Utils.isArray(this.config.koa.routers)) {
                 this.config.koa.routers.forEach(router => {
@@ -573,7 +557,9 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
                             try {
                                 koaRouter.use(router.path, router.middleware);
                             }
-                            catch (e) { }
+                            catch (e) {
+                                this.log.error('Invalid middleware.', e);
+                            }
                             ;
                         }
                         // 增加路由处理方法
@@ -582,7 +568,9 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
                             try {
                                 koaRouter[router.method](router.path, router.handler);
                             }
-                            catch (e) { }
+                            catch (e) {
+                                this.log.error('Invalid middleware.', e);
+                            }
                             ;
                         }
                     }
@@ -628,7 +616,7 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
                 // 404
                 this.server.use((ctx, next) => __awaiter(this, void 0, void 0, function* () {
                     if (ctx.status === 404) {
-                        if (this.isAjax(ctx)) {
+                        if (Utils.isAjaxRequest(ctx)) {
                             ctx.type = 'application/json';
                             ctx.body = this.utils.jsonError('Server Error', '500');
                         }

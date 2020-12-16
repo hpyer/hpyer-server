@@ -7,6 +7,7 @@ import Stream from 'stream';
 import * as Uuid from 'uuid';
 import * as Xss from 'xss';
 import * as UrlEncode from 'urlencode';
+import { Context } from 'koa';
 
 /**
  * 扩展对象
@@ -710,4 +711,15 @@ export const parseWhere = function(where: object | Array<string | boolean> | str
     return ' WHERE ' + whereStrings.join('').replace(/^\s(AND|OR)\s/gi, '');
   }
   return '';
+};
+
+/**
+ * 是否ajax请求
+ * @param  ctx  koa的上下文
+ */
+export const isAjaxRequest = function(ctx: Context): boolean {
+  if (ctx.request.is_ajax || (ctx.request.header['x-requested-with'] && ctx.request.header['x-requested-with'] == 'XMLHttpRequest')) {
+    return true;
+  }
+  return false;
 };

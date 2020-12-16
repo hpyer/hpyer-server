@@ -1,6 +1,7 @@
 import Moment from 'moment';
 import Crypto from 'crypto';
 import Stream from 'stream';
+import { Context } from 'koa';
 /**
  * 扩展对象
  * @param target 目标对象
@@ -280,3 +281,8 @@ export declare const parseWhereItem: (k: string, v: string | Array<string | bool
  * @param where 查询信息
  */
 export declare const parseWhere: (where: object | Array<string | boolean> | string) => string;
+/**
+ * 是否ajax请求
+ * @param  ctx  koa的上下文
+ */
+export declare const isAjaxRequest: (ctx: Context) => boolean;

@@ -39,11 +39,6 @@ declare class Application {
     server: Koa;
     constructor();
     /**
-     * 是否ajax请求
-     * @param  {object}  ctx  koa的上下文
-     */
-    isAjax(ctx: Koa.Context): boolean;
-    /**
      * 发起http请求
      * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
      * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data

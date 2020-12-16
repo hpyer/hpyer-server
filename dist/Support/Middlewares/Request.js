@@ -62,7 +62,7 @@ function default_1(ctx, next) {
             return false;
         }
         ctx.request.client_ip = request_ip_1.default.getClientIp(ctx.request);
-        loglevel_1.default.info('[' + ctx.client_ip + ']', ctx.request.url);
+        loglevel_1.default.info('[' + ctx.request.client_ip + ']', ctx.request.url);
         ctx.request.query_raw = {};
         if (ctx.request.query) {
             for (let k in ctx.request.query) {

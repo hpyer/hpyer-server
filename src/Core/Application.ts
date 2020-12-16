@@ -77,18 +77,6 @@ class Application {
   }
 
   /**
-   * 是否ajax请求
-   * @param  {object}  ctx  koa的上下文
-   */
-  isAjax (ctx: Koa.Context) {
-    let isAjax = false;
-    if (ctx.request.is_ajax || (ctx.request.header['x-requested-with'] && ctx.request.header['x-requested-with'] == 'XMLHttpRequest')) {
-      isAjax = true;
-    }
-    return isAjax;
-  };
-
-  /**
    * 发起http请求
    * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
    * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
@@ -365,7 +353,7 @@ class Application {
       this.log.error('Action `' + action + '` occurred a fatal error.', e);
 
       ctx.status = 500;
-      if (this.isAjax(ctx)) {
+      if (Utils.isAjaxRequest(ctx)) {
         ctx.type = 'application/json';
         ctx.body = Utils.jsonError('Server Error', '500');
       }
@@ -546,10 +534,7 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
 
     // 系统请求处理方法
     let koaRouter = new KoaRouter;
-    try {
-      koaRouter.use(MiddlewareRequest);
-    }
-    catch(e) {};
+    koaRouter.use(MiddlewareRequest);
     // 自定义路由
     if (this.config.koa.routers && Utils.isArray(this.config.koa.routers)) {
       this.config.koa.routers.forEach(router => {
@@ -559,7 +544,9 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
             try {
               koaRouter.use(router.path, router.middleware);
             }
-            catch (e) {};
+            catch (e) {
+              this.log.error('Invalid middleware.', e);
+            };
           }
           // 增加路由处理方法
           if (router.handler && Utils.isFunction(router.handler)) {
@@ -567,7 +554,9 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
             try {
               koaRouter[router.method](router.path, router.handler);
             }
-            catch (e) { };
+            catch (e) {
+              this.log.error('Invalid middleware.', e);
+            };
           }
         }
       });
@@ -618,7 +607,7 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
       // 404
       this.server.use(async (ctx: Koa.Context, next: Koa.Next) => {
         if (ctx.status === 404) {
-          if (this.isAjax(ctx)) {
+          if (Utils.isAjaxRequest(ctx)) {
             ctx.type = 'application/json';
             ctx.body = this.utils.jsonError('Server Error', '500');
           }

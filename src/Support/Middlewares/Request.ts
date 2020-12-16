@@ -34,7 +34,7 @@ export default async function (ctx: Context, next: Next) {
 
   ctx.request.client_ip = RequestIp.getClientIp(ctx.request);
 
-  LogLevel.info('[' + ctx.client_ip + ']', ctx.request.url);
+  LogLevel.info('[' + ctx.request.client_ip + ']', ctx.request.url);
 
   ctx.request.query_raw = {};
   if (ctx.request.query) {
