@@ -1,7 +1,8 @@
-import { HpyerServerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider } from '../Support/Types/hpyer';
+import { HpyerServerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider } from '../Support/Types/hpyer';
 import * as Utils from '../Support/Utils';
 import Model from './Model';
 import Service from './Service';
+import Templater from './Templater';
 import ContractSql from '../Support/Database/Contracts/ContractSql';
 import ContractCache from '../Support/Cache/Contracts/ContractCache';
 import Koa from 'koa';
@@ -48,6 +49,11 @@ declare class Application {
      * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
      */
     doRequest(payload: AxiosRequestConfig, returnResponse?: boolean): Promise<any>;
+    /**
+     * 获取模版操作实例
+     * @param provider 模版供应商
+     */
+    getTemplater(provider?: HpyerTemplateProvider): Templater;
     /**
      * 获取数据库操作实例
      * @param {string} provider 数据库供应商

@@ -152,6 +152,13 @@ class Application {
         });
     }
     /**
+     * 获取模版操作实例
+     * @param provider 模版供应商
+     */
+    getTemplater(provider = null) {
+        return new Templater_1.default(this, provider);
+    }
+    /**
      * 获取数据库操作实例
      * @param {string} provider 数据库供应商
      */
@@ -405,7 +412,7 @@ class Application {
                 }
                 else {
                     ctx.type = 'text/html';
-                    ctx.body = (new Templater_1.default(this)).renderError({
+                    ctx.body = this.getTemplater().renderError({
                         success: false,
                         message: 'Server Error',
                         code: '500',
@@ -614,7 +621,7 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
                         }
                         else {
                             ctx.type = 'text/html';
-                            ctx.body = (new Templater_1.default(this)).renderError({
+                            ctx.body = this.getTemplater().renderError({
                                 success: false,
                                 message: 'Page not found.',
                                 code: 404,

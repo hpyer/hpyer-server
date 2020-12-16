@@ -10,11 +10,11 @@ const hpyer_1 = require("../Support/Types/hpyer");
  * 框架模版
  */
 class Templater {
-    constructor(app) {
+    constructor(app, provider = null) {
         this.app = null;
-        this.provider = '';
+        this.provider = null;
         this.app = app;
-        this.provider = app.config.template.provider || hpyer_1.HpyerTemplateProvider.NUNJUCKS;
+        this.provider = provider || app.config.template.provider || hpyer_1.HpyerTemplateProvider.NUNJUCKS;
     }
     /**
      * 设置模版提供商

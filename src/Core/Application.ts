@@ -1,6 +1,6 @@
 'use strict';
 
-import { HpyerServerConfig, HpyerLuaParams, HpyerModelMap, HpyerServiceMap, HpyerDbProvider, HpyerCacheProvider } from '../Support/Types/hpyer';
+import { HpyerServerConfig, HpyerLuaParams, HpyerModelMap, HpyerServiceMap, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider } from '../Support/Types/hpyer';
 
 import Path from 'path';
 import ChildProcess from 'child_process';
@@ -115,6 +115,14 @@ class Application {
       return null;
     });
 
+  }
+
+  /**
+   * 获取模版操作实例
+   * @param provider 模版供应商
+   */
+  getTemplater(provider: HpyerTemplateProvider = null): Templater {
+    return new Templater(this, provider);
   }
 
   /**
@@ -363,7 +371,7 @@ class Application {
       }
       else {
         ctx.type = 'text/html';
-        ctx.body = (new Templater(this)).renderError({
+        ctx.body = this.getTemplater().renderError({
           success: false,
           message: 'Server Error',
           code: '500',
@@ -605,7 +613,7 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
           }
           else {
             ctx.type = 'text/html';
-            ctx.body = (new Templater(this)).renderError({
+            ctx.body = this.getTemplater().renderError({
               success: false,
               message: 'Page not found.',
               code: 404,

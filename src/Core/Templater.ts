@@ -11,11 +11,11 @@ import Application from './Application';
 export default class Templater {
   app: Application = null;
 
-  provider: string = '';
+  provider: HpyerTemplateProvider = null;
 
-  constructor(app: Application) {
+  constructor(app: Application, provider: HpyerTemplateProvider = null) {
     this.app = app;
-    this.provider = app.config.template.provider || HpyerTemplateProvider.NUNJUCKS;
+    this.provider = provider || app.config.template.provider || HpyerTemplateProvider.NUNJUCKS;
   }
 
   /**
@@ -23,7 +23,7 @@ export default class Templater {
    * @param {string} provider 模版提供商
    * @retur Templater
    */
-  setProvider(provider: string): Templater {
+  setProvider(provider: HpyerTemplateProvider): Templater {
     this.provider = provider;
     return this;
   }
