@@ -82,7 +82,7 @@ class Application {
    */
   isAjax (ctx: Koa.Context) {
     let isAjax = false;
-    if (ctx.isAjax || (ctx.request.header['x-requested-with'] && ctx.request.header['x-requested-with'] == 'XMLHttpRequest')) {
+    if (ctx.request.is_ajax || (ctx.request.header['x-requested-with'] && ctx.request.header['x-requested-with'] == 'XMLHttpRequest')) {
       isAjax = true;
     }
     return isAjax;

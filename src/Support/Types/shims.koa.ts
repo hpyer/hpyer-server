@@ -3,6 +3,10 @@ import { Request } from 'koa';
 declare module 'koa' {
   export interface Request {
     /**
+     * 是否ajax请求
+     */
+    is_ajax?: boolean,
+    /**
      * 客户端ip
      */
     client_ip?: string,
