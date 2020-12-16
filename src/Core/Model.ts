@@ -1,6 +1,6 @@
 'use strict';
 
-import { HpyerServerConfigDbQueryOption } from '../Support/Types/Hpyer';
+import { HpyerServerConfigDbQueryOption } from '../Support/Types/hpyer';
 import Application from './Application';
 
 /**

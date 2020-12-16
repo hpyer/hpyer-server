@@ -4,7 +4,7 @@ import * as Utils from '../../Utils';
 import LogLevel from 'loglevel';
 import { ConnectionConfig, MysqlError, Pool, PoolConnection } from 'mysql';
 import ContractSql from '../Contracts/ContractSql';
-import { HpyerServerConfigDbQueryOption } from '../../Types/Hpyer';
+import { HpyerServerConfigDbQueryOption } from '../../Types/hpyer';
 
 const mysql = require('mysql');
 

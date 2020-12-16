@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -235,14 +235,14 @@ class ProviderMysql extends ContractSql_1.default {
         });
     }
     ;
-    transaction(callback) {
+    transaction(closure) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (typeof callback != 'function')
+            if (!Utils.isFunction(closure))
                 return false;
             let res = false;
             yield this.startTrans();
             try {
-                res = yield callback(this);
+                res = yield closure(this);
             }
             catch (e) {
                 loglevel_1.default.error('mysql.transaction: ', e);

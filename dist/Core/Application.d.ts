@@ -1,4 +1,4 @@
-import { HpyerServerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider } from '../Support/Types/Hpyer';
+import { HpyerServerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider } from '../Support/Types/hpyer';
 import * as Utils from '../Support/Utils';
 import Model from './Model';
 import Service from './Service';
@@ -53,6 +53,13 @@ declare class Application {
      * @param {string} provider 数据库供应商
      */
     getDB(provider?: HpyerDbProvider): ContractSql;
+    /**
+     * 执行事务，执行完后自动提交或回滚
+     * @param closure 要执行的闭包。该闭包需要接收一个 db 实例对象，以完成事务相关操作。闭包返回 false 表示需要回滚，返回其他则表示提交。
+     * @param provider 数据库供应商
+     * @return 闭包的返回值也是该方法的返回值
+     */
+    transaction(closure: Function, provider?: HpyerDbProvider): Promise<any>;
     /**
      * 获取redis操作实例
      * @param  options redis选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new

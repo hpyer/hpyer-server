@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -61,40 +61,40 @@ function default_1(ctx, next) {
         if (ctx.path == '/favicon.ico') {
             return false;
         }
-        ctx.client_ip = request_ip_1.default.getClientIp(ctx.request);
+        ctx.request.client_ip = request_ip_1.default.getClientIp(ctx.request);
         loglevel_1.default.info('[' + ctx.client_ip + ']', ctx.request.url);
-        ctx.request['query_raw'] = {};
+        ctx.request.query_raw = {};
         if (ctx.request.query) {
             for (let k in ctx.request.query) {
-                ctx.request['query_raw'][k] = ctx.request.query[k];
+                ctx.request.query_raw[k] = ctx.request.query[k];
                 ctx.request.query[k] = XssHandler(ctx.request.query[k]);
             }
         }
         else {
             ctx.request.query = {};
         }
-        ctx.request['post'] = {};
-        ctx.request['post_raw'] = {};
+        ctx.request.post = {};
+        ctx.request.post_raw = {};
         if (ctx.request['body'].params) {
             for (let k in ctx.request['body'].params) {
-                ctx.request['post_raw'][k] = ctx.request['body'].params[k];
-                ctx.request['post'][k] = XssHandler(ctx.request['body'].params[k]);
+                ctx.request.post_raw[k] = ctx.request['body'].params[k];
+                ctx.request.post[k] = XssHandler(ctx.request['body'].params[k]);
             }
         }
         else if (ctx.request['body'].fields) {
             for (let k in ctx.request['body'].fields) {
                 if (k == 'files')
                     continue;
-                ctx.request['post_raw'][k] = ctx.request['body'].fields[k];
-                ctx.request['post'][k] = XssHandler(ctx.request['body'].fields[k]);
+                ctx.request.post_raw[k] = ctx.request['body'].fields[k];
+                ctx.request.post[k] = XssHandler(ctx.request['body'].fields[k]);
             }
         }
         else if (ctx.request['body']) {
             for (let k in ctx.request['body']) {
                 if (k == 'files')
                     continue;
-                ctx.request['post_raw'][k] = ctx.request['body'][k];
-                ctx.request['post'][k] = XssHandler(ctx.request['body'][k]);
+                ctx.request.post_raw[k] = ctx.request['body'][k];
+                ctx.request.post[k] = XssHandler(ctx.request['body'][k]);
             }
         }
         yield next();

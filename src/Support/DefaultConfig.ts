@@ -1,6 +1,6 @@
 'use strict';
 
-import { HpyerApplicationEnv, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider } from "./Types/Hpyer";
+import { HpyerApplicationEnv, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider } from "./Types/hpyer";
 import Config from './Config';
 
 const DefaultConfig = new Config({

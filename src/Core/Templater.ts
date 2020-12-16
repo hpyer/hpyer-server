@@ -2,7 +2,7 @@
 
 import Nunjucks from 'nunjucks';
 import Path from 'path';
-import { HpyerTemplateProvider } from '../Support/Types/Hpyer';
+import { HpyerTemplateProvider } from '../Support/Types/hpyer';
 import Application from './Application';
 
 /**

@@ -1,6 +1,6 @@
 'use strict';
 
-import { HpyerServerConfigDbQueryOption } from "../../Types/Hpyer";
+import { HpyerServerConfigDbQueryOption } from "../../Types/hpyer";
 
 export default class ContractSql {
 
