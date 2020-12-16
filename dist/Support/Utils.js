@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jsonError = exports.jsonSuccess = exports.parseQueryString = exports.buildQueryString = exports.urlDecode = exports.urlEncode = exports.htmlUnescape = exports.htmlEscape = exports.md5File = exports.createHmac = exports.createHash = exports.getRandomString = exports.getRandomNumber = exports.base64Decode = exports.base64Encode = exports.sleep = exports.matchAll = exports.toLineCase = exports.toCamelCase = exports.toStudlyCase = exports.toLowerFirstLetter = exports.toUpperFirstLetter = exports.pad = exports.repeat = exports.rtrim = exports.ltrim = exports.trim = exports.inArray = exports.isMatch = exports.isEmpty = exports.isDate = exports.isFunction = exports.isArray = exports.isObject = exports.isNumberString = exports.isNumber = exports.isString = exports.toString = exports.isUuid = exports.getUuid = exports.getMoment = exports.isDateString = exports.getFormatTime = exports.xssFilter = exports.clone = exports.extend = void 0;
+exports.parseWhere = exports.parseWhereItem = exports.parseWhereValue = exports.sqlEscape = exports.jsonError = exports.jsonSuccess = exports.parseQueryString = exports.buildQueryString = exports.urlDecode = exports.urlEncode = exports.htmlUnescape = exports.htmlEscape = exports.md5File = exports.createHmac = exports.createHash = exports.getRandomString = exports.getRandomNumber = exports.base64Decode = exports.base64Encode = exports.sleep = exports.matchAll = exports.toLineCase = exports.toCamelCase = exports.toStudlyCase = exports.toLowerFirstLetter = exports.toUpperFirstLetter = exports.pad = exports.repeat = exports.rtrim = exports.ltrim = exports.trim = exports.inArray = exports.isMatch = exports.isEmpty = exports.isDate = exports.isFunction = exports.isArray = exports.isObject = exports.isNumberString = exports.isNumber = exports.isString = exports.toString = exports.isUuid = exports.getUuid = exports.getMoment = exports.isDateString = exports.getFormatTime = exports.xssFilter = exports.clone = exports.extend = void 0;
 const moment_1 = __importDefault(require("moment"));
 const crypto_1 = __importDefault(require("crypto"));
 const fs_1 = __importDefault(require("fs"));
@@ -560,4 +560,142 @@ exports.jsonSuccess = (data, message = 'ok') => {
  */
 exports.jsonError = (message, code = '1', data = null) => {
     return { success: false, code, data, message };
+};
+/**
+ * SQL字符转义
+ * @param str 待转义的字符串或字符串数组
+ */
+exports.sqlEscape = function (str) {
+    if (exports.isArray(str)) {
+        let arr = [];
+        for (let i = 0; str.length; i++) {
+            arr[i] = exports.sqlEscape(str[i]);
+        }
+        return arr;
+    }
+    else if (exports.isString(str)) {
+        return `'${(str + '').replace(/(\'|\")/i, '\\$1')}'`;
+    }
+    else {
+        return str.toString();
+    }
+};
+/**
+ * 解析where查询的值
+ * @param k 字段名
+ * @param v 字段值
+ */
+exports.parseWhereValue = function (k, v) {
+    if (exports.isArray(v[1])) {
+        // array eg. ['in', ['value1', 'value2', 'value3']]
+        if (v[0].toLowerCase() == 'between') {
+            return `${k} BETWEEN ${exports.sqlEscape(v[1][0])} AND ${exports.sqlEscape(v[1][1])}`;
+        }
+        else if (v[0].toLowerCase() == 'like') {
+            let a = [];
+            for (let i = 0; i < v[1].length; i++) {
+                a.push(`${k} LIKE ${exports.sqlEscape(v[1][i])}`);
+            }
+            return a.join(' OR ');
+        }
+        else {
+            return `${k} ${v[0]} (${exports.sqlEscape(v[1]).join(',')})`;
+        }
+    }
+    else if (v[0] == 'exp') {
+        // array eg. ['exp', sql]
+        return `${k} ${v[1]}`;
+    }
+    else {
+        // array eg. ['=', 'value'] or ['like', 'value%']
+        return `${k} ${v[0]} (${exports.sqlEscape(v[1])})`;
+    }
+};
+/**
+ * 解析where查询项
+ * @param k 字段名
+ * @param v 字段值
+ */
+exports.parseWhereItem = function (k, v) {
+    k = k.replace(/\./, '.');
+    if (exports.isArray(v) && v.length == 2) {
+        return ' AND ' + exports.parseWhereValue(k, v);
+    }
+    else if (exports.isArray(v) && v.length == 3) {
+        // array eg. ['name', 'a', false] or ['name', ['in', ['a', 'b']], 'or']
+        let is_and = !(v[2] === false || v[2] == 'OR' || v[2] == 'or');
+        return (is_and ? ' AND ' : ' OR ') + exports.parseWhereValue(k, v);
+    }
+    else {
+        return ` AND \`${k}\`=${exports.sqlEscape(v)}`;
+    }
+};
+/**
+ * 解析where查询
+ * @param where 查询信息
+ */
+exports.parseWhere = function (where) {
+    if (!where)
+        return '';
+    let whereStrings = [];
+    if (exports.isObject(where)) {
+        for (let k in where) {
+            let v = where[k];
+            if (k.indexOf('|')) {
+                // eg. {'name|account': 'test'}
+                let is_and = true;
+                if (exports.isArray(v) && v.length == 3) {
+                    is_and = !(v[2] === false || v[2] == 'OR' || v[2] == 'or');
+                }
+                let ks = k.split('|');
+                let items = [];
+                for (let j = 0; j < ks.length; j++) {
+                    if (!ks[j])
+                        continue;
+                    items.push(exports.parseWhereItem(ks[j], v).replace(/^\s(AND|OR)\s/gi, ''));
+                }
+                whereStrings.push((is_and ? ' AND ' : ' OR ') + '(' + items.join(' OR ') + ')');
+            }
+            else if (k.indexOf('&')) {
+                // eg. {'name&account': 'test'}
+                let is_and = true;
+                if (exports.isArray(v) && v.length == 3) {
+                    is_and = !(v[2] === false || v[2] == 'OR' || v[2] == 'or');
+                }
+                let ks = k.split('&');
+                let items = [];
+                for (let j = 0; j < ks.length; j++) {
+                    if (!ks[j])
+                        continue;
+                    items.push(exports.parseWhereItem(ks[j], v).replace(/^\s(AND|OR)\s/gi, ''));
+                }
+                whereStrings.push((is_and ? ' AND ' : ' OR ') + '(' + items.join(' AND ') + ')');
+            }
+            else {
+                whereStrings.push(exports.parseWhereItem(k, v));
+            }
+        }
+    }
+    else if (exports.isArray(where)) {
+        // array eg. ['`name`=\'a\'', ['`name`=\'b\'', false], ['`status`=1', 'and']]
+        for (let i = 0; i < where.length; i++) {
+            let v = where[i];
+            if (exports.isArray(v) && v.length == 2) {
+                // array eg. ['`name`=\'b\'', false], ['`status`=1', 'and']
+                let is_and = !(v[1] === false || v[1] == 'OR' || v[1] == 'or');
+                whereStrings.push((is_and ? ' AND ' : ' OR ') + v[0]);
+            }
+            else {
+                whereStrings.push(` AND ${v}`);
+            }
+        }
+    }
+    else {
+        // string
+        return ' WHERE ' + where;
+    }
+    if (whereStrings.length > 0) {
+        return ' WHERE ' + whereStrings.join('').replace(/^\s(AND|OR)\s/gi, '');
+    }
+    return '';
 };

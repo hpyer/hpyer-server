@@ -258,3 +258,25 @@ export declare const jsonSuccess: (data: any, message?: string) => object;
  * @param data 失败时要返回的数据，默认：null
  */
 export declare const jsonError: (message: string, code?: string, data?: any) => object;
+/**
+ * SQL字符转义
+ * @param str 待转义的字符串或字符串数组
+ */
+export declare const sqlEscape: (str: string | Array<string>) => Array<string> | string;
+/**
+ * 解析where查询的值
+ * @param k 字段名
+ * @param v 字段值
+ */
+export declare const parseWhereValue: (k: string, v: string | Array<string>) => string;
+/**
+ * 解析where查询项
+ * @param k 字段名
+ * @param v 字段值
+ */
+export declare const parseWhereItem: (k: string, v: string | Array<string | boolean>) => string;
+/**
+ * 解析where查询
+ * @param where 查询信息
+ */
+export declare const parseWhere: (where: object | Array<string | boolean> | string) => string;

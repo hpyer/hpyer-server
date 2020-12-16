@@ -29,130 +29,6 @@ class ProviderMysql extends ContractSql {
     this.options = options;
   }
 
-
-  escape (str: string | Array<string>): Array<string> | string {
-    if (typeof str == 'object') {
-      let arr = []
-      for (let i in str) {
-        arr[i] = this.escape(str[i]);
-      }
-      return arr;
-    }
-    else if (typeof str == 'string') {
-      return `'${str.replace(/(\'|\")/i, '\\$1')}'`;
-    }
-    else {
-      return str + '';
-    }
-  };
-
-  parseWhereValue (k: string, v: string | Array<string>): string {
-    if (Utils.isArray(v[1])) {
-      // array eg. ['in', ['value1', 'value2', 'value3']]
-      if (v[0].toLowerCase() == 'between') {
-        return `\`${k}\` BETWEEN ${this.escape(v[1][0])} AND ${this.escape(v[1][1])}`;
-      }
-      else if (v[0].toLowerCase() == 'like') {
-        let a = [];
-        for (let i = 0; i < v[1].length; i++) {
-          a.push(`\`${k}\` LIKE ${this.escape(v[1][i])}`);
-        }
-        return a.join(' OR ');
-      }
-      else {
-        return `\`${k}\` ${v[0]} (${(this.escape(v[1]) as Array<string>).join(',')})`;
-      }
-    }
-    else if (v[0] == 'exp') {
-      // array eg. ['exp', sql]
-      return `\`${k}\` ${v[1]}`;
-    }
-    else {
-      // array eg. ['=', 'value'] or ['like', 'value%']
-      return `\`${k}\` ${v[0]} (${this.escape(v[1])})`;
-    }
-  }
-
-  parseWhereItem (k: string, v: string | Array<string | boolean>): string {
-    k = k.replace(/\./, '`.`');
-    if (Utils.isArray(v) && v.length == 2) {
-      return ' AND ' + this.parseWhereValue(k, v as Array<string>);
-    }
-    else if (Utils.isArray(v) && v.length == 3) {
-      // array eg. ['name', 'a', false] or ['name', ['in', ['a', 'b']], 'or']
-      let is_and = !(v[2] === false || v[2] == 'OR' || v[2] == 'or');
-      return (is_and ? ' AND ' : ' OR ') + this.parseWhereValue(k, v as Array<string>);
-    }
-    else {
-      return ` AND \`${k}\`=${this.escape(v as string)}`;
-    }
-  }
-
-  parseWhere (where: object | Array<string | boolean> | string): string {
-    if (!where) return '';
-
-    let whereStrings = [];
-    if (Utils.isObject(where)) {
-      for (let k in where as object) {
-        let v = where[k];
-        if (k.indexOf('|')) {
-          // eg. {'name|account': 'test'}
-          let is_and: boolean = true;
-          if (Utils.isArray(v) && v.length == 3) {
-            is_and = !(v[2] === false || v[2] == 'OR' || v[2] == 'or');
-          }
-          let ks = k.split('|');
-          let items = [];
-          for (let j = 0; j < ks.length; j++) {
-            if (!ks[j]) continue;
-            items.push(this.parseWhereItem(ks[j], v).replace(/^\s(AND|OR)\s/gi, ''));
-          }
-          whereStrings.push((is_and ? ' AND ' : ' OR ') + '(' + items.join(' OR ') + ')');
-        }
-        else if (k.indexOf('&')) {
-          // eg. {'name&account': 'test'}
-          let is_and: boolean = true;
-          if (Utils.isArray(v) && v.length == 3) {
-            is_and = !(v[2] === false || v[2] == 'OR' || v[2] == 'or');
-          }
-          let ks = k.split('&');
-          let items = [];
-          for (let j = 0; j < ks.length; j++) {
-            if (!ks[j]) continue;
-            items.push(this.parseWhereItem(ks[j], v).replace(/^\s(AND|OR)\s/gi, ''));
-          }
-          whereStrings.push((is_and ? ' AND ' : ' OR ') + '(' + items.join(' AND ') + ')');
-        }
-        else {
-          whereStrings.push(this.parseWhereItem(k, v));
-        }
-      }
-    }
-    else if (Utils.isArray(where)) {
-      // array eg. ['`name`=\'a\'', ['`name`=\'b\'', false], ['`status`=1', 'and']]
-      for (let i = 0; i < (where as Array<string>).length; i++) {
-        let v = where[i];
-        if (Utils.isArray(v) && v.length == 2) {
-          // array eg. ['`name`=\'b\'', false], ['`status`=1', 'and']
-          let is_and = !(v[1] === false || v[1] == 'OR' || v[1] == 'or');
-          whereStrings.push((is_and ? ' AND ' : ' OR ') + v[0]);
-        }
-        else {
-          whereStrings.push(` AND ${v}`);
-        }
-      }
-    }
-    else {
-      // string
-      return ' WHERE ' + where;
-    }
-    if (whereStrings.length > 0) {
-      return ' WHERE ' + whereStrings.join('').replace(/^\s(AND|OR)\s/gi, '');
-    }
-    return '';
-  }
-
-
   disconnect (): boolean {
     try {
       if (!this.conn) return true;
@@ -164,7 +40,6 @@ class ProviderMysql extends ContractSql {
     }
     return true;
   }
-
 
   getConnection(): Promise<PoolConnection> {
     return new Promise((resolve, reject) => {
@@ -179,7 +54,6 @@ class ProviderMysql extends ContractSql {
       });
     });
   }
-
 
   async execute(sql: string, values: object = null, fetch_last_id: boolean = false): Promise<any> {
     try {
@@ -274,7 +148,7 @@ class ProviderMysql extends ContractSql {
   }
 
   findAll(table: string, where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption = {}) {
-    where = this.parseWhere(where);
+    where = Utils.parseWhere(where);
     options = options || {};
     options = Utils.extend({}, DefaultQueryOptions, options);
     let limit = '', order = '';
@@ -317,7 +191,7 @@ class ProviderMysql extends ContractSql {
     let fields = [], values = [];
     for (let k in data) {
       fields.push('`' + k + '`');
-      values.push(this.escape(data[k]));
+      values.push(Utils.sqlEscape(data[k]));
     }
     let sql = `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${values.join(', ')})`;
     return this.execute(sql, null, fetch_last_id);
@@ -327,14 +201,14 @@ class ProviderMysql extends ContractSql {
     let fields = [], values = [];
     for (let k in data) {
       fields.push('`' + k + '`');
-      values.push(this.escape(data[k]));
+      values.push(Utils.sqlEscape(data[k]));
     }
     let sql = `REPLACE INTO ${table} (${fields.join(', ')}) VALUES (${values.join(', ')})`;
     return this.execute(sql);
   }
 
   async update(table: string, data: object, where: object | Array<string | boolean> | string = null): Promise<boolean> {
-    where = this.parseWhere(where);
+    where = Utils.parseWhere(where);
     let dataArr = [];
     for (let k in data) {
       let v = '';
@@ -344,7 +218,7 @@ class ProviderMysql extends ContractSql {
         }
       }
       else {
-        v = Utils.isNumber(data[k]) ? data[k] : this.escape(data[k]);
+        v = Utils.isNumber(data[k]) ? data[k] : Utils.sqlEscape(data[k]);
       }
       dataArr.push('`' + k + '`=' + v);
     }
@@ -354,7 +228,7 @@ class ProviderMysql extends ContractSql {
   }
 
   async delete(table: string, where: object | Array<string | boolean> | string = null): Promise<boolean> {
-    where = this.parseWhere(where);
+    where = Utils.parseWhere(where);
     let sql = `DELETE FROM ${table}${where}`;
     let res = await this.execute(sql);
     return res ? true : false;

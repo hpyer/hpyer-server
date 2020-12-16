@@ -7,10 +7,6 @@ declare class ProviderMysql extends ContractSql {
     conn: PoolConnection;
     options: ConnectionConfig;
     constructor(pool: Pool, options: ConnectionConfig);
-    escape(str: string | Array<string>): Array<string> | string;
-    parseWhereValue(k: string, v: string | Array<string>): string;
-    parseWhereItem(k: string, v: string | Array<string | boolean>): string;
-    parseWhere(where: object | Array<string | boolean> | string): string;
     disconnect(): boolean;
     getConnection(): Promise<PoolConnection>;
     execute(sql: string, values?: object, fetch_last_id?: boolean): Promise<any>;

@@ -571,3 +571,143 @@ export const jsonSuccess = (data: any, message = 'ok'): object => {
 export const jsonError = (message: string, code: string = '1', data: any = null): object => {
   return { success: false, code, data, message };
 }
+
+/**
+ * SQL字符转义
+ * @param str 待转义的字符串或字符串数组
+ */
+export const sqlEscape = function(str: string | Array<string>): Array<string> | string {
+  if (isArray(str)) {
+    let arr = []
+    for (let i=0; str.length; i++) {
+      arr[i] = sqlEscape(str[i]);
+    }
+    return arr;
+  }
+  else if (isString(str)) {
+    return `'${(str + '').replace(/(\'|\")/i, '\\$1')}'`;
+  }
+  else {
+    return str.toString();
+  }
+};
+
+/**
+ * 解析where查询的值
+ * @param k 字段名
+ * @param v 字段值
+ */
+export const parseWhereValue = function(k: string, v: string | Array<string>): string {
+  if (isArray(v[1])) {
+    // array eg. ['in', ['value1', 'value2', 'value3']]
+    if (v[0].toLowerCase() == 'between') {
+      return `${k} BETWEEN ${sqlEscape(v[1][0])} AND ${sqlEscape(v[1][1])}`;
+    }
+    else if (v[0].toLowerCase() == 'like') {
+      let a = [];
+      for (let i = 0; i < v[1].length; i++) {
+        a.push(`${k} LIKE ${sqlEscape(v[1][i])}`);
+      }
+      return a.join(' OR ');
+    }
+    else {
+      return `${k} ${v[0]} (${(sqlEscape(v[1]) as Array<string>).join(',')})`;
+    }
+  }
+  else if (v[0] == 'exp') {
+    // array eg. ['exp', sql]
+    return `${k} ${v[1]}`;
+  }
+  else {
+    // array eg. ['=', 'value'] or ['like', 'value%']
+    return `${k} ${v[0]} (${sqlEscape(v[1])})`;
+  }
+};
+
+/**
+ * 解析where查询项
+ * @param k 字段名
+ * @param v 字段值
+ */
+export const parseWhereItem = function(k: string, v: string | Array<string | boolean>): string {
+  k = k.replace(/\./, '.');
+  if (isArray(v) && v.length == 2) {
+    return ' AND ' + parseWhereValue(k, v as Array<string>);
+  }
+  else if (isArray(v) && v.length == 3) {
+    // array eg. ['name', 'a', false] or ['name', ['in', ['a', 'b']], 'or']
+    let is_and = !(v[2] === false || v[2] == 'OR' || v[2] == 'or');
+    return (is_and ? ' AND ' : ' OR ') + parseWhereValue(k, v as Array<string>);
+  }
+  else {
+    return ` AND \`${k}\`=${sqlEscape(v as string)}`;
+  }
+};
+
+/**
+ * 解析where查询
+ * @param where 查询信息
+ */
+export const parseWhere = function(where: object | Array<string | boolean> | string): string {
+  if (!where) return '';
+
+  let whereStrings = [];
+  if (isObject(where)) {
+    for (let k in where as object) {
+      let v = where[k];
+      if (k.indexOf('|')) {
+        // eg. {'name|account': 'test'}
+        let is_and: boolean = true;
+        if (isArray(v) && v.length == 3) {
+          is_and = !(v[2] === false || v[2] == 'OR' || v[2] == 'or');
+        }
+        let ks = k.split('|');
+        let items = [];
+        for (let j = 0; j < ks.length; j++) {
+          if (!ks[j]) continue;
+          items.push(parseWhereItem(ks[j], v).replace(/^\s(AND|OR)\s/gi, ''));
+        }
+        whereStrings.push((is_and ? ' AND ' : ' OR ') + '(' + items.join(' OR ') + ')');
+      }
+      else if (k.indexOf('&')) {
+        // eg. {'name&account': 'test'}
+        let is_and: boolean = true;
+        if (isArray(v) && v.length == 3) {
+          is_and = !(v[2] === false || v[2] == 'OR' || v[2] == 'or');
+        }
+        let ks = k.split('&');
+        let items = [];
+        for (let j = 0; j < ks.length; j++) {
+          if (!ks[j]) continue;
+          items.push(parseWhereItem(ks[j], v).replace(/^\s(AND|OR)\s/gi, ''));
+        }
+        whereStrings.push((is_and ? ' AND ' : ' OR ') + '(' + items.join(' AND ') + ')');
+      }
+      else {
+        whereStrings.push(parseWhereItem(k, v));
+      }
+    }
+  }
+  else if (isArray(where)) {
+    // array eg. ['`name`=\'a\'', ['`name`=\'b\'', false], ['`status`=1', 'and']]
+    for (let i = 0; i < (where as Array<string>).length; i++) {
+      let v = where[i];
+      if (isArray(v) && v.length == 2) {
+        // array eg. ['`name`=\'b\'', false], ['`status`=1', 'and']
+        let is_and = !(v[1] === false || v[1] == 'OR' || v[1] == 'or');
+        whereStrings.push((is_and ? ' AND ' : ' OR ') + v[0]);
+      }
+      else {
+        whereStrings.push(` AND ${v}`);
+      }
+    }
+  }
+  else {
+    // string
+    return ' WHERE ' + where;
+  }
+  if (whereStrings.length > 0) {
+    return ' WHERE ' + whereStrings.join('').replace(/^\s(AND|OR)\s/gi, '');
+  }
+  return '';
+};
