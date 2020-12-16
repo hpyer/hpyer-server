@@ -215,12 +215,12 @@ class ProviderMysql extends ContractSql {
     }
   };
 
-  async transaction (callback) {
-    if (typeof callback != 'function') return false;
+  async transaction(closure: Function): Promise<any> {
+    if (!Utils.isFunction(closure)) return false;
     let res = false;
     await this.startTrans();
     try {
-      res = await callback(this);
+      res = await closure(this);
     } catch (e) {
       LogLevel.error('mysql.transaction: ', e);
       res = false;
