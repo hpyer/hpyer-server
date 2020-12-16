@@ -546,21 +546,32 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
 
     // 系统请求处理方法
     let koaRouter = new KoaRouter;
-    koaRouter.use(MiddlewareRequest);
+    try {
+      koaRouter.use(MiddlewareRequest);
+    }
+    catch(e) {};
     // 自定义路由
-    if (this.config.koa.routers && Utils.isArray(this.config.koa.routers)) this.config.koa.routers.forEach(router => {
-      if (router.path && Utils.isString(router.path)) {
-        // 配置指定路由的中间件
-        if (router.middleware && (Utils.isFunction(router.middleware) || Utils.isArray(router.middleware))) {
-          koaRouter.use(router.path, router.middleware);
+    if (this.config.koa.routers && Utils.isArray(this.config.koa.routers)) {
+      this.config.koa.routers.forEach(router => {
+        if (router.path && Utils.isString(router.path)) {
+          // 配置指定路由的中间件
+          if (router.middleware && (Utils.isFunction(router.middleware) || Utils.isArray(router.middleware))) {
+            try {
+              koaRouter.use(router.path, router.middleware);
+            }
+            catch (e) {};
+          }
+          // 增加路由处理方法
+          if (router.handler && Utils.isFunction(router.handler)) {
+            router.method = router.method || 'all';
+            try {
+              koaRouter[router.method](router.path, router.handler);
+            }
+            catch (e) { };
+          }
         }
-        // 增加路由处理方法
-        if (router.handler && Utils.isFunction(router.handler)) {
-          router.method = router.method || 'all';
-          koaRouter[router.method](router.path, router.handler);
-        }
-      }
-    });
+      });
+    }
     // 系统路由
     koaRouter.all('/', this.KoaHandler());
     koaRouter.all('/:module/:controller/:action', this.KoaHandler());
