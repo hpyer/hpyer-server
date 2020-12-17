@@ -49,9 +49,9 @@ export default class Model {
   /**
    * 查询所有
    * @param where 查询条件
-   * @param options 查询选项
+   * @param options 查询选项。若传字符串，则表示查询的字段
    */
-  async findAll(where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption = null) {
+  async findAll(where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption | string = null) {
     let db = this.app.getDB();
     if (!db) return null;
     let res = await db.findAll(this.table, where, options);
@@ -62,9 +62,9 @@ export default class Model {
   /**
    * 查询单条
    * @param where 查询条件
-   * @param options 查询选项
+   * @param options 查询选项。若传字符串，则表示查询的字段
    */
-  async findOne(where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption = null) {
+  async findOne(where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption | string = null) {
     let db = this.app.getDB();
     if (!db) return null;
     let res = await db.findOne(this.table, where, options);

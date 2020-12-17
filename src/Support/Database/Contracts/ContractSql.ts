@@ -28,9 +28,9 @@ export default class ContractSql {
    * 查询所有
    * @param table 表名
    * @param where 查询条件
-   * @param options 查询选项
+   * @param options 查询选项。若传字符串，则表示查询的字段
    */
-  findAll(table: string, where: object | Array<string | boolean> | string, options: HpyerServerConfigDbQueryOption): Promise<any> {
+  findAll(table: string, where: object | Array<string | boolean> | string, options: HpyerServerConfigDbQueryOption | string): Promise<any> {
     return null;
   }
 
@@ -38,9 +38,9 @@ export default class ContractSql {
    * 查询单条
    * @param table 表名
    * @param where 查询条件
-   * @param options 查询选项
+   * @param options 查询选项。若传字符串，则表示查询的字段
    */
-  findOne(table: string, where: object | Array<string | boolean> | string, options: HpyerServerConfigDbQueryOption): Promise<any> {
+  findOne(table: string, where: object | Array<string | boolean> | string, options: HpyerServerConfigDbQueryOption | string): Promise<any> {
     return null;
   }
 

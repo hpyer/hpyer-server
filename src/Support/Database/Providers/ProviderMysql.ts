@@ -147,9 +147,14 @@ class ProviderMysql extends ContractSql {
     });
   }
 
-  findAll(table: string, where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption = {}) {
+  findAll(table: string, where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption | string = {}) {
     where = Utils.parseWhere(where);
     options = options || {};
+    if (typeof options === 'string') {
+      options = {
+        fields: options,
+      };
+    }
     options = Utils.extend({}, DefaultQueryOptions, options);
     let limit = '', order = '';
     if (options.limit > 0) {
@@ -165,8 +170,13 @@ class ProviderMysql extends ContractSql {
     return this.execute(sql);
   }
 
-  async findOne(table: string, where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption = {}) {
+  async findOne(table: string, where: object | Array<string | boolean> | string = null, options: HpyerServerConfigDbQueryOption | string = {}) {
     options = options || {};
+    if (typeof options === 'string') {
+      options = {
+        fields: options,
+      };
+    }
     options.offset = 0;
     options.limit = 1;
     let rows = await this.findAll(table, where, options);
@@ -177,10 +187,7 @@ class ProviderMysql extends ContractSql {
   }
 
   async findCount(table: string, where: object | Array<string | boolean> | string = null, field: string = 'COUNT(1)') {
-    let options: HpyerServerConfigDbQueryOption = {
-      fields: field + ' AS qty',
-    }
-    let row = await this.findOne(table, where, options);
+    let row = await this.findOne(table, where, field + ' AS qty');
     if (!row) {
       return false;
     }
