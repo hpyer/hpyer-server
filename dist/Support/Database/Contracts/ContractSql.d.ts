@@ -1,4 +1,4 @@
-import { HpyerServerConfigDbQueryOption } from "../../Types/hpyer";
+import { HpyerServerConfigDbQueryOption } from "../../Types/Hpyer";
 export default class ContractSql {
     /**
      * 断开链接

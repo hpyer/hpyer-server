@@ -1,4 +1,4 @@
-import { HashMap } from '../Support/Types/hpyer';
+import { HashMap } from '../Support/Types/Hpyer';
 import { Context } from 'koa';
 import Application from './Application';
 /**

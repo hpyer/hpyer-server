@@ -1,4 +1,4 @@
-import { HpyerServerConfigDbQueryOption } from '../Support/Types/hpyer';
+import { HpyerServerConfigDbQueryOption } from '../Support/Types/Hpyer';
 import Application from './Application';
 /**
  * 模型基类

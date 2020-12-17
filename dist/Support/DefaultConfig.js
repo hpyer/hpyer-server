@@ -3,12 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const hpyer_1 = require("./Types/hpyer");
+const Hpyer_1 = require("./Types/Hpyer");
 const Config_1 = __importDefault(require("./Config"));
 const DefaultConfig = new Config_1.default({
     port: '8001',
     key: 'HpyerServer',
-    env: hpyer_1.HpyerApplicationEnv.DEVELOPMENT,
+    env: Hpyer_1.HpyerApplicationEnv.DEVELOPMENT,
     defaultModelDir: 'models',
     defaultControllerDir: 'controllers',
     defaultViewDir: 'views',
@@ -50,7 +50,7 @@ const DefaultConfig = new Config_1.default({
     },
     db: {
         enable: false,
-        provider: hpyer_1.HpyerDbProvider.MYSQL,
+        provider: Hpyer_1.HpyerDbProvider.MYSQL,
         mysql: {
             host: 'localhost',
             user: 'root',
@@ -61,7 +61,7 @@ const DefaultConfig = new Config_1.default({
     },
     cache: {
         enable: false,
-        provider: hpyer_1.HpyerCacheProvider.FILE,
+        provider: Hpyer_1.HpyerCacheProvider.FILE,
         file: {
             path: './runtime/cache/',
             dirMode: 0o777,
@@ -74,7 +74,7 @@ const DefaultConfig = new Config_1.default({
         }
     },
     template: {
-        provider: hpyer_1.HpyerTemplateProvider.NUNJUCKS,
+        provider: Hpyer_1.HpyerTemplateProvider.NUNJUCKS,
         defaultMessageTpl: 'message.njk',
         tplExtention: '.njk',
         nunjucks: {

@@ -1,6 +1,6 @@
 'use strict';
 
-import { HpyerServerConfig, HpyerLuaParams, HpyerModelMap, HpyerServiceMap, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider } from '../Support/Types/hpyer';
+import { HpyerServerConfig, HpyerLuaParams, HpyerModelMap, HpyerServiceMap, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider } from '../Support/Types/Hpyer';
 
 import Path from 'path';
 import ChildProcess from 'child_process';

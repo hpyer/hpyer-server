@@ -5,7 +5,7 @@ import Fs from 'fs';
 import Logger from '../../Logger';
 import * as Utils from '../../Utils';
 import ContractCache from '../Contracts/ContractCache';
-import { HpyerServerConfigCacheFileOptions } from '../../Types/hpyer'
+import { HpyerServerConfigCacheFileOptions } from '../../Types/Hpyer'
 
 export const DefaultCacheFileOptions: HpyerServerConfigCacheFileOptions = {
   path: '',

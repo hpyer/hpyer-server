@@ -1,5 +1,5 @@
 
-import { HpyerApplicationEnv, HpyerServerConfigRoot, HpyerServerConfigUniqueId, HpyerServerConfigKoa, HpyerServerConfigDb, HpyerServerConfigCache, HpyerServerConfigTemplate, HpyerServerConfig } from "./Types/hpyer";
+import { HpyerApplicationEnv, HpyerServerConfigRoot, HpyerServerConfigUniqueId, HpyerServerConfigKoa, HpyerServerConfigDb, HpyerServerConfigCache, HpyerServerConfigTemplate, HpyerServerConfig } from "./Types/Hpyer";
 import * as Utils from './Utils';
 
 /**

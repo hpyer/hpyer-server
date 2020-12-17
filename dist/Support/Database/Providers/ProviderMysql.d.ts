@@ -1,6 +1,6 @@
 import { ConnectionConfig, Pool, PoolConnection } from 'mysql';
 import ContractSql from '../Contracts/ContractSql';
-import { HpyerServerConfigDbQueryOption } from '../../Types/hpyer';
+import { HpyerServerConfigDbQueryOption } from '../../Types/Hpyer';
 export declare const DefaultQueryOptions: HpyerServerConfigDbQueryOption;
 declare class ProviderMysql extends ContractSql {
     pool: Pool;

@@ -1,4 +1,4 @@
-import { HpyerTemplateProvider } from '../Support/Types/hpyer';
+import { HpyerTemplateProvider } from '../Support/Types/Hpyer';
 import Application from './Application';
 /**
  * 框架模版

@@ -1,4 +1,4 @@
-import { HpyerServerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider } from '../Support/Types/hpyer';
+import { HpyerServerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider } from '../Support/Types/Hpyer';
 import * as Utils from '../Support/Utils';
 import Model from './Model';
 import Service from './Service';
