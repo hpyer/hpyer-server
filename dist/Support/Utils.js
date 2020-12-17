@@ -416,7 +416,7 @@ exports.base64Decode = function (str) {
  * @param min 最小值（包含），默认：0
  */
 exports.getRandomNumber = function (max, min = 0) {
-    if (max <= 0 || min <= 0) {
+    if (max < 0 || min < 0) {
         throw new Error(`Invalid params. max: ${max}, min: ${min}.`);
     }
     if (max == min)

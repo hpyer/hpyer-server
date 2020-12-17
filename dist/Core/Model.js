@@ -52,7 +52,7 @@ class Model {
     /**
      * 查询所有
      * @param where 查询条件
-     * @param options 查询选项
+     * @param options 查询选项。若传字符串，则表示查询的字段
      */
     findAll(where = null, options = null) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -67,7 +67,7 @@ class Model {
     /**
      * 查询单条
      * @param where 查询条件
-     * @param options 查询选项
+     * @param options 查询选项。若传字符串，则表示查询的字段
      */
     findOne(where = null, options = null) {
         return __awaiter(this, void 0, void 0, function* () {

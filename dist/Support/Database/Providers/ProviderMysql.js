@@ -175,6 +175,11 @@ class ProviderMysql extends ContractSql_1.default {
     findAll(table, where = null, options = {}) {
         where = Utils.parseWhere(where);
         options = options || {};
+        if (typeof options === 'string') {
+            options = {
+                fields: options,
+            };
+        }
         options = Utils.extend({}, exports.DefaultQueryOptions, options);
         let limit = '', order = '';
         if (options.limit > 0) {
@@ -192,6 +197,11 @@ class ProviderMysql extends ContractSql_1.default {
     findOne(table, where = null, options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             options = options || {};
+            if (typeof options === 'string') {
+                options = {
+                    fields: options,
+                };
+            }
             options.offset = 0;
             options.limit = 1;
             let rows = yield this.findAll(table, where, options);
@@ -203,10 +213,7 @@ class ProviderMysql extends ContractSql_1.default {
     }
     findCount(table, where = null, field = 'COUNT(1)') {
         return __awaiter(this, void 0, void 0, function* () {
-            let options = {
-                fields: field + ' AS qty',
-            };
-            let row = yield this.findOne(table, where, options);
+            let row = yield this.findOne(table, where, field + ' AS qty');
             if (!row) {
                 return false;
             }

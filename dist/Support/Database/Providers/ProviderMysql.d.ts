@@ -14,8 +14,8 @@ declare class ProviderMysql extends ContractSql {
     startTrans(): Promise<any>;
     commit(): Promise<any>;
     rollback(): Promise<any>;
-    findAll(table: string, where?: object | Array<string | boolean> | string, options?: HpyerServerConfigDbQueryOption): Promise<any>;
-    findOne(table: string, where?: object | Array<string | boolean> | string, options?: HpyerServerConfigDbQueryOption): Promise<any>;
+    findAll(table: string, where?: object | Array<string | boolean> | string, options?: HpyerServerConfigDbQueryOption | string): Promise<any>;
+    findOne(table: string, where?: object | Array<string | boolean> | string, options?: HpyerServerConfigDbQueryOption | string): Promise<any>;
     findCount(table: string, where?: object | Array<string | boolean> | string, field?: string): Promise<any>;
     create(table: string, data: object, fetch_last_id?: boolean): Promise<any>;
     replace(table: string, data: object): Promise<any>;
