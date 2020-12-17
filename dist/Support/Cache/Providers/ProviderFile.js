@@ -34,7 +34,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DefaultCacheFileOptions = void 0;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-const loglevel_1 = __importDefault(require("loglevel"));
+const Logger_1 = __importDefault(require("../../Logger"));
 const Utils = __importStar(require("../../Utils"));
 const ContractCache_1 = __importDefault(require("../Contracts/ContractCache"));
 exports.DefaultCacheFileOptions = {
@@ -57,7 +57,7 @@ class ProviderFile extends ContractCache_1.default {
                 fs_1.default.mkdirSync(this.options.path, this.options.dirMode);
             }
             catch (e) {
-                loglevel_1.default.error(`Fail to create folder for cache. Path: ${this.options.path}`);
+                Logger_1.default.error(`Fail to create folder for cache. Path: ${this.options.path}`);
             }
         }
     }

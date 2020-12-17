@@ -33,7 +33,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DefaultQueryOptions = void 0;
 const Utils = __importStar(require("../../Utils"));
-const loglevel_1 = __importDefault(require("loglevel"));
+const Logger_1 = __importDefault(require("../../Logger"));
 const ContractSql_1 = __importDefault(require("../Contracts/ContractSql"));
 const mysql = require('mysql');
 exports.DefaultQueryOptions = {
@@ -67,7 +67,7 @@ class ProviderMysql extends ContractSql_1.default {
         return new Promise((resolve, reject) => {
             pool.getConnection((err, conn) => {
                 if (err) {
-                    loglevel_1.default.error('mysql.connect fail. ' + this.options.user + '@' + this.options.host + '.' + this.options.database + ' [password:' + (this.options.password ? 'YES' : 'NO') + ']');
+                    Logger_1.default.error('mysql.connect fail. ' + this.options.user + '@' + this.options.host + '.' + this.options.database + ' [password:' + (this.options.password ? 'YES' : 'NO') + ']');
                     reject(err);
                 }
                 else {
@@ -82,7 +82,7 @@ class ProviderMysql extends ContractSql_1.default {
                 if (!this.conn) {
                     this.conn = yield this.getConnection();
                 }
-                loglevel_1.default.info('mysql.execute: ', sql, values);
+                Logger_1.default.info('mysql.execute: ', sql, values);
                 return new Promise((resolve, reject) => {
                     let callback = (e, results, fields) => {
                         if (e)
@@ -108,7 +108,7 @@ class ProviderMysql extends ContractSql_1.default {
                 });
             }
             catch (e) {
-                loglevel_1.default.error('mysql.execute: ', e);
+                Logger_1.default.error('mysql.execute: ', e);
                 throw new Error('mysql.execute: ' + e.message);
             }
         });
@@ -124,7 +124,7 @@ class ProviderMysql extends ContractSql_1.default {
                 res = yield closure(this);
             }
             catch (e) {
-                loglevel_1.default.error('mysql.transaction: ', e);
+                Logger_1.default.error('mysql.transaction: ', e);
                 res = false;
             }
             if (res === false) {
@@ -140,10 +140,10 @@ class ProviderMysql extends ContractSql_1.default {
         return new Promise((resolve, reject) => {
             this.conn.beginTransaction((e) => {
                 if (e) {
-                    loglevel_1.default.error('mysql.startTrans: ', e);
+                    Logger_1.default.error('mysql.startTrans: ', e);
                     return reject(false);
                 }
-                loglevel_1.default.info('mysql.startTrans');
+                Logger_1.default.info('mysql.startTrans');
                 resolve(true);
             });
         });
@@ -152,10 +152,10 @@ class ProviderMysql extends ContractSql_1.default {
         return new Promise((resolve, reject) => {
             this.conn.commit((e) => {
                 if (e) {
-                    loglevel_1.default.error('mysql.commit: ', e);
+                    Logger_1.default.error('mysql.commit: ', e);
                     return reject(false);
                 }
-                loglevel_1.default.info('mysql.commit');
+                Logger_1.default.info('mysql.commit');
                 resolve(true);
             });
         });
@@ -164,10 +164,10 @@ class ProviderMysql extends ContractSql_1.default {
         return new Promise((resolve, reject) => {
             this.conn.rollback((e) => {
                 if (e) {
-                    loglevel_1.default.error('mysql.rollback: ', e);
+                    Logger_1.default.error('mysql.rollback: ', e);
                     return reject(false);
                 }
-                loglevel_1.default.info('mysql.rollback');
+                Logger_1.default.info('mysql.rollback');
                 resolve(true);
             });
         });

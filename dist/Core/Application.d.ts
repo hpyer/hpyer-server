@@ -7,7 +7,7 @@ import ContractSql from '../Support/Database/Contracts/ContractSql';
 import ContractCache from '../Support/Cache/Contracts/ContractCache';
 import Koa from 'koa';
 import { AxiosRequestConfig } from 'axios';
-import LogLevel from 'loglevel';
+import Logger from '../Support/Logger';
 import IORedis from 'ioredis';
 /**
  * 框架
@@ -24,7 +24,7 @@ declare class Application {
     /**
      * 记录日志
      */
-    log: LogLevel.RootLogger;
+    log: Logger.RootLogger;
     /**
      * 常用工具
      */

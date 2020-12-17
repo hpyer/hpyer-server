@@ -19,8 +19,8 @@
 // 引入 hpyer-server 的 HpyerApplication 类
 const { HpyerApplication } = require('hpyer-server');
 
-// 增加 koa 上下文的属性提示，如：ctx.request.client_ip, ctx.request.post 等
-require('hpyer-server/dist/Support/Types/shims.koa');
+// 增加对第三方模块的提示，如：ctx.request.client_ip, ctx.request.post 等
+require('hpyer-server/dist/Support/Types/shims');
 
 // 相关配置项
 let cfg = {

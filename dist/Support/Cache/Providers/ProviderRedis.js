@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ioredis_1 = __importDefault(require("ioredis"));
-const loglevel_1 = __importDefault(require("loglevel"));
+const Logger_1 = __importDefault(require("../../Logger"));
 const ContractCache_1 = __importDefault(require("../Contracts/ContractCache"));
 let client = null;
 class ProviderRedis extends ContractCache_1.default {
@@ -25,7 +25,7 @@ class ProviderRedis extends ContractCache_1.default {
             }
         }
         catch (e) {
-            loglevel_1.default.error(`Fail to create Redis client.`, e);
+            Logger_1.default.error(`Fail to create Redis client.`, e);
         }
     }
     get(id) {
@@ -37,7 +37,7 @@ class ProviderRedis extends ContractCache_1.default {
                 content = JSON.parse(yield client.get(id));
             }
             catch (e) {
-                loglevel_1.default.info(`Fail to get content via key '${id}'`, e);
+                Logger_1.default.info(`Fail to get content via key '${id}'`, e);
                 return null;
             }
             return content;
@@ -70,7 +70,7 @@ class ProviderRedis extends ContractCache_1.default {
                 }
             }
             catch (e) {
-                loglevel_1.default.info(`Fail to set content via key '${id}' with: `, data, e);
+                Logger_1.default.info(`Fail to set content via key '${id}' with: `, data, e);
                 return false;
             }
             return true;

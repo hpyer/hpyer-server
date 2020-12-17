@@ -24,7 +24,7 @@ import KoaStatic from 'koa-static';
 import KoaRouter from 'koa-router';
 
 import Axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import LogLevel from 'loglevel';
+import Logger from '../Support/Logger';
 import IORedis from 'ioredis';
 import BN from 'bn.js';
 
@@ -50,7 +50,7 @@ class Application {
   /**
    * 记录日志
    */
-  log = LogLevel;
+  log = Logger;
 
   /**
    * 常用工具

@@ -1,7 +1,7 @@
 const assert = require('assert');
 
 const { HpyerApplication, HpyerConfig } = require('../dist');
-require('../dist/Support/Types/shims.koa');
+require('../dist/Support/Types/shims');
 
 const Package = require('../package.json');
 const Path = require('path');

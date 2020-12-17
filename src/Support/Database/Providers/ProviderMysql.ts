@@ -1,7 +1,7 @@
 'use strict';
 
 import * as Utils from '../../Utils';
-import LogLevel from 'loglevel';
+import Logger from '../../Logger';
 import { ConnectionConfig, MysqlError, Pool, PoolConnection } from 'mysql';
 import ContractSql from '../Contracts/ContractSql';
 import { HpyerServerConfigDbQueryOption } from '../../Types/hpyer';
@@ -45,7 +45,7 @@ class ProviderMysql extends ContractSql {
     return new Promise((resolve, reject) => {
       pool.getConnection((err: MysqlError, conn: PoolConnection) => {
         if (err) {
-          LogLevel.error('mysql.connect fail. ' + this.options.user + '@' + this.options.host + '.' + this.options.database + ' [password:' + (this.options.password ? 'YES' : 'NO') + ']')
+          Logger.error('mysql.connect fail. ' + this.options.user + '@' + this.options.host + '.' + this.options.database + ' [password:' + (this.options.password ? 'YES' : 'NO') + ']')
           reject(err);
         }
         else {
@@ -60,7 +60,7 @@ class ProviderMysql extends ContractSql {
       if (!this.conn) {
         this.conn = await this.getConnection();
       }
-      LogLevel.info('mysql.execute: ', sql, values);
+      Logger.info('mysql.execute: ', sql, values);
       return new Promise((resolve, reject) => {
         let callback = (e, results: any, fields) => {
           if (e) return reject(e);
@@ -84,7 +84,7 @@ class ProviderMysql extends ContractSql {
       });
     }
     catch (e) {
-      LogLevel.error('mysql.execute: ', e);
+      Logger.error('mysql.execute: ', e);
       throw new Error('mysql.execute: ' + e.message);
     }
   };
@@ -96,7 +96,7 @@ class ProviderMysql extends ContractSql {
     try {
       res = await closure(this);
     } catch (e) {
-      LogLevel.error('mysql.transaction: ', e);
+      Logger.error('mysql.transaction: ', e);
       res = false;
     }
     if (res === false) {
@@ -112,10 +112,10 @@ class ProviderMysql extends ContractSql {
     return new Promise((resolve, reject) => {
       this.conn.beginTransaction((e: MysqlError) => {
         if (e) {
-          LogLevel.error('mysql.startTrans: ', e);
+          Logger.error('mysql.startTrans: ', e);
           return reject(false);
         }
-        LogLevel.info('mysql.startTrans');
+        Logger.info('mysql.startTrans');
         resolve(true);
       })
     });
@@ -125,10 +125,10 @@ class ProviderMysql extends ContractSql {
     return new Promise((resolve, reject) => {
       this.conn.commit((e) => {
         if (e) {
-          LogLevel.error('mysql.commit: ', e);
+          Logger.error('mysql.commit: ', e);
           return reject(false);
         }
-        LogLevel.info('mysql.commit');
+        Logger.info('mysql.commit');
         resolve(true);
       })
     });
@@ -138,10 +138,10 @@ class ProviderMysql extends ContractSql {
     return new Promise((resolve, reject) => {
       this.conn.rollback((e) => {
         if (e) {
-          LogLevel.error('mysql.rollback: ', e);
+          Logger.error('mysql.rollback: ', e);
           return reject(false);
         }
-        LogLevel.info('mysql.rollback');
+        Logger.info('mysql.rollback');
         resolve(true);
       })
     });

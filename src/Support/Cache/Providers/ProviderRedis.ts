@@ -1,7 +1,7 @@
 'use strict';
 
 import IORedis from 'ioredis';
-import LogLevel from 'loglevel';
+import Logger from '../../Logger';
 import ContractCache from '../Contracts/ContractCache';
 
 let client: IORedis.Redis = null;
@@ -17,7 +17,7 @@ class ProviderRedis extends ContractCache {
       }
     }
     catch (e) {
-      LogLevel.error(`Fail to create Redis client.`, e);
+      Logger.error(`Fail to create Redis client.`, e);
     }
   }
 
@@ -28,7 +28,7 @@ class ProviderRedis extends ContractCache {
       content = JSON.parse(await client.get(id));
     }
     catch (e) {
-      LogLevel.info(`Fail to get content via key '${id}'`, e);
+      Logger.info(`Fail to get content via key '${id}'`, e);
       return null;
     }
     return content;
@@ -57,7 +57,7 @@ class ProviderRedis extends ContractCache {
       }
     }
     catch (e) {
-      LogLevel.info(`Fail to set content via key '${id}' with: `, data, e);
+      Logger.info(`Fail to set content via key '${id}' with: `, data, e);
       return false;
     }
     return true;

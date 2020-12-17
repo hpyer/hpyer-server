@@ -44,7 +44,7 @@ const koa_session_1 = __importDefault(require("koa-session"));
 const koa_static_1 = __importDefault(require("koa-static"));
 const koa_router_1 = __importDefault(require("koa-router"));
 const axios_1 = __importDefault(require("axios"));
-const loglevel_1 = __importDefault(require("loglevel"));
+const Logger_1 = __importDefault(require("../Support/Logger"));
 const ioredis_1 = __importDefault(require("ioredis"));
 const bn_js_1 = __importDefault(require("bn.js"));
 let modelInstances = {};
@@ -65,7 +65,7 @@ class Application {
         /**
          * 记录日志
          */
-        this.log = loglevel_1.default;
+        this.log = Logger_1.default;
         /**
          * 常用工具
          */

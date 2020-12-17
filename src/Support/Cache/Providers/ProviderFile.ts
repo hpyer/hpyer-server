@@ -2,7 +2,7 @@
 
 import Path from 'path';
 import Fs from 'fs';
-import LogLevel from 'loglevel';
+import Logger from '../../Logger';
 import * as Utils from '../../Utils';
 import ContractCache from '../Contracts/ContractCache';
 import { HpyerServerConfigCacheFileOptions } from '../../Types/hpyer'
@@ -31,7 +31,7 @@ class ProviderFile extends ContractCache {
         Fs.mkdirSync(this.options.path, this.options.dirMode);
       }
       catch (e) {
-        LogLevel.error(`Fail to create folder for cache. Path: ${this.options.path}`);
+        Logger.error(`Fail to create folder for cache. Path: ${this.options.path}`);
       }
     }
   }
