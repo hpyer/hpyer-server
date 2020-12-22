@@ -568,7 +568,7 @@ exports.jsonError = (message, code = '1', data = null) => {
 exports.sqlEscape = function (str) {
     if (exports.isArray(str)) {
         let arr = [];
-        for (let i = 0; str.length; i++) {
+        for (let i = 0; i < str.length; i++) {
             arr[i] = exports.sqlEscape(str[i]);
         }
         return arr;
@@ -577,7 +577,7 @@ exports.sqlEscape = function (str) {
         return `'${(str + '').replace(/(\'|\")/i, '\\$1')}'`;
     }
     else {
-        return str.toString();
+        return str + '';
     }
 };
 /**

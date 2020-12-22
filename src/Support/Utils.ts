@@ -580,7 +580,7 @@ export const jsonError = (message: string, code: string = '1', data: any = null)
 export const sqlEscape = function(str: string | Array<string>): Array<string> | string {
   if (isArray(str)) {
     let arr = []
-    for (let i=0; str.length; i++) {
+    for (let i=0; i<str.length; i++) {
       arr[i] = sqlEscape(str[i]);
     }
     return arr;
@@ -589,7 +589,7 @@ export const sqlEscape = function(str: string | Array<string>): Array<string> | 
     return `'${(str + '').replace(/(\'|\")/i, '\\$1')}'`;
   }
   else {
-    return str.toString();
+    return str + '';
   }
 };
 
