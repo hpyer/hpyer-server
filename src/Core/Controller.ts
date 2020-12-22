@@ -3,10 +3,10 @@
 import KoaSend from 'koa-send';
 import Fs from 'fs';
 import * as Utils from '../Support/Utils';
-import Templater from './Templater';
 import { HashMap } from '../Support/Types/Hpyer';
 import { Context } from 'koa';
 import Application from './Application';
+require('../Support/Types/Thirdparty');
 
 /**
  * 控制器基类

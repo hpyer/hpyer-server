@@ -34,6 +34,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const koa_send_1 = __importDefault(require("koa-send"));
 const fs_1 = __importDefault(require("fs"));
 const Utils = __importStar(require("../Support/Utils"));
+require('../Support/Types/Thirdparty');
 /**
  * 控制器基类
  */
