@@ -585,11 +585,8 @@ export const sqlEscape = function(str: string | Array<string>): Array<string> | 
     }
     return arr;
   }
-  else if (isString(str)) {
-    return `'${(str + '').replace(/(\'|\")/i, '\\$1')}'`;
-  }
   else {
-    return str + '';
+    return `${(str + '').replace(/(\'|\")/i, '\\$1')}`;
   }
 };
 
@@ -602,17 +599,17 @@ export const parseWhereValue = function(k: string, v: string | Array<string>): s
   if (isArray(v[1])) {
     // array eg. ['in', ['value1', 'value2', 'value3']]
     if (v[0].toLowerCase() == 'between') {
-      return `${k} BETWEEN ${sqlEscape(v[1][0])} AND ${sqlEscape(v[1][1])}`;
+      return `${k} BETWEEN '${sqlEscape(v[1][0])}' AND '${sqlEscape(v[1][1])}'`;
     }
     else if (v[0].toLowerCase() == 'like') {
       let a = [];
       for (let i = 0; i < v[1].length; i++) {
-        a.push(`${k} LIKE ${sqlEscape(v[1][i])}`);
+        a.push(`${k} LIKE '${sqlEscape(v[1][i])}'`);
       }
       return a.join(' OR ');
     }
     else {
-      return `${k} ${v[0]} (${(sqlEscape(v[1]) as Array<string>).join(',')})`;
+      return `${k} ${v[0]} ('${(sqlEscape(v[1]) as Array<string>).join(',')}')`;
     }
   }
   else if (v[0] == 'exp') {
@@ -621,7 +618,7 @@ export const parseWhereValue = function(k: string, v: string | Array<string>): s
   }
   else {
     // array eg. ['=', 'value'] or ['like', 'value%']
-    return `${k} ${v[0]} (${sqlEscape(v[1])})`;
+    return `${k} ${v[0]} ('${sqlEscape(v[1])}')`;
   }
 };
 
@@ -641,7 +638,7 @@ export const parseWhereItem = function(k: string, v: string | Array<string | boo
     return (is_and ? ' AND ' : ' OR ') + parseWhereValue(k, v as Array<string>);
   }
   else {
-    return ` AND ${k}=${sqlEscape(v as string)}`;
+    return ` AND ${k}='${sqlEscape(v as string)}'`;
   }
 };
 

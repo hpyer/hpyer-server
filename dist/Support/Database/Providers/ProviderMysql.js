@@ -233,7 +233,7 @@ class ProviderMysql extends ContractSql_1.default {
         let fields = [], values = [];
         for (let k in data) {
             fields.push('`' + k + '`');
-            values.push(Utils.sqlEscape(data[k]));
+            values.push(`'${Utils.sqlEscape(data[k])}'`);
         }
         let sql = `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${values.join(', ')})`;
         return this.execute(sql, null, fetch_last_id);
@@ -242,7 +242,7 @@ class ProviderMysql extends ContractSql_1.default {
         let fields = [], values = [];
         for (let k in data) {
             fields.push('`' + k + '`');
-            values.push(Utils.sqlEscape(data[k]));
+            values.push(`'${Utils.sqlEscape(data[k])}'`);
         }
         let sql = `REPLACE INTO ${table} (${fields.join(', ')}) VALUES (${values.join(', ')})`;
         return this.execute(sql);
@@ -259,7 +259,7 @@ class ProviderMysql extends ContractSql_1.default {
                     }
                 }
                 else {
-                    v = Utils.isNumber(data[k]) ? data[k] : Utils.sqlEscape(data[k]);
+                    v = `'${Utils.sqlEscape(data[k])}'`;
                 }
                 dataArr.push('`' + k + '`=' + v);
             }
