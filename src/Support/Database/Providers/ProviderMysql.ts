@@ -109,7 +109,10 @@ class ProviderMysql extends ContractSql {
   }
 
   startTrans (): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      if (!this.conn) {
+        this.conn = await this.getConnection();
+      }
       this.conn.beginTransaction((e: MysqlError) => {
         if (e) {
           Logger.error('mysql.startTrans: ', e);
@@ -122,7 +125,10 @@ class ProviderMysql extends ContractSql {
   }
 
   commit(): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      if (!this.conn) {
+        this.conn = await this.getConnection();
+      }
       this.conn.commit((e) => {
         if (e) {
           Logger.error('mysql.commit: ', e);
@@ -135,7 +141,10 @@ class ProviderMysql extends ContractSql {
   }
 
   rollback(): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      if (!this.conn) {
+        this.conn = await this.getConnection();
+      }
       this.conn.rollback((e) => {
         if (e) {
           Logger.error('mysql.rollback: ', e);

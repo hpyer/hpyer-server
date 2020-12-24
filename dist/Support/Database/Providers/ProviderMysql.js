@@ -137,7 +137,10 @@ class ProviderMysql extends ContractSql_1.default {
         });
     }
     startTrans() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.conn) {
+                this.conn = yield this.getConnection();
+            }
             this.conn.beginTransaction((e) => {
                 if (e) {
                     Logger_1.default.error('mysql.startTrans: ', e);
@@ -146,10 +149,13 @@ class ProviderMysql extends ContractSql_1.default {
                 Logger_1.default.info('mysql.startTrans');
                 resolve(true);
             });
-        });
+        }));
     }
     commit() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.conn) {
+                this.conn = yield this.getConnection();
+            }
             this.conn.commit((e) => {
                 if (e) {
                     Logger_1.default.error('mysql.commit: ', e);
@@ -158,10 +164,13 @@ class ProviderMysql extends ContractSql_1.default {
                 Logger_1.default.info('mysql.commit');
                 resolve(true);
             });
-        });
+        }));
     }
     rollback() {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.conn) {
+                this.conn = yield this.getConnection();
+            }
             this.conn.rollback((e) => {
                 if (e) {
                     Logger_1.default.error('mysql.rollback: ', e);
@@ -170,7 +179,7 @@ class ProviderMysql extends ContractSql_1.default {
                 Logger_1.default.info('mysql.rollback');
                 resolve(true);
             });
-        });
+        }));
     }
     findAll(table, where = null, options = {}) {
         where = Utils.parseWhere(where);
