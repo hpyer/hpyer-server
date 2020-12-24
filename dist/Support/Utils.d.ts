@@ -21,9 +21,9 @@ export declare const clone: (obj: any) => any;
 export declare const xssFilter: (str: string, whiteList?: XSS.IWhiteList) => string;
 /**
  * 格式化时间
- * @param format 输出格式
- * @param datetime 时间对象、字符串等
- * @param offset 时间偏移量数值，正数表示增加，负数表示减少
+ * @param format 输出格式，默认：YYYY-MM-DD HH:mm:ss
+ * @param datetime 时间对象、字符串等，默认：null 表示当前时间
+ * @param offset 时间偏移量数值，正数表示增加，负数表示减少，默认：0 表示不做偏移
  * @param offsetUnit 时间偏移量单位，默认：'seconds'
  */
 export declare const getFormatTime: (format?: string, datetime?: Moment.MomentInput, offset?: number, offsetUnit?: Moment.unitOfTime.DurationConstructor) => string;
