@@ -7,12 +7,10 @@ LogLevelPrefix.reg(LogLevel);
  * 颜色映射表，更多颜色：https://misc.flogisoft.com/bash/tip_colors_and_formatting
  */
 const COLOR = {
-  DefaultFG : '\x1B[39m',  // Default Foreground
-  DefaultBG : '\x1B[49m',  // Default Background
+  Default : '\x1B[39m',  // Default Foreground
   LightGray : '\x1B[245m', // Light gray
   DarkGray  : '\x1B[90m',  // Dark gray
   Green     : '\x1B[32m',  // Green
-  GreenBG   : '\x1B[42m',  // Green Background
 
   // for loglevel
   TRACE     : '\x1B[35m',  // Magenta
@@ -30,7 +28,7 @@ LogLevelPrefix.apply(LogLevel, {
   },
   format(level, name, timestamp) {
     level = level.toUpperCase();
-    return `${COLOR.DarkGray}[${timestamp}]${COLOR.DefaultFG} ${COLOR[level]}${level}${COLOR.DefaultFG} ${name === DefaultName ? COLOR.Green : COLOR.GreenBG + ' '}${name}${name === DefaultName ? COLOR.DefaultFG : ' ' + COLOR.DefaultBG}:`;
+    return `${COLOR.DarkGray}[${timestamp}]${COLOR.Default} ${COLOR[level]}${level}${COLOR.Default} ${COLOR.Green}${name}${COLOR.Default}:`;
   },
 });
 
