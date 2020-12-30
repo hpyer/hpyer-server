@@ -11,7 +11,6 @@
 * 关系数据库操作（暂支持：MySql）
 * 缓存操作（暂支持：文件、Redis）
 * 视图模版（暂支持：nunjucks）
-* 计划任务
 
 ## 使用方式
 
@@ -39,3 +38,7 @@ await Hpyer.start(cfg);
 ## 配置项
 
 详见：[DefaultConfig.js](dist/Support/DefaultConfig.js)
+
+## DEMO
+
+详见：[test](test/)
