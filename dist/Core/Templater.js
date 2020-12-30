@@ -11,9 +11,9 @@ const Hpyer_1 = require("../Support/Types/Hpyer");
  */
 class Templater {
     constructor(app, provider = null) {
-        this.app = null;
+        this.$app = null;
         this.provider = null;
-        this.app = app;
+        this.$app = app;
         this.provider = provider || app.config.template.provider || Hpyer_1.HpyerTemplateProvider.NUNJUCKS;
     }
     /**
@@ -34,7 +34,7 @@ class Templater {
         switch (this.provider) {
             case Hpyer_1.HpyerTemplateProvider.NUNJUCKS:
             default:
-                nunjucks_1.default.configure(path_1.default.resolve(this.app.config.root.modules), this.app.config.template.nunjucks);
+                nunjucks_1.default.configure(path_1.default.resolve(this.$app.config.root.modules), this.$app.config.template.nunjucks);
                 content = nunjucks_1.default.render.apply(this, args);
         }
         return content;
@@ -48,8 +48,8 @@ class Templater {
         switch (this.provider) {
             case Hpyer_1.HpyerTemplateProvider.NUNJUCKS:
             default:
-                nunjucks_1.default.configure(path_1.default.resolve(this.app.config.root.errors), this.app.config.template.nunjucks);
-                content = nunjucks_1.default.render(this.app.config.template.defaultMessageTpl, opt);
+                nunjucks_1.default.configure(path_1.default.resolve(this.$app.config.root.errors), this.$app.config.template.nunjucks);
+                content = nunjucks_1.default.render(this.$app.config.template.defaultMessageTpl, opt);
         }
         return content;
     }

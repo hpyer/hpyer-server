@@ -1,6 +1,14 @@
-import { Request } from 'koa';
+import { Context, Request } from 'koa';
+import Application from '../../Core/Application';
 
 declare module 'koa' {
+  export interface Context {
+    /**
+     * 应用实例
+     */
+    $app?: Application,
+  }
+
   export interface Request {
     /**
      * 是否ajax请求

@@ -9,12 +9,12 @@ import Application from './Application';
  * 框架模版
  */
 export default class Templater {
-  app: Application = null;
+  $app: Application = null;
 
   provider: HpyerTemplateProvider = null;
 
   constructor(app: Application, provider: HpyerTemplateProvider = null) {
-    this.app = app;
+    this.$app = app;
     this.provider = provider || app.config.template.provider || HpyerTemplateProvider.NUNJUCKS;
   }
 
@@ -37,7 +37,7 @@ export default class Templater {
     switch (this.provider) {
       case HpyerTemplateProvider.NUNJUCKS:
       default:
-        Nunjucks.configure(Path.resolve(this.app.config.root.modules), this.app.config.template.nunjucks);
+        Nunjucks.configure(Path.resolve(this.$app.config.root.modules), this.$app.config.template.nunjucks);
         content = Nunjucks.render.apply(this, args);
     }
     return content;
@@ -52,8 +52,8 @@ export default class Templater {
     switch (this.provider) {
       case HpyerTemplateProvider.NUNJUCKS:
       default:
-        Nunjucks.configure(Path.resolve(this.app.config.root.errors), this.app.config.template.nunjucks);
-        content = Nunjucks.render(this.app.config.template.defaultMessageTpl, opt);
+        Nunjucks.configure(Path.resolve(this.$app.config.root.errors), this.$app.config.template.nunjucks);
+        content = Nunjucks.render(this.$app.config.template.defaultMessageTpl, opt);
     }
     return content;
   }

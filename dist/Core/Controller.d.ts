@@ -8,7 +8,7 @@ export default class Controller {
     /**
      * 应用实例，框架会自动注入
      */
-    app: Application;
+    $app: Application;
     /**
      * 当前 module 名称，框架会自动注入
      */

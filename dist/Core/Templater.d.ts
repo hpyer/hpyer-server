@@ -4,7 +4,7 @@ import Application from './Application';
  * 框架模版
  */
 export default class Templater {
-    app: Application;
+    $app: Application;
     provider: HpyerTemplateProvider;
     constructor(app: Application, provider?: HpyerTemplateProvider);
     /**

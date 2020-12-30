@@ -6,7 +6,6 @@ import Templater from './Templater';
 import ContractSql from '../Support/Database/Contracts/ContractSql';
 import ContractCache from '../Support/Cache/Contracts/ContractCache';
 import Koa from 'koa';
-import { AxiosRequestConfig } from 'axios';
 import Logger from '../Support/Logger';
 import IORedis from 'ioredis';
 /**
@@ -38,12 +37,6 @@ declare class Application {
      */
     server: Koa;
     constructor();
-    /**
-     * 发起http请求
-     * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
-     * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
-     */
-    doRequest(payload: AxiosRequestConfig, returnResponse?: boolean): Promise<any>;
     /**
      * 获取模版操作实例
      * @param provider 模版供应商
@@ -111,7 +104,7 @@ declare class Application {
     /**
      * Koa的控制器处理方法
      */
-    KoaHandler(): Function;
+    KoaHandler(ctx: Koa.Context, next: Koa.Next): Promise<Koa.Next>;
     /**
      * 控制器处理方法
      * @param  module 应用名称

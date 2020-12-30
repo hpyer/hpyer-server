@@ -1,7 +1,6 @@
 'use strict';
 
 import * as Utils from '../Utils';
-import Logger from '../Logger';
 import RequestIp from 'request-ip';
 import { Context, Next } from 'koa';
 
@@ -34,7 +33,7 @@ export default async function (ctx: Context, next: Next) {
 
   ctx.request.client_ip = RequestIp.getClientIp(ctx.request);
 
-  Logger.info('[' + ctx.request.client_ip + ']', ctx.request.url);
+  ctx.$app.log.info('[' + ctx.request.client_ip + ']', ctx.request.method.toUpperCase(), ctx.request.url);
 
   ctx.request.query_raw = {};
   if (ctx.request.query) {

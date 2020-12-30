@@ -11,7 +11,7 @@ export default class Service {
   /**
    * 应用实例，框架会自动注入
    */
-  app: Application = null;
+  $app: Application = null;
 
   constructor () {
   }

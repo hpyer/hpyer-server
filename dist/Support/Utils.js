@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isAjaxRequest = exports.parseWhere = exports.parseWhereItem = exports.parseWhereValue = exports.sqlEscape = exports.jsonError = exports.jsonSuccess = exports.parseQueryString = exports.buildQueryString = exports.urlDecode = exports.urlEncode = exports.htmlUnescape = exports.htmlEscape = exports.md5File = exports.createHmac = exports.createHash = exports.getRandomString = exports.getRandomNumber = exports.base64Decode = exports.base64Encode = exports.sleep = exports.matchAll = exports.toLineCase = exports.toCamelCase = exports.toStudlyCase = exports.toLowerFirstLetter = exports.toUpperFirstLetter = exports.pad = exports.repeat = exports.rtrim = exports.ltrim = exports.trim = exports.inArray = exports.isMatch = exports.isEmpty = exports.isDate = exports.isFunction = exports.isArray = exports.isObject = exports.isNumberString = exports.isNumber = exports.isString = exports.toString = exports.isUuid = exports.getUuid = exports.getMoment = exports.isDateString = exports.getFormatTime = exports.xssFilter = exports.clone = exports.extend = void 0;
+exports.isAjaxRequest = exports.parseWhere = exports.parseWhereItem = exports.parseWhereValue = exports.sqlEscape = exports.jsonError = exports.jsonSuccess = exports.parseQueryString = exports.buildQueryString = exports.urlDecode = exports.urlEncode = exports.htmlUnescape = exports.htmlEscape = exports.doRequest = exports.md5File = exports.createHmac = exports.createHash = exports.getRandomString = exports.getRandomNumber = exports.base64Decode = exports.base64Encode = exports.sleep = exports.matchAll = exports.toLineCase = exports.toCamelCase = exports.toStudlyCase = exports.toLowerFirstLetter = exports.toUpperFirstLetter = exports.pad = exports.repeat = exports.rtrim = exports.ltrim = exports.trim = exports.inArray = exports.isMatch = exports.isEmpty = exports.isDate = exports.isFunction = exports.isArray = exports.isObject = exports.isNumberString = exports.isNumber = exports.isString = exports.toString = exports.isUuid = exports.getUuid = exports.getMoment = exports.isDateString = exports.getFormatTime = exports.xssFilter = exports.clone = exports.extend = void 0;
 const moment_1 = __importDefault(require("moment"));
 const crypto_1 = __importDefault(require("crypto"));
 const fs_1 = __importDefault(require("fs"));
@@ -30,6 +30,8 @@ const stream_1 = __importDefault(require("stream"));
 const Uuid = __importStar(require("uuid"));
 const Xss = __importStar(require("xss"));
 const UrlEncode = __importStar(require("urlencode"));
+const axios_1 = __importDefault(require("axios"));
+const Logger_1 = __importDefault(require("../Support/Logger"));
 /**
  * 扩展对象
  * @param target 目标对象
@@ -488,6 +490,31 @@ exports.md5File = function (path) {
             let str = md5sum.digest('hex').toUpperCase();
             reslove(str);
         });
+    });
+};
+/**
+ * 发起http请求
+ * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
+ * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
+ */
+exports.doRequest = function (payload, returnResponse = false) {
+    let start_time = (new Date).getTime();
+    Logger_1.default.info(`doRequest_${start_time}`, payload);
+    return axios_1.default.request(payload).then((res) => {
+        let end_time = (new Date).getTime();
+        let log_data = res.data;
+        if (payload.responseType == 'stream') {
+            log_data = '[ReadableStream]';
+        }
+        else if (payload.responseType == 'arraybuffer') {
+            log_data = '[Buffer]';
+        }
+        Logger_1.default.info(`doRequest.success_${start_time}`, `${end_time - start_time}ms`, log_data);
+        return returnResponse ? res : res.data;
+    }).catch(err => {
+        let end_time = (new Date).getTime();
+        Logger_1.default.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, err.response.status, err.response.data);
+        return null;
     });
 };
 /**

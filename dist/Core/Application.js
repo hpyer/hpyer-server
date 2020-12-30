@@ -43,7 +43,6 @@ const KoaBody_1 = __importDefault(require("../Support/KoaBody"));
 const koa_session_1 = __importDefault(require("koa-session"));
 const koa_static_1 = __importDefault(require("koa-static"));
 const koa_router_1 = __importDefault(require("koa-router"));
-const axios_1 = __importDefault(require("axios"));
 const Logger_1 = __importDefault(require("../Support/Logger"));
 const ioredis_1 = __importDefault(require("ioredis"));
 const bn_js_1 = __importDefault(require("bn.js"));
@@ -85,8 +84,7 @@ class Application {
          */
         this.runCmd = (cmd, args = []) => {
             return new Promise((resolve, reject) => {
-                let logger = this.log;
-                logger.info('Run command', cmd, args);
+                Logger_1.default.info('Run command', cmd, args);
                 let job = child_process_1.default.spawn(cmd, args);
                 let data_buffers = [];
                 let error_buffers = [];
@@ -99,7 +97,7 @@ class Application {
                 job.on('exit', function (code) {
                     let data = Buffer.concat(data_buffers).toString();
                     let error = Buffer.concat(error_buffers).toString();
-                    logger.info('After run command', data);
+                    Logger_1.default.info('After run command', data);
                     if (error) {
                         reject(error);
                     }
@@ -113,31 +111,6 @@ class Application {
         else {
             this.log.setLevel(this.log.levels.DEBUG);
         }
-    }
-    /**
-     * 发起http请求
-     * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
-     * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
-     */
-    doRequest(payload, returnResponse = false) {
-        let start_time = (new Date).getTime();
-        this.log.info(`doRequest_${start_time}`, payload);
-        return axios_1.default.request(payload).then((res) => {
-            let end_time = (new Date).getTime();
-            let log_data = res.data;
-            if (payload.responseType == 'stream') {
-                log_data = '[ReadableStream]';
-            }
-            else if (payload.responseType == 'arraybuffer') {
-                log_data = '[Buffer]';
-            }
-            this.log.info(`doRequest.success_${start_time}`, `${end_time - start_time}ms`, log_data);
-            return returnResponse ? res : res.data;
-        }).catch(err => {
-            let end_time = (new Date).getTime();
-            this.log.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, err.response.status, err.response.data);
-            return null;
-        });
     }
     /**
      * 获取模版操作实例
@@ -297,7 +270,7 @@ class Application {
                     modelInstances[tag].table = Utils.toLineCase(name, '_');
                 }
                 // 注入相关实例、变量等
-                modelInstances[name].app = this;
+                modelInstances[name].$app = this;
             }
             return modelInstances[tag];
         }
@@ -317,7 +290,7 @@ class Application {
                 let path = this.config.root.services;
                 serviceInstances[name] = new (require(path + name));
                 // 注入相关实例、变量等
-                serviceInstances[name].app = this;
+                serviceInstances[name].$app = this;
             }
             return serviceInstances[name];
         }
@@ -330,13 +303,11 @@ class Application {
     /**
      * Koa的控制器处理方法
      */
-    KoaHandler() {
-        return (ctx, next) => {
-            let module = ctx.params.module || this.config.defaultModuleName;
-            let controller = ctx.params.controller || this.config.defaultControllerName;
-            let action = ctx.params.action || this.config.defaultActionName;
-            return this.ControllerHandler(module, controller, action, ctx, next);
-        };
+    KoaHandler(ctx, next) {
+        let module = ctx.params.module || ctx.$app.config.defaultModuleName;
+        let controller = ctx.params.controller || ctx.$app.config.defaultControllerName;
+        let action = ctx.params.action || ctx.$app.config.defaultActionName;
+        return ctx.$app.ControllerHandler(module, controller, action, ctx, next);
     }
     /**
      * 控制器处理方法
@@ -361,16 +332,16 @@ class Application {
                 this.log.error('Controller `' + controller + '` not found.', e);
                 if (ctx)
                     ctx.response.status = 404;
-                return next ? next() : false;
+                return next ? yield next() : false;
             }
             if (!Utils.isFunction(instance[action + 'Action'])) {
                 this.log.error('Action `' + action + '` not found.');
                 if (ctx)
                     ctx.response.status = 404;
-                return next ? next() : false;
+                return next ? yield next() : false;
             }
             // 注入相关实例、变量等
-            instance.app = this;
+            instance.$app = this;
             instance.module = module;
             instance.controller = controller;
             instance.action = action;
@@ -382,13 +353,13 @@ class Application {
                 if (Utils.isFunction(instance.__before)) {
                     res = yield instance.__before();
                     if (false === res)
-                        return next ? next() : false;
+                        return next ? yield next() : false;
                 }
                 yield instance[action + 'Action']();
                 if (Utils.isFunction(instance.__after)) {
                     res = yield instance.__after();
                     if (false === res)
-                        return next ? next() : false;
+                        return next ? yield next() : false;
                 }
             }
             catch (e) {
@@ -408,7 +379,7 @@ class Application {
                         jumpUrl: ''
                     });
                 }
-                return next ? next() : false;
+                return next ? yield next() : false;
             }
         });
     }
@@ -547,6 +518,10 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
             this.config.root.errors = Utils.rtrim(this.config.root.errors, '\\/+') + '/';
             // 系统请求处理方法
             let koaRouter = new koa_router_1.default;
+            koaRouter.use((ctx, next) => __awaiter(this, void 0, void 0, function* () {
+                ctx.$app = this;
+                yield next();
+            }));
             koaRouter.use(Request_1.default);
             // 自定义路由
             if (this.config.koa.routers && Utils.isArray(this.config.koa.routers)) {
@@ -577,9 +552,9 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
                 });
             }
             // 系统路由
-            koaRouter.all('/', this.KoaHandler());
-            koaRouter.all('/:module/:controller/:action', this.KoaHandler());
-            koaRouter.all('/:controller/:action', this.KoaHandler());
+            koaRouter.all('/', this.KoaHandler);
+            koaRouter.all('/:module/:controller/:action', this.KoaHandler);
+            koaRouter.all('/:controller/:action', this.KoaHandler);
             let argv2 = process.argv[2];
             if (argv2 && /^\/?[a-z]\w*/i.test(argv2)) {
                 let matched = koaRouter.match(argv2, 'GET');

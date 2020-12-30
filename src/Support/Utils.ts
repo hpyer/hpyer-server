@@ -8,6 +8,8 @@ import * as Uuid from 'uuid';
 import * as Xss from 'xss';
 import * as UrlEncode from 'urlencode';
 import { Context } from 'koa';
+import Axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import Logger from '../Support/Logger';
 
 /**
  * 扩展对象
@@ -491,6 +493,34 @@ export const md5File = function (path: string | Stream.Readable): Promise<string
       let str = md5sum.digest('hex').toUpperCase();
       reslove(str);
     });
+  });
+}
+
+/**
+ * 发起http请求
+ * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
+ * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
+ */
+export const doRequest = function(payload: AxiosRequestConfig, returnResponse: boolean = false): Promise <any> {
+  let start_time = (new Date).getTime();
+  Logger.info(`doRequest_${start_time}`, payload);
+
+  return Axios.request(payload).then((res: AxiosResponse) => {
+    let end_time = (new Date).getTime();
+    let log_data = res.data;
+    if (payload.responseType == 'stream') {
+      log_data = '[ReadableStream]';
+    }
+    else if (payload.responseType == 'arraybuffer') {
+      log_data = '[Buffer]';
+    }
+    Logger.info(`doRequest.success_${start_time}`, `${end_time - start_time}ms`, log_data);
+
+    return returnResponse ? res : res.data;
+  }).catch(err => {
+    let end_time = (new Date).getTime();
+    Logger.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, err.response.status, err.response.data);
+    return null;
   });
 }
 

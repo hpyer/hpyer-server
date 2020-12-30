@@ -2,6 +2,7 @@ import Moment from 'moment';
 import Crypto from 'crypto';
 import Stream from 'stream';
 import { Context } from 'koa';
+import { AxiosRequestConfig } from 'axios';
 /**
  * 扩展对象
  * @param target 目标对象
@@ -216,6 +217,12 @@ export declare const createHmac: (str: string, key: string, type?: string, targe
  * @param path 文件路径或文件可读流
  */
 export declare const md5File: (path: string | Stream.Readable) => Promise<string>;
+/**
+ * 发起http请求
+ * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
+ * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
+ */
+export declare const doRequest: (payload: AxiosRequestConfig, returnResponse?: boolean) => Promise<any>;
 /**
  * 编码html特殊符号
  * @param text 原字符串

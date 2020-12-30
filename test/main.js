@@ -73,7 +73,7 @@ describe('Framwork', function () {
   });
 
   it(`Visite default controller`, async function() {
-    let response = await Hpyer.doRequest({
+    let response = await Hpyer.utils.doRequest({
       url: `http://localhost:${config.port}`,
       method: 'get',
     });
@@ -82,7 +82,7 @@ describe('Framwork', function () {
   });
 
   it(`Visite api controller (with custom middleware)`, async function() {
-    let response = await Hpyer.doRequest({
+    let response = await Hpyer.utils.doRequest({
       url: `http://localhost:${config.port}/api/index/index`,
       method: 'get',
     });

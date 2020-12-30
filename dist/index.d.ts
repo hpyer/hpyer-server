@@ -3,6 +3,7 @@ import Controller from './Core/Controller';
 import Model from './Core/Model';
 import Service from './Core/Service';
 import Config from './Support/Config';
+import * as Utils from './Support/Utils';
 /**
  * 框架
  */
@@ -23,3 +24,7 @@ export declare const HpyerService: typeof Service;
  * 配置基类
  */
 export declare const HpyerConfig: typeof Config;
+/**
+ * 工具集合
+ */
+export declare const HpyerUtils: typeof Utils;

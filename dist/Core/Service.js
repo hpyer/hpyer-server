@@ -28,7 +28,7 @@ class Service {
         /**
          * 应用实例，框架会自动注入
          */
-        this.app = null;
+        this.$app = null;
     }
     /**
      * 返回成功时的结果

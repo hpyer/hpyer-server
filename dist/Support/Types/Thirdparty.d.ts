@@ -1,4 +1,11 @@
+import Application from '../../Core/Application';
 declare module 'koa' {
+    interface Context {
+        /**
+         * 应用实例
+         */
+        $app?: Application;
+    }
     interface Request {
         /**
          * 是否ajax请求
@@ -22,4 +29,3 @@ declare module 'koa' {
         post_raw?: object;
     }
 }
-export {};

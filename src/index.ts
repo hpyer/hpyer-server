@@ -4,6 +4,7 @@ import Controller from './Core/Controller';
 import Model from './Core/Model';
 import Service from './Core/Service';
 import Config from './Support/Config';
+import * as Utils from './Support/Utils';
 
 /**
  * 框架
@@ -25,3 +26,7 @@ export const HpyerService = Service;
  * 配置基类
  */
 export const HpyerConfig = Config;
+/**
+ * 工具集合
+ */
+export const HpyerUtils = Utils;
