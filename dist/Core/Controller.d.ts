@@ -1,5 +1,4 @@
-import { HashMap } from '../Support/Types/Hpyer';
-import { Context } from 'koa';
+import { HashMap, HpyerServerKoaContext } from '../Support/Types/Hpyer';
 import Application from './Application';
 /**
  * 控制器基类
@@ -24,7 +23,7 @@ export default class Controller {
     /**
      * 当前 koa 的请求上下文对象，框架会自动注入
      */
-    ctx: Context;
+    ctx: HpyerServerKoaContext;
     /**
      * 是否 post 请求，框架会自动注入
      */

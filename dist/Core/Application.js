@@ -36,6 +36,7 @@ const child_process_1 = __importDefault(require("child_process"));
 const Utils = __importStar(require("../Support/Utils"));
 const DefaultConfig_1 = __importDefault(require("../Support/DefaultConfig"));
 const Model_1 = __importDefault(require("./Model"));
+const Middleware_1 = __importDefault(require("./Middleware"));
 const Templater_1 = __importDefault(require("./Templater"));
 const Request_1 = __importDefault(require("../Support/Middlewares/Request"));
 const koa_1 = __importDefault(require("koa"));
@@ -522,20 +523,31 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
                 ctx.$app = this;
                 yield next();
             }));
-            koaRouter.use(Request_1.default);
+            koaRouter.use(Request_1.default.get());
             // 自定义路由
             if (this.config.koa.routers && Utils.isArray(this.config.koa.routers)) {
                 this.config.koa.routers.forEach(router => {
                     if (router.path && Utils.isString(router.path)) {
                         // 配置指定路由的中间件
-                        if (router.middleware && (Utils.isFunction(router.middleware) || Utils.isArray(router.middleware))) {
-                            try {
-                                koaRouter.use(router.path, router.middleware);
+                        if (router.middleware) {
+                            if (router.middleware instanceof Middleware_1.default) {
+                                try {
+                                    koaRouter.use(router.path, router.middleware.get());
+                                }
+                                catch (e) {
+                                    this.log.error('Invalid middleware.', e);
+                                }
+                                ;
                             }
-                            catch (e) {
-                                this.log.error('Invalid middleware.', e);
+                            else if (Utils.isFunction(router.middleware) || Utils.isArray(router.middleware)) {
+                                try {
+                                    koaRouter.use(router.path, router.middleware);
+                                }
+                                catch (e) {
+                                    this.log.error('Invalid koa.middleware.', e);
+                                }
+                                ;
                             }
-                            ;
                         }
                         // 增加路由处理方法
                         if (router.handler && Utils.isFunction(router.handler)) {

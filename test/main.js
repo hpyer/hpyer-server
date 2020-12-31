@@ -1,7 +1,6 @@
 const assert = require('assert');
 
 const { HpyerApplication, HpyerConfig } = require('../dist');
-require('../dist/Support/Types/Thirdparty');
 
 const Package = require('../package.json');
 const Path = require('path');

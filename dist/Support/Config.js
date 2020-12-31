@@ -89,15 +89,7 @@ class Config {
             for (let k in options) {
                 if (options[k] === null)
                     continue;
-                if (Utils.isObject(options[k])) {
-                    this[k] = Utils.extend({}, options[k]);
-                }
-                else if (Utils.isArray(options[k])) {
-                    this[k] = Utils.extend([], options[k]);
-                }
-                else {
-                    this[k] = options[k];
-                }
+                this[k] = Utils.merge(this[k], options[k]);
             }
     }
 }

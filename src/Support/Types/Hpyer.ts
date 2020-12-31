@@ -4,7 +4,64 @@ import { ConfigureOptions } from "nunjucks";
 import { RedisOptions } from "ioredis";
 import Model from "../../Core/Model";
 import Service from "../../Core/Service";
-import { Middleware } from "koa";
+import Middleware from "../../Core/Middleware";
+import { DefaultContext, BaseRequest, DefaultState, Middleware as KoaMiddleware, ParameterizedContext, Next } from "koa";
+import Application from '../../Core/Application';
+
+/**
+ * Koa请求对象
+ */
+export interface HpyerServerKoaRequest extends BaseRequest {
+  /**
+   * 是否ajax请求
+   */
+  is_ajax?: boolean,
+  /**
+   * 客户端ip
+   */
+  client_ip?: string,
+  /**
+   * query的数据
+   */
+  query: object,
+  /**
+   * query的原始数据
+   */
+  query_raw?: object,
+  /**
+   * post的数据
+   */
+  post?: object,
+  /**
+   * post的原始数据
+   */
+  post_raw?: object,
+}
+
+/**
+ * Koa上下文对象
+ */
+export interface HpyerServerKoaContext extends DefaultContext {
+  /**
+   * 应用实例
+   */
+  $app?: Application,
+  /**
+   * Koa请求对象
+   */
+  request?: HpyerServerKoaRequest,
+}
+
+/**
+ * Koa状态对象
+ */
+export interface HpyerServerKoaState extends DefaultState {
+}
+
+/**
+ * Koa中间件类型
+ */
+export type HpyerServerKoaMiddleware<StateT = HpyerServerKoaState, CustomT = HpyerServerKoaContext> = (context: ParameterizedContext<StateT, CustomT>, next: Next) => any
 
 export interface HashMap {
   [key: string]: any,
@@ -177,9 +234,9 @@ export interface HpyerServerConfigKoaRouter {
    */
   path?: string;
   /**
-   * 中间件，Koa.Middleware 实例，在 handler 之前执行
+   * 中间件，Koa.Middleware 或 HpyerMiddleware 实例，在 handler 之前执行
    */
-  middleware?: Middleware;
+  middleware?: HpyerServerKoaMiddleware | Middleware;
   /**
    * 请求方式，如：all、get、post等，默认：all
    */
@@ -197,7 +254,7 @@ export interface HpyerServerConfigKoaRouter {
    *
    * }
    */
-  handler?: Middleware;
+  handler?: KoaMiddleware;
 }
 
 /**

@@ -1,7 +1,6 @@
 import { HpyerServerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider } from '../Support/Types/Hpyer';
 import * as Utils from '../Support/Utils';
 import Model from './Model';
-import Service from './Service';
 import Templater from './Templater';
 import ContractSql from '../Support/Database/Contracts/ContractSql';
 import ContractCache from '../Support/Cache/Contracts/ContractCache';
@@ -100,7 +99,7 @@ declare class Application {
      * 获取service实例
      * @param  {string} name 服务名称
      */
-    service(name: string): Service;
+    service(name: string): import("./Service").default;
     /**
      * Koa的控制器处理方法
      */

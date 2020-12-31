@@ -1,8 +1,9 @@
 import Moment from 'moment';
 import Crypto from 'crypto';
 import Stream from 'stream';
-import { Context } from 'koa';
 import { AxiosRequestConfig } from 'axios';
+import { HpyerServerKoaContext } from './Types/Hpyer';
+export declare const merge: (target: any, source: any) => any;
 /**
  * 扩展对象
  * @param target 目标对象
@@ -292,4 +293,4 @@ export declare const parseWhere: (where: object | Array<string | boolean> | stri
  * 是否ajax请求
  * @param  ctx  koa的上下文
  */
-export declare const isAjaxRequest: (ctx: Context) => boolean;
+export declare const isAjaxRequest: (ctx: HpyerServerKoaContext) => boolean;

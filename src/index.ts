@@ -3,6 +3,7 @@ import Application from './Core/Application';
 import Controller from './Core/Controller';
 import Model from './Core/Model';
 import Service from './Core/Service';
+import Middleware from './Core/Middleware';
 import Config from './Support/Config';
 import * as Utils from './Support/Utils';
 
@@ -22,6 +23,10 @@ export const HpyerModel = Model;
  * 服务基类
  */
 export const HpyerService = Service;
+/**
+ * 中间件封装方法
+ */
+export const HpyerMiddleware = Middleware;
 /**
  * 配置基类
  */

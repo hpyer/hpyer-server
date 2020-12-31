@@ -1,6 +1,6 @@
 'use strict';
 
-import { HpyerServerConfig, HpyerLuaParams, HpyerModelMap, HpyerServiceMap, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider } from '../Support/Types/Hpyer';
+import { HpyerServerConfig, HpyerLuaParams, HpyerModelMap, HpyerServiceMap, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider, HpyerServerKoaContext, HpyerServerKoaState } from '../Support/Types/Hpyer';
 
 import Path from 'path';
 import ChildProcess from 'child_process';
@@ -9,7 +9,7 @@ import * as Utils from '../Support/Utils';
 import DefaultConfig from '../Support/DefaultConfig';
 import Controller from './Controller';
 import Model from './Model';
-import Service from './Service';
+import Middleware from './Middleware';
 import Templater from './Templater';
 
 import ContractSql from '../Support/Database/Contracts/ContractSql';
@@ -17,7 +17,7 @@ import ContractCache from '../Support/Cache/Contracts/ContractCache';
 
 import MiddlewareRequest from '../Support/Middlewares/Request';
 
-import Koa, { Context, Next } from 'koa';
+import Koa, { Next } from 'koa';
 import KoaBody from '../Support/KoaBody';
 import KoaSession from 'koa-session';
 import KoaStatic from 'koa-static';
@@ -501,23 +501,33 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
 
     // 系统请求处理方法
     let koaRouter = new KoaRouter;
-    koaRouter.use(async (ctx: Context, next: Next) => {
+    koaRouter.use(async (ctx: HpyerServerKoaContext, next: Next) => {
       ctx.$app = this;
       await next();
     });
-    koaRouter.use(MiddlewareRequest);
+    koaRouter.use(MiddlewareRequest.get());
     // 自定义路由
     if (this.config.koa.routers && Utils.isArray(this.config.koa.routers)) {
       this.config.koa.routers.forEach(router => {
         if (router.path && Utils.isString(router.path)) {
           // 配置指定路由的中间件
-          if (router.middleware && (Utils.isFunction(router.middleware) || Utils.isArray(router.middleware))) {
-            try {
-              koaRouter.use(router.path, router.middleware);
+          if (router.middleware) {
+            if (router.middleware instanceof Middleware) {
+              try {
+                koaRouter.use(router.path, router.middleware.get());
+              }
+              catch (e) {
+                this.log.error('Invalid middleware.', e);
+              };
             }
-            catch (e) {
-              this.log.error('Invalid middleware.', e);
-            };
+            else if (Utils.isFunction(router.middleware) || Utils.isArray(router.middleware)) {
+              try {
+                koaRouter.use(router.path, router.middleware);
+              }
+              catch (e) {
+                this.log.error('Invalid koa.middleware.', e);
+              };
+            }
           }
           // 增加路由处理方法
           if (router.handler && Utils.isFunction(router.handler)) {
@@ -561,7 +571,7 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
       }
     }
     else {
-      this.server = new Koa();
+      this.server = new Koa<HpyerServerKoaState, HpyerServerKoaContext>();
 
       this.server.keys = [this.config.key];
 
@@ -576,7 +586,7 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
       this.server.use(koaRouter.routes()).use(koaRouter.allowedMethods());
 
       // 404
-      this.server.use(async (ctx: Koa.Context, next: Koa.Next) => {
+      this.server.use(async (ctx: HpyerServerKoaContext, next: Koa.Next) => {
         if (ctx.status === 404) {
           if (Utils.isAjaxRequest(ctx)) {
             ctx.type = 'application/json';

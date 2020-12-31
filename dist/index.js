@@ -22,11 +22,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HpyerUtils = exports.HpyerConfig = exports.HpyerService = exports.HpyerModel = exports.HpyerController = exports.HpyerApplication = void 0;
+exports.HpyerUtils = exports.HpyerConfig = exports.HpyerMiddleware = exports.HpyerService = exports.HpyerModel = exports.HpyerController = exports.HpyerApplication = void 0;
 const Application_1 = __importDefault(require("./Core/Application"));
 const Controller_1 = __importDefault(require("./Core/Controller"));
 const Model_1 = __importDefault(require("./Core/Model"));
 const Service_1 = __importDefault(require("./Core/Service"));
+const Middleware_1 = __importDefault(require("./Core/Middleware"));
 const Config_1 = __importDefault(require("./Support/Config"));
 const Utils = __importStar(require("./Support/Utils"));
 /**
@@ -45,6 +46,10 @@ exports.HpyerModel = Model_1.default;
  * 服务基类
  */
 exports.HpyerService = Service_1.default;
+/**
+ * 中间件封装方法
+ */
+exports.HpyerMiddleware = Middleware_1.default;
 /**
  * 配置基类
  */

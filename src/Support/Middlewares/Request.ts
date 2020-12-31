@@ -2,7 +2,9 @@
 
 import * as Utils from '../Utils';
 import RequestIp from 'request-ip';
-import { Context, Next } from 'koa';
+import { Next } from 'koa';
+import Middleware from '../../Core/Middleware';
+import { HpyerServerKoaContext } from '../Types/Hpyer';
 
 const XssHandler = function (item: any): any {
   if (Utils.isObject(item)) {
@@ -26,7 +28,7 @@ const XssHandler = function (item: any): any {
   }
 }
 
-export default async function (ctx: Context, next: Next) {
+export default new Middleware(async function (ctx: HpyerServerKoaContext, next: Next) {
   if (ctx.path == '/favicon.ico') {
     return false;
   }
@@ -70,4 +72,4 @@ export default async function (ctx: Context, next: Next) {
   }
 
   await next();
-};
+});

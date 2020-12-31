@@ -7,9 +7,33 @@ import Stream from 'stream';
 import * as Uuid from 'uuid';
 import * as Xss from 'xss';
 import * as UrlEncode from 'urlencode';
-import { Context } from 'koa';
 import Axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import Logger from '../Support/Logger';
+import { HpyerServerKoaContext } from './Types/Hpyer';
+
+export const merge = (target: any, source: any): any => {
+  if (isObject(source)) {
+    if (!target || !isObject(target)) {
+      target = {};
+    }
+    Object.keys(source).map((k) => {
+      if (!target[k]) {
+        target[k] = null;
+      }
+      target[k] = merge(target[k], source[k]);
+    });
+  }
+  else if (isArray(source)) {
+    if (!target || !isArray(target)) {
+      target = [];
+    }
+    target = target.concat(target, source);
+  }
+  else {
+    target = source;
+  }
+  return target;
+}
 
 /**
  * 扩展对象
@@ -37,13 +61,7 @@ export const extend = (target = {}, ...args) => {
       if (src && src === copy) {
         continue;
       }
-      if (isArray(copy)) {
-        target[name] = extend([], copy);
-      } else if (isObject(copy)) {
-        target[name] = extend(src && isObject(src) ? src : {}, copy);
-      } else {
-        target[name] = copy;
-      }
+      target[name] = merge(target[name], copy);
     }
   }
   return target;
@@ -744,7 +762,7 @@ export const parseWhere = function(where: object | Array<string | boolean> | str
  * 是否ajax请求
  * @param  ctx  koa的上下文
  */
-export const isAjaxRequest = function(ctx: Context): boolean {
+export const isAjaxRequest = function(ctx: HpyerServerKoaContext): boolean {
   if (ctx.request.is_ajax || (ctx.request.header['x-requested-with'] && ctx.request.header['x-requested-with'] == 'XMLHttpRequest')) {
     return true;
   }

@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isAjaxRequest = exports.parseWhere = exports.parseWhereItem = exports.parseWhereValue = exports.sqlEscape = exports.jsonError = exports.jsonSuccess = exports.parseQueryString = exports.buildQueryString = exports.urlDecode = exports.urlEncode = exports.htmlUnescape = exports.htmlEscape = exports.doRequest = exports.md5File = exports.createHmac = exports.createHash = exports.getRandomString = exports.getRandomNumber = exports.base64Decode = exports.base64Encode = exports.sleep = exports.matchAll = exports.toLineCase = exports.toCamelCase = exports.toStudlyCase = exports.toLowerFirstLetter = exports.toUpperFirstLetter = exports.pad = exports.repeat = exports.rtrim = exports.ltrim = exports.trim = exports.inArray = exports.isMatch = exports.isEmpty = exports.isDate = exports.isFunction = exports.isArray = exports.isObject = exports.isNumberString = exports.isNumber = exports.isString = exports.toString = exports.isUuid = exports.getUuid = exports.getMoment = exports.isDateString = exports.getFormatTime = exports.xssFilter = exports.clone = exports.extend = void 0;
+exports.isAjaxRequest = exports.parseWhere = exports.parseWhereItem = exports.parseWhereValue = exports.sqlEscape = exports.jsonError = exports.jsonSuccess = exports.parseQueryString = exports.buildQueryString = exports.urlDecode = exports.urlEncode = exports.htmlUnescape = exports.htmlEscape = exports.doRequest = exports.md5File = exports.createHmac = exports.createHash = exports.getRandomString = exports.getRandomNumber = exports.base64Decode = exports.base64Encode = exports.sleep = exports.matchAll = exports.toLineCase = exports.toCamelCase = exports.toStudlyCase = exports.toLowerFirstLetter = exports.toUpperFirstLetter = exports.pad = exports.repeat = exports.rtrim = exports.ltrim = exports.trim = exports.inArray = exports.isMatch = exports.isEmpty = exports.isDate = exports.isFunction = exports.isArray = exports.isObject = exports.isNumberString = exports.isNumber = exports.isString = exports.toString = exports.isUuid = exports.getUuid = exports.getMoment = exports.isDateString = exports.getFormatTime = exports.xssFilter = exports.clone = exports.extend = exports.merge = void 0;
 const moment_1 = __importDefault(require("moment"));
 const crypto_1 = __importDefault(require("crypto"));
 const fs_1 = __importDefault(require("fs"));
@@ -32,6 +32,29 @@ const Xss = __importStar(require("xss"));
 const UrlEncode = __importStar(require("urlencode"));
 const axios_1 = __importDefault(require("axios"));
 const Logger_1 = __importDefault(require("../Support/Logger"));
+exports.merge = (target, source) => {
+    if (exports.isObject(source)) {
+        if (!target || !exports.isObject(target)) {
+            target = {};
+        }
+        Object.keys(source).map((k) => {
+            if (!target[k]) {
+                target[k] = null;
+            }
+            target[k] = exports.merge(target[k], source[k]);
+        });
+    }
+    else if (exports.isArray(source)) {
+        if (!target || !exports.isArray(target)) {
+            target = [];
+        }
+        target = target.concat(target, source);
+    }
+    else {
+        target = source;
+    }
+    return target;
+};
 /**
  * 扩展对象
  * @param target 目标对象
@@ -58,15 +81,7 @@ exports.extend = (target = {}, ...args) => {
             if (src && src === copy) {
                 continue;
             }
-            if (exports.isArray(copy)) {
-                target[name] = exports.extend([], copy);
-            }
-            else if (exports.isObject(copy)) {
-                target[name] = exports.extend(src && exports.isObject(src) ? src : {}, copy);
-            }
-            else {
-                target[name] = copy;
-            }
+            target[name] = exports.merge(target[name], copy);
         }
     }
     return target;

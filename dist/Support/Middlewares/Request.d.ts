@@ -1,2 +1,3 @@
-import { Context, Next } from 'koa';
-export default function (ctx: Context, next: Next): Promise<boolean>;
+import Middleware from '../../Core/Middleware';
+declare const _default: Middleware;
+export default _default;

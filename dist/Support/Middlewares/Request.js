@@ -33,6 +33,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Utils = __importStar(require("../Utils"));
 const request_ip_1 = __importDefault(require("request-ip"));
+const Middleware_1 = __importDefault(require("../../Core/Middleware"));
 const XssHandler = function (item) {
     if (Utils.isObject(item)) {
         let newItem = {};
@@ -55,7 +56,7 @@ const XssHandler = function (item) {
         return Utils.xssFilter(item);
     }
 };
-function default_1(ctx, next) {
+exports.default = new Middleware_1.default(function (ctx, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (ctx.path == '/favicon.ico') {
             return false;
@@ -98,6 +99,4 @@ function default_1(ctx, next) {
         }
         yield next();
     });
-}
-exports.default = default_1;
-;
+});
