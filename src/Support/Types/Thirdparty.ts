@@ -2,6 +2,9 @@ import { Context, Request } from 'koa';
 import Application from '../../Core/Application';
 
 declare module 'koa' {
+  /**
+   * Koa上下文对象
+   */
   export interface Context {
     /**
      * 应用实例
@@ -9,6 +12,9 @@ declare module 'koa' {
     $app?: Application,
   }
 
+  /**
+   * Koa请求对象
+   */
   export interface Request {
     /**
      * 是否ajax请求
@@ -18,6 +24,10 @@ declare module 'koa' {
      * 客户端ip
      */
     client_ip?: string,
+    /**
+     * query的数据
+     */
+    query?: object,
     /**
      * query的原始数据
      */
