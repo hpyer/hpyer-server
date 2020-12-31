@@ -3,6 +3,7 @@ import { ConfigureOptions } from "nunjucks";
 import { RedisOptions } from "ioredis";
 import Model from "../../Core/Model";
 import Service from "../../Core/Service";
+import { Middleware } from "koa";
 export interface HashMap {
     [key: string]: any;
 }
@@ -12,8 +13,17 @@ export interface HpyerModelMap {
 export interface HpyerServiceMap {
     [key: string]: Service;
 }
+/**
+ * lua 参数对象
+ */
 export interface HpyerLuaParams {
+    /**
+     * 键名
+     */
     key: string;
+    /**
+     * 键值
+     */
     value?: string;
 }
 export declare enum HpyerApplicationEnv {
@@ -32,6 +42,9 @@ export declare enum HpyerCacheProvider {
 export declare enum HpyerTemplateProvider {
     NUNJUCKS = "nunjucks"
 }
+/**
+ * 目录相关配置
+ */
 export interface HpyerServerConfigRoot {
     /**
      * modules 所在目录
@@ -50,6 +63,9 @@ export interface HpyerServerConfigRoot {
      */
     errors: string;
 }
+/**
+ * 唯一id发号器相关配置（雪花算法）
+ */
 export interface HpyerServerConfigUniqueId {
     /**
      * redis 的hash键名
@@ -60,6 +76,9 @@ export interface HpyerServerConfigUniqueId {
      */
     epoch?: number;
 }
+/**
+ * koa-body 解析器相关配置
+ */
 export interface HpyerServerConfigKoaBody {
     /**
      * 是否返回原始报文
@@ -98,27 +117,98 @@ export interface HpyerServerConfigKoaBody {
      */
     xmlLimit?: string;
 }
+/**
+ * koa-session 相关配置
+ */
 export interface HpyerServerConfigKoaSession {
+    /**
+     * 对应的cookie名称，默认：koa:sess
+     */
     key?: string;
-    maxAge?: number;
+    /**
+     * 有效期，填数字或 'session'
+     *
+     * 如果是数字，单位：毫秒，默认：1天
+     *
+     * 如果是 'session'，则浏览器关闭后失效
+     */
+    maxAge?: number | 'session';
+    /**
+     * 是否可重写，默认：true
+     */
     overwrite?: boolean;
+    /**
+     * 是否 http only，默认：true
+     */
     httpOnly?: boolean;
+    /**
+     * 是否签名，默认：true
+     */
     signed?: boolean;
+    /**
+     * 是否在每次服务器作出响应时，更新cookie的有效期为 maxAge，默认：false
+     */
     rolling?: boolean;
+    /**
+     * 快过期时，是否刷新cookie，以保持用户登录状态，默认：false
+     */
     renew?: boolean;
 }
+/**
+ * 自定义路由
+ */
 export interface HpyerServerConfigKoaRouter {
+    /**
+     * 访问路径，如：/api/user/login、/api/(.*)
+     */
     path?: string;
-    middleware?: Function;
+    /**
+     * 中间件，Koa.Middleware 实例，在 handler 之前执行
+     */
+    middleware?: Middleware;
+    /**
+     * 请求方式，如：all、get、post等，默认：all
+     */
     method?: string;
-    handler?: Function;
+    /**
+     * 路由的处理方法，实际上也是一个 Koa.Middleware 实例
+     *
+     * 如需要自定义特殊url，可在此方法中调用 ctx.$app.ControllerHandler 方法，以映射到对应的控制器中
+     *
+     * 如：async (ctx, next) => {
+     *
+     *   let module = 'api', controller = 'user', action = 'login';
+     *
+     *   await ctx.$app.ControllerHandler(module, controller, action, ctx, next);
+     *
+     * }
+     */
+    handler?: Middleware;
 }
+/**
+ * koa 相关配置
+ */
 export interface HpyerServerConfigKoa {
+    /**
+     * koa-body 相关配置
+     */
     body?: HpyerServerConfigKoaBody;
+    /**
+     * koa-session 相关配置，详见：https://www.npmjs.com/package/koa-session
+     */
     session?: HpyerServerConfigKoaSession;
+    /**
+     * 需要加载的静态资源目录列表
+     */
     statics?: Array<string>;
+    /**
+     * 自定义路由列表
+     */
     routers?: Array<HpyerServerConfigKoaRouter>;
 }
+/**
+ * 数据库相关配置
+ */
 export interface HpyerServerConfigDb {
     /**
      * 是否启用
@@ -155,6 +245,9 @@ export interface HpyerServerConfigDbQueryOption {
      */
     lock?: boolean;
 }
+/**
+ * 文件缓存相关配置
+ */
 export interface HpyerServerConfigCacheFileOptions {
     /**
      * 缓存文件存储位置
@@ -173,6 +266,9 @@ export interface HpyerServerConfigCacheFileOptions {
      */
     ext: string;
 }
+/**
+ * 缓存相关配置
+ */
 export interface HpyerServerConfigCache {
     /**
      * 是否启用
@@ -257,7 +353,7 @@ export interface HpyerServerConfig {
      */
     root: HpyerServerConfigRoot;
     /**
-     * redis 唯一id相关配置
+     * 唯一id发号器相关配置（雪花算法），需开启 redis
      */
     uniqueId: HpyerServerConfigUniqueId;
     /**
