@@ -19,7 +19,7 @@ const COLOR = {
     DEBUG: '\x1B[96m',
     INFO: '\x1B[97m',
     WARN: '\x1B[33m',
-    ERROR: '\x1B[31m',
+    ERROR: '\x1B[31m', // Magenta
 };
 const DefaultName = 'HpyerServer';
 loglevel_plugin_prefix_1.default.apply(loglevel_1.default, {

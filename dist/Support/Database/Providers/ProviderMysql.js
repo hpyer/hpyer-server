@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -232,8 +232,16 @@ class ProviderMysql extends ContractSql_1.default {
     create(table, data, fetch_last_id = true) {
         let fields = [], values = [];
         for (let k in data) {
+            if (data[k] == undefined || typeof data[k] == 'undefined') {
+                continue;
+            }
             fields.push('`' + k + '`');
-            values.push(`'${Utils.sqlEscape(data[k])}'`);
+            if (data[k] == null) {
+                values.push(`NULL`);
+            }
+            else {
+                values.push(`'${Utils.sqlEscape(data[k])}'`);
+            }
         }
         let sql = `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${values.join(', ')})`;
         return this.execute(sql, null, fetch_last_id);
@@ -241,8 +249,16 @@ class ProviderMysql extends ContractSql_1.default {
     replace(table, data) {
         let fields = [], values = [];
         for (let k in data) {
+            if (data[k] == undefined || typeof data[k] == 'undefined') {
+                continue;
+            }
             fields.push('`' + k + '`');
-            values.push(`'${Utils.sqlEscape(data[k])}'`);
+            if (data[k] == null) {
+                values.push(`NULL`);
+            }
+            else {
+                values.push(`'${Utils.sqlEscape(data[k])}'`);
+            }
         }
         let sql = `REPLACE INTO ${table} (${fields.join(', ')}) VALUES (${values.join(', ')})`;
         return this.execute(sql);
@@ -252,8 +268,14 @@ class ProviderMysql extends ContractSql_1.default {
             where = Utils.parseWhere(where);
             let dataArr = [];
             for (let k in data) {
+                if (data[k] == undefined || typeof data[k] == 'undefined') {
+                    continue;
+                }
                 let v = '';
-                if (Utils.isArray(data[k])) {
+                if (data[k] == null) {
+                    v = 'NULL';
+                }
+                else if (Utils.isArray(data[k])) {
                     if (data[k][0] == 'exp') {
                         v = data[k][1];
                     }
