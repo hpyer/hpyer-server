@@ -206,8 +206,16 @@ class ProviderMysql extends ContractSql {
   create(table: string, data: object, fetch_last_id: boolean = true): Promise<any> {
     let fields = [], values = [];
     for (let k in data) {
+      if (data[k] == undefined || typeof data[k] == 'undefined') {
+        continue;
+      }
       fields.push('`' + k + '`');
-      values.push(`'${Utils.sqlEscape(data[k])}'`);
+      if (data[k] == null) {
+        values.push(`NULL`);
+      }
+      else {
+        values.push(`'${Utils.sqlEscape(data[k])}'`);
+      }
     }
     let sql = `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${values.join(', ')})`;
     return this.execute(sql, null, fetch_last_id);
@@ -216,8 +224,16 @@ class ProviderMysql extends ContractSql {
   replace(table: string, data: object): Promise<any> {
     let fields = [], values = [];
     for (let k in data) {
+      if (data[k] == undefined || typeof data[k] == 'undefined') {
+        continue;
+      }
       fields.push('`' + k + '`');
-      values.push(`'${Utils.sqlEscape(data[k])}'`);
+      if (data[k] == null) {
+        values.push(`NULL`);
+      }
+      else {
+        values.push(`'${Utils.sqlEscape(data[k])}'`);
+      }
     }
     let sql = `REPLACE INTO ${table} (${fields.join(', ')}) VALUES (${values.join(', ')})`;
     return this.execute(sql);
@@ -227,8 +243,14 @@ class ProviderMysql extends ContractSql {
     where = Utils.parseWhere(where);
     let dataArr = [];
     for (let k in data) {
+      if (data[k] == undefined || typeof data[k] == 'undefined') {
+        continue;
+      }
       let v = '';
-      if (Utils.isArray(data[k])) {
+      if (data[k] == null) {
+        v = 'NULL';
+      }
+      else if (Utils.isArray(data[k])) {
         if (data[k][0] == 'exp') {
           v = data[k][1];
         }
