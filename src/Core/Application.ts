@@ -447,7 +447,7 @@ return {tonumber(now[1]), tonumber(now[2]), machineId, count};`;
     ]);
     // redis的毫秒是6位的，取前3位
     segments[1] = parseInt((segments[1] / 1000).toString());
-    return this.buildUniqueId.call(this, segments);
+    return this.buildUniqueId.apply(this, segments);
   }
 
   /**
