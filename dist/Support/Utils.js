@@ -33,6 +33,7 @@ const Xss = __importStar(require("xss"));
 const UrlEncode = __importStar(require("urlencode"));
 const axios_1 = __importDefault(require("axios"));
 const Logger_1 = __importDefault(require("../Support/Logger"));
+const mysql_1 = __importDefault(require("mysql"));
 const merge = (target, source) => {
     if (exports.isObject(source)) {
         if (source.constructor !== Object) {
@@ -669,7 +670,7 @@ const sqlEscape = function (str) {
         return arr;
     }
     else {
-        return `${(str + '').replace(/(\'|\")/i, '\\$1')}`;
+        return mysql_1.default.escape(str);
     }
 };
 exports.sqlEscape = sqlEscape;
@@ -682,17 +683,17 @@ const parseWhereValue = function (k, v) {
     if (exports.isArray(v[1])) {
         // array eg. ['in', ['value1', 'value2', 'value3']]
         if (v[0].toLowerCase() == 'between') {
-            return `${k} BETWEEN '${exports.sqlEscape(v[1][0])}' AND '${exports.sqlEscape(v[1][1])}'`;
+            return `${k} BETWEEN ${exports.sqlEscape(v[1][0])} AND ${exports.sqlEscape(v[1][1])}`;
         }
         else if (v[0].toLowerCase() == 'like') {
             let a = [];
             for (let i = 0; i < v[1].length; i++) {
-                a.push(`${k} LIKE '${exports.sqlEscape(v[1][i])}'`);
+                a.push(`${k} LIKE ${exports.sqlEscape(v[1][i])}`);
             }
             return a.join(' OR ');
         }
         else {
-            return `${k} ${v[0]} ('${exports.sqlEscape(v[1]).join(',')}')`;
+            return `${k} ${v[0]} (${exports.sqlEscape(v[1]).join(',')})`;
         }
     }
     else if (v[0] == 'exp') {
@@ -701,7 +702,7 @@ const parseWhereValue = function (k, v) {
     }
     else {
         // array eg. ['=', 'value'] or ['like', 'value%']
-        return `${k} ${v[0]} ('${exports.sqlEscape(v[1])}')`;
+        return `${k} ${v[0]} (${exports.sqlEscape(v[1])})`;
     }
 };
 exports.parseWhereValue = parseWhereValue;
@@ -721,7 +722,7 @@ const parseWhereItem = function (k, v) {
         return (is_and ? ' AND ' : ' OR ') + exports.parseWhereValue(k, v);
     }
     else {
-        return ` AND ${k}='${exports.sqlEscape(v)}'`;
+        return ` AND ${k}=${exports.sqlEscape(v)}`;
     }
 };
 exports.parseWhereItem = parseWhereItem;

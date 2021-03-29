@@ -240,7 +240,7 @@ class ProviderMysql extends ContractSql_1.default {
                 values.push(`NULL`);
             }
             else {
-                values.push(`'${Utils.sqlEscape(data[k])}'`);
+                values.push(Utils.sqlEscape(data[k]));
             }
         }
         let sql = `INSERT INTO ${table} (${fields.join(', ')}) VALUES (${values.join(', ')})`;
@@ -257,7 +257,7 @@ class ProviderMysql extends ContractSql_1.default {
                 values.push(`NULL`);
             }
             else {
-                values.push(`'${Utils.sqlEscape(data[k])}'`);
+                values.push(Utils.sqlEscape(data[k]));
             }
         }
         let sql = `REPLACE INTO ${table} (${fields.join(', ')}) VALUES (${values.join(', ')})`;
@@ -281,7 +281,7 @@ class ProviderMysql extends ContractSql_1.default {
                     }
                 }
                 else {
-                    v = `'${Utils.sqlEscape(data[k])}'`;
+                    v = Utils.sqlEscape(data[k]);
                 }
                 dataArr.push('`' + k + '`=' + v);
             }
