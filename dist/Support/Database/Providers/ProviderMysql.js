@@ -88,12 +88,18 @@ class ProviderMysql extends ContractSql_1.default {
                         if (e)
                             return reject(e);
                         if (fetch_last_id && (/^INSERT/ig).test(sql)) {
-                            this.conn.query('SELECT last_insert_id() AS id', (e1, results1) => {
-                                if (e1)
-                                    return reject(e1);
-                                let last_insert_id = results1 && results1[0] && results1[0].id ? results1[0].id : 0;
-                                resolve(last_insert_id);
-                            });
+                            try {
+                                this.conn.query('SELECT last_insert_id() AS id', (e1, results1) => {
+                                    if (e1)
+                                        return reject(e1);
+                                    let last_insert_id = results1 && results1[0] && results1[0].id ? results1[0].id : 0;
+                                    resolve(last_insert_id);
+                                });
+                            }
+                            catch (e) {
+                                // 获取自增id失败时返回插入成功
+                                resolve(true);
+                            }
                         }
                         else {
                             resolve(results);
