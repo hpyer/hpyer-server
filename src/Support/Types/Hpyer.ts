@@ -7,6 +7,7 @@ import Service from "../../Core/Service";
 import Middleware from "../../Core/Middleware";
 import { DefaultContext, BaseRequest, DefaultState, Middleware as KoaMiddleware, ParameterizedContext, Next } from "koa";
 import Application from '../../Core/Application';
+import ContractSql from "../Database/Contracts/ContractSql";
 
 /**
  * Koa请求对象
@@ -463,3 +464,5 @@ export interface HpyerServerConfig {
   template: HpyerServerConfigTemplate;
 
 };
+
+export type HpyerDbSqlTransactionClosure = (db: ContractSql) => Promise<boolean>;

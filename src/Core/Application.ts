@@ -1,6 +1,6 @@
 'use strict';
 
-import { HpyerServerConfig, HpyerLuaParams, HpyerModelMap, HpyerServiceMap, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider, HpyerServerKoaContext, HpyerServerKoaState } from '../Support/Types/Hpyer';
+import { HpyerServerConfig, HpyerLuaParams, HpyerModelMap, HpyerServiceMap, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider, HpyerServerKoaContext, HpyerServerKoaState, HpyerDbSqlTransactionClosure } from '../Support/Types/Hpyer';
 
 import Path from 'path';
 import ChildProcess from 'child_process';
@@ -106,7 +106,7 @@ class Application {
    * @param provider 数据库供应商
    * @return 闭包的返回值也是该方法的返回值
    */
-  async transaction(closure: Function, provider: HpyerDbProvider = null): Promise<any> {
+  async transaction(closure: HpyerDbSqlTransactionClosure, provider: HpyerDbProvider = null): Promise<any> {
     let db = this.getDB(provider);
     if (!db) return false;
     let res = await db.transaction(closure);

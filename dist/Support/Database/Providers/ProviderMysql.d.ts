@@ -1,6 +1,6 @@
 import { ConnectionConfig, Pool, PoolConnection } from 'mysql';
 import ContractSql from '../Contracts/ContractSql';
-import { HpyerServerConfigDbQueryOption } from '../../Types/Hpyer';
+import { HpyerDbSqlTransactionClosure, HpyerServerConfigDbQueryOption } from '../../Types/Hpyer';
 export declare const DefaultQueryOptions: HpyerServerConfigDbQueryOption;
 declare class ProviderMysql extends ContractSql {
     pool: Pool;
@@ -10,7 +10,7 @@ declare class ProviderMysql extends ContractSql {
     disconnect(): boolean;
     getConnection(): Promise<PoolConnection>;
     execute(sql: string, values?: object, fetch_last_id?: boolean): Promise<any>;
-    transaction(closure: Function): Promise<any>;
+    transaction(closure: HpyerDbSqlTransactionClosure): Promise<any>;
     startTrans(): Promise<any>;
     commit(): Promise<any>;
     rollback(): Promise<any>;

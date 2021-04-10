@@ -1,4 +1,4 @@
-import { HpyerServerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider } from '../Support/Types/Hpyer';
+import { HpyerServerConfig, HpyerLuaParams, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider, HpyerDbSqlTransactionClosure } from '../Support/Types/Hpyer';
 import * as Utils from '../Support/Utils';
 import Model from './Model';
 import Templater from './Templater';
@@ -52,7 +52,7 @@ declare class Application {
      * @param provider 数据库供应商
      * @return 闭包的返回值也是该方法的返回值
      */
-    transaction(closure: Function, provider?: HpyerDbProvider): Promise<any>;
+    transaction(closure: HpyerDbSqlTransactionClosure, provider?: HpyerDbProvider): Promise<any>;
     /**
      * 获取redis操作实例
      * @param  options redis选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new

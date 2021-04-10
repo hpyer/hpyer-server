@@ -4,7 +4,7 @@ import * as Utils from '../../Utils';
 import Logger from '../../Logger';
 import { ConnectionConfig, MysqlError, Pool, PoolConnection } from 'mysql';
 import ContractSql from '../Contracts/ContractSql';
-import { HpyerServerConfigDbQueryOption } from '../../Types/Hpyer';
+import { HpyerDbSqlTransactionClosure, HpyerServerConfigDbQueryOption } from '../../Types/Hpyer';
 
 const mysql = require('mysql');
 
@@ -89,7 +89,7 @@ class ProviderMysql extends ContractSql {
     }
   };
 
-  async transaction(closure: Function): Promise<any> {
+  async transaction(closure: HpyerDbSqlTransactionClosure): Promise<any> {
     if (!Utils.isFunction(closure)) return false;
     let res = false;
     await this.startTrans();
