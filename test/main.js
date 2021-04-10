@@ -172,4 +172,37 @@ describe('Framwork', function () {
     assert.strictEqual(user.name, data.name);
   });
 
+  it(`Mysql transaction operation`, async function () {
+    let res = await Hpyer.transaction(async db => {
+
+      let table = 'tb_user';
+      let data = {
+        name: '张三',
+        age: 18,
+        sex: '男',
+        birth_date: '1990-01-01',
+      };
+
+      let id = await db.create(table, data, true);
+
+      let user = await db.findOne(table, {
+        id: id,
+      });
+
+      let res = await db.update(table, {
+        name: '李四',
+      }, {
+        id: id,
+      });
+
+      res = await db.delete(table, {
+        id: id,
+      });
+
+      return true;
+    });
+
+    assert.strictEqual(res, true);
+  });
+
 });
