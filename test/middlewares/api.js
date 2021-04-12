@@ -1,8 +1,8 @@
 'use strict';
 
-const { HpyerMiddleware } = require('../../dist');
+const { defineMiddleware } = require('../../dist');
 
-module.exports = new HpyerMiddleware(async function (ctx, next) {
+module.exports = defineMiddleware(async function (ctx, next) {
   ctx.request.is_ajax = true;
   await next();
 });

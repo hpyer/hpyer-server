@@ -1,11 +1,11 @@
 'use strict';
 
-const { HpyerController } = require('../../../../dist');
+const { Hpyer, Controller } = require('../../../../dist');
 
-module.exports = class extends HpyerController {
+module.exports = class extends Controller {
 
   async indexAction() {
-    let time = this.$app.utils.getFormatTime('YYYY-MM-DD HH:mm:ss');
+    let time = Hpyer.utils.getFormatTime('YYYY-MM-DD HH:mm:ss');
     this.success(time);
   }
 

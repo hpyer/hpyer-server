@@ -1,13 +1,11 @@
 const assert = require('assert');
 
-const { HpyerApplication, HpyerConfig } = require('../dist');
+const { Hpyer, defineConfig } = require('../dist');
 
 const Package = require('../package.json');
 const Path = require('path');
 
-let Hpyer = new HpyerApplication;
-
-let config = new HpyerConfig({
+let config = defineConfig({
   key: 'HpyerServerTest',
   env: 'develop',
   port: 1234,
@@ -49,18 +47,14 @@ let config = new HpyerConfig({
 describe('Framwork', function () {
 
   before('Test start.', async function() {
-    Hpyer.log.setLevel(Hpyer.log.levels.ERROR);
-    await Hpyer.start(config);
+    // Hpyer.log.setLevel(Hpyer.log.levels.ERROR);
+    await Hpyer.startup(config);
   });
 
   after('Test finished.', function() {
     setTimeout(() => {
       process.exit(0);
     }, 100);
-  });
-
-  it(`Should instanceof HpyerApplication`, function() {
-    assert.strictEqual(Hpyer instanceof HpyerApplication, true);
   });
 
   it(`Framwork version should be ${ Package.version }`, function() {
