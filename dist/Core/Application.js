@@ -492,7 +492,7 @@ exports.parseUniqueId = parseUniqueId;
  * 启动服务
  * @param cfg 配置项
  */
-const startup = function (cfg = null) {
+const startup = function (cfg = null, cb = null) {
     return __awaiter(this, void 0, void 0, function* () {
         if (cfg)
             for (let k in cfg) {
@@ -622,6 +622,9 @@ const startup = function (cfg = null) {
                 exports.log.info('Current ENV: ' + exports.config.env);
                 exports.log.info('Framework version: ' + exports.version);
                 exports.log.info('Listen port: ' + exports.config.port);
+                if (typeof cb == 'function') {
+                    cb();
+                }
             });
         }
     });

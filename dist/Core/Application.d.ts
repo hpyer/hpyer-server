@@ -142,4 +142,4 @@ export declare const parseUniqueId: (id: string) => object;
  * 启动服务
  * @param cfg 配置项
  */
-export declare const startup: (cfg?: HpyerServerConfig) => Promise<void>;
+export declare const startup: (cfg?: HpyerServerConfig, cb?: Function) => Promise<void>;

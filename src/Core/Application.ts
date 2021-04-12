@@ -456,7 +456,7 @@ export const parseUniqueId = function(id: string): object {
  * 启动服务
  * @param cfg 配置项
  */
-export const startup = async function(cfg: HpyerServerConfig = null): Promise<void> {
+export const startup = async function(cfg: HpyerServerConfig = null, cb: Function = null): Promise<void> {
   if (cfg) for (let k in cfg) {
     if (cfg[k] === null) continue;
     const DefaultConfig = (await import('../Support/DefaultConfig')).default;
@@ -590,6 +590,10 @@ export const startup = async function(cfg: HpyerServerConfig = null): Promise<vo
       log.info('Current ENV: ' + config.env);
       log.info('Framework version: ' + version);
       log.info('Listen port: ' + config.port);
+
+      if (typeof cb == 'function') {
+        cb();
+      }
     });
   }
 
