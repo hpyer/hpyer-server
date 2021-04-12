@@ -42,13 +42,19 @@ let config = defineConfig({
       { path: '/api/(.*)', middleware: require('./middlewares/api') },
     ],
   },
+  custom: {
+    a: 123,
+    b: '456'
+  }
 });
 
 describe('Framwork', function () {
 
   before('Test start.', async function() {
-    // Hpyer.log.setLevel(Hpyer.log.levels.ERROR);
-    await Hpyer.startup(config);
+    Hpyer.log.setLevel(Hpyer.log.levels.ERROR);
+    await Hpyer.startup(config, () => {
+      console.log('Output by startup callback.')
+    });
   });
 
   after('Test finished.', function() {
@@ -63,6 +69,11 @@ describe('Framwork', function () {
 
   it(`Listen port should be ${ config.port }`, function() {
     assert.strictEqual(Hpyer.config.port, config.port);
+  });
+
+  it(`Should have custom config`, function () {
+    assert.strictEqual(Hpyer.config.custom.a, config.custom.a);
+    assert.strictEqual(Hpyer.config.custom.b, config.custom.b);
   });
 
   it(`Visite default controller`, async function() {
