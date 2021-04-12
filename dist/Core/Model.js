@@ -9,15 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const Application_1 = require("./Application");
 /**
  * 模型基类
  */
 class Model {
     constructor() {
-        /**
-         * 应用实例，框架会自动注入
-         */
-        this.$app = null;
         /**
          * 表名
          */
@@ -32,7 +29,7 @@ class Model {
      */
     execute(sql, values = null, fetch_last_id = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = this.$app.getDB();
+            let db = Application_1.getDB();
             if (!db)
                 return null;
             let res = yield db.execute(sql, values, fetch_last_id);
@@ -56,7 +53,7 @@ class Model {
      */
     findAll(where = null, options = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = this.$app.getDB();
+            let db = Application_1.getDB();
             if (!db)
                 return null;
             let res = yield db.findAll(this.table, where, options);
@@ -71,7 +68,7 @@ class Model {
      */
     findOne(where = null, options = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = this.$app.getDB();
+            let db = Application_1.getDB();
             if (!db)
                 return null;
             let res = yield db.findOne(this.table, where, options);
@@ -86,7 +83,7 @@ class Model {
      */
     findCount(where = null, field = 'COUNT(1)') {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = this.$app.getDB();
+            let db = Application_1.getDB();
             if (!db)
                 return 0;
             let res = yield db.findCount(this.table, where, field);
@@ -101,7 +98,7 @@ class Model {
      */
     create(data, fetch_last_id = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = this.$app.getDB();
+            let db = Application_1.getDB();
             if (!db)
                 return false;
             let res = yield db.create(this.table, data, fetch_last_id);
@@ -124,7 +121,7 @@ class Model {
      */
     update(data, where = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = this.$app.getDB();
+            let db = Application_1.getDB();
             if (!db)
                 return false;
             let res = yield db.update(this.table, data, where);
@@ -138,7 +135,7 @@ class Model {
      */
     delete(where = null) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = this.$app.getDB();
+            let db = Application_1.getDB();
             if (!db)
                 return false;
             let res = yield db.delete(this.table, where);
@@ -154,7 +151,7 @@ class Model {
      */
     increase(field, where = null, qty = 1) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = this.$app.getDB();
+            let db = Application_1.getDB();
             if (!db)
                 return false;
             let res = yield db.increase(this.table, field, where, qty);
@@ -170,7 +167,7 @@ class Model {
      */
     discrease(field, where = null, qty = 1) {
         return __awaiter(this, void 0, void 0, function* () {
-            let db = this.$app.getDB();
+            let db = Application_1.getDB();
             if (!db)
                 return false;
             let res = yield db.discrease(this.table, field, where, qty);

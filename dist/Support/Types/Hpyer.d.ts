@@ -3,9 +3,7 @@ import { ConfigureOptions } from "nunjucks";
 import { RedisOptions } from "ioredis";
 import Model from "../../Core/Model";
 import Service from "../../Core/Service";
-import Middleware from "../../Core/Middleware";
 import { DefaultContext, BaseRequest, DefaultState, Middleware as KoaMiddleware, ParameterizedContext, Next } from "koa";
-import Application from '../../Core/Application';
 import ContractSql from "../Database/Contracts/ContractSql";
 /**
  * Koa请求对象
@@ -40,10 +38,6 @@ export interface HpyerServerKoaRequest extends BaseRequest {
  * Koa上下文对象
  */
 export interface HpyerServerKoaContext extends DefaultContext {
-    /**
-     * 应用实例
-     */
-    $app?: Application;
     /**
      * Koa请求对象
      */
@@ -219,7 +213,7 @@ export interface HpyerServerConfigKoaRouter {
     /**
      * 中间件，Koa.Middleware 或 HpyerMiddleware 实例，在 handler 之前执行
      */
-    middleware?: HpyerServerKoaMiddleware | Middleware;
+    middleware?: HpyerServerKoaMiddleware;
     /**
      * 请求方式，如：all、get、post等，默认：all
      */

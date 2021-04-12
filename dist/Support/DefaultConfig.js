@@ -1,11 +1,8 @@
 'use strict';
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Hpyer_1 = require("./Types/Hpyer");
-const Config_1 = __importDefault(require("./Config"));
-const DefaultConfig = new Config_1.default({
+const __1 = require("../");
+const DefaultConfig = __1.defineConfig({
     port: '8001',
     key: 'HpyerServer',
     env: Hpyer_1.HpyerApplicationEnv.DEVELOPMENT,

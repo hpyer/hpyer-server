@@ -1,12 +1,7 @@
-import Application from './Application';
 /**
  * 服务基类
  */
 export default class Service {
-    /**
-     * 应用实例，框架会自动注入
-     */
-    $app: Application;
     constructor();
     /**
      * 返回成功时的结果

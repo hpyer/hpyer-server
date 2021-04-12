@@ -25,10 +25,6 @@ const Utils = __importStar(require("../Support/Utils"));
  */
 class Service {
     constructor() {
-        /**
-         * 应用实例，框架会自动注入
-         */
-        this.$app = null;
     }
     /**
      * 返回成功时的结果

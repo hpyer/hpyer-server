@@ -1,35 +1,33 @@
-import Application from './Core/Application';
-import Controller from './Core/Controller';
-import Model from './Core/Model';
-import Service from './Core/Service';
-import Middleware from './Core/Middleware';
-import Config from './Support/Config';
-import * as Utils from './Support/Utils';
+import * as Application from './Core/Application';
+import BaseController from './Core/Controller';
+import BaseModel from './Core/Model';
+import BaseService from './Core/Service';
+import { HpyerServerConfig, HpyerServerKoaMiddleware } from './Support/Types/Hpyer';
+/**
+ * 声明中间件
+ * @param func koa2中间件
+ * @returns
+ */
+export declare const defineMiddleware: (func: HpyerServerKoaMiddleware) => HpyerServerKoaMiddleware;
+/**
+ * 声明配置
+ * @param func koa2中间件
+ * @returns
+ */
+export declare const defineConfig: (cfg: HpyerServerConfig) => HpyerServerConfig;
 /**
  * 框架
  */
-export declare const HpyerApplication: typeof Application;
+export declare const Hpyer: typeof Application;
 /**
  * 控制器基类
  */
-export declare const HpyerController: typeof Controller;
+export declare const Controller: typeof BaseController;
 /**
  * 模型基类
  */
-export declare const HpyerModel: typeof Model;
+export declare const Model: typeof BaseModel;
 /**
  * 服务基类
  */
-export declare const HpyerService: typeof Service;
-/**
- * 中间件封装方法
- */
-export declare const HpyerMiddleware: typeof Middleware;
-/**
- * 配置基类
- */
-export declare const HpyerConfig: typeof Config;
-/**
- * 工具集合
- */
-export declare const HpyerUtils: typeof Utils;
+export declare const Service: typeof BaseService;

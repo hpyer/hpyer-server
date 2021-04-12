@@ -34,15 +34,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const koa_send_1 = __importDefault(require("koa-send"));
 const fs_1 = __importDefault(require("fs"));
 const Utils = __importStar(require("../Support/Utils"));
+const Application_1 = require("./Application");
 /**
  * 控制器基类
  */
 class Controller {
     constructor() {
-        /**
-         * 应用实例，框架会自动注入
-         */
-        this.$app = null;
         /**
          * 当前 module 名称，框架会自动注入
          */
@@ -115,7 +112,7 @@ class Controller {
      */
     displayTemplate(file = null, params = null) {
         if (!file) {
-            file = this.module + '/' + this.$app.config.defaultViewDir + '/' + this.controller + '/' + this.action + this.$app.config.template.tplExtention;
+            file = this.module + '/' + Application_1.config.defaultViewDir + '/' + this.controller + '/' + this.action + Application_1.config.template.tplExtention;
         }
         if (params) {
             params = Utils.extend({}, this.viewParams, params);
@@ -124,10 +121,10 @@ class Controller {
             params = this.viewParams;
         }
         try {
-            this.displayContent(this.$app.getTemplater().render(file, params));
+            this.displayContent(Application_1.getTemplater().render(file, params));
         }
         catch (e) {
-            this.$app.log.error(`Fail to render template '${file}'.`, e.message);
+            Application_1.log.error(`Fail to render template '${file}'.`, e.message);
         }
         return;
     }
@@ -139,9 +136,9 @@ class Controller {
      */
     display(file = null, params = null, ext = '') {
         if (!file) {
-            file = this.controller + '/' + this.action + this.$app.config.template.tplExtention;
+            file = this.controller + '/' + this.action + Application_1.config.template.tplExtention;
         }
-        file = this.module + '/' + this.$app.config.defaultViewDir + '/' + file;
+        file = this.module + '/' + Application_1.config.defaultViewDir + '/' + file;
         if (ext) {
             if (ext.substr(0, 1) != '.') {
                 ext = '.' + ext;
@@ -169,7 +166,7 @@ class Controller {
      * 判断当前是否ajax请求
      */
     isAjaxRequest() {
-        return this.$app.utils.isAjaxRequest(this.ctx);
+        return Application_1.utils.isAjaxRequest(this.ctx);
     }
     /**
      * 输出成功时的结果，ajax请求则输出json，否则输出html
@@ -182,7 +179,7 @@ class Controller {
             this.ctx.body = Utils.jsonSuccess(data, message);
         }
         else {
-            this.displayContent(this.$app.getTemplater().renderError({
+            this.displayContent(Application_1.getTemplater().renderError({
                 success: true,
                 message: message,
                 code: '0',
@@ -205,7 +202,7 @@ class Controller {
             return false;
         }
         else {
-            this.displayContent(this.$app.getTemplater().renderError({
+            this.displayContent(Application_1.getTemplater().renderError({
                 success: false,
                 message: message,
                 code: code,

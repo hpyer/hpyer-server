@@ -1,12 +1,10 @@
 import { HpyerTemplateProvider } from '../Support/Types/Hpyer';
-import Application from './Application';
 /**
  * 框架模版
  */
 export default class Templater {
-    $app: Application;
     provider: HpyerTemplateProvider;
-    constructor(app: Application, provider?: HpyerTemplateProvider);
+    constructor(provider?: HpyerTemplateProvider);
     /**
      * 设置模版提供商
      * @param {string} provider 模版提供商

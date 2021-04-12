@@ -3,19 +3,16 @@
 import Nunjucks from 'nunjucks';
 import Path from 'path';
 import { HpyerTemplateProvider } from '../Support/Types/Hpyer';
-import Application from './Application';
+import { config } from './Application';
 
 /**
  * 框架模版
  */
 export default class Templater {
-  $app: Application = null;
-
   provider: HpyerTemplateProvider = null;
 
-  constructor(app: Application, provider: HpyerTemplateProvider = null) {
-    this.$app = app;
-    this.provider = provider || app.config.template.provider || HpyerTemplateProvider.NUNJUCKS;
+  constructor(provider: HpyerTemplateProvider = null) {
+    this.provider = provider || config.template.provider || HpyerTemplateProvider.NUNJUCKS;
   }
 
   /**
@@ -37,7 +34,7 @@ export default class Templater {
     switch (this.provider) {
       case HpyerTemplateProvider.NUNJUCKS:
       default:
-        Nunjucks.configure(Path.resolve(this.$app.config.root.modules), this.$app.config.template.nunjucks);
+        Nunjucks.configure(Path.resolve(config.root.modules), config.template.nunjucks);
         content = Nunjucks.render.apply(this, args);
     }
     return content;
@@ -52,8 +49,8 @@ export default class Templater {
     switch (this.provider) {
       case HpyerTemplateProvider.NUNJUCKS:
       default:
-        Nunjucks.configure(Path.resolve(this.$app.config.root.errors), this.$app.config.template.nunjucks);
-        content = Nunjucks.render(this.$app.config.template.defaultMessageTpl, opt);
+        Nunjucks.configure(Path.resolve(config.root.errors), config.template.nunjucks);
+        content = Nunjucks.render(config.template.defaultMessageTpl, opt);
     }
     return content;
   }

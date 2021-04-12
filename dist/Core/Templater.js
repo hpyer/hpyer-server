@@ -6,15 +6,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const nunjucks_1 = __importDefault(require("nunjucks"));
 const path_1 = __importDefault(require("path"));
 const Hpyer_1 = require("../Support/Types/Hpyer");
+const Application_1 = require("./Application");
 /**
  * 框架模版
  */
 class Templater {
-    constructor(app, provider = null) {
-        this.$app = null;
+    constructor(provider = null) {
         this.provider = null;
-        this.$app = app;
-        this.provider = provider || app.config.template.provider || Hpyer_1.HpyerTemplateProvider.NUNJUCKS;
+        this.provider = provider || Application_1.config.template.provider || Hpyer_1.HpyerTemplateProvider.NUNJUCKS;
     }
     /**
      * 设置模版提供商
@@ -34,7 +33,7 @@ class Templater {
         switch (this.provider) {
             case Hpyer_1.HpyerTemplateProvider.NUNJUCKS:
             default:
-                nunjucks_1.default.configure(path_1.default.resolve(this.$app.config.root.modules), this.$app.config.template.nunjucks);
+                nunjucks_1.default.configure(path_1.default.resolve(Application_1.config.root.modules), Application_1.config.template.nunjucks);
                 content = nunjucks_1.default.render.apply(this, args);
         }
         return content;
@@ -48,8 +47,8 @@ class Templater {
         switch (this.provider) {
             case Hpyer_1.HpyerTemplateProvider.NUNJUCKS:
             default:
-                nunjucks_1.default.configure(path_1.default.resolve(this.$app.config.root.errors), this.$app.config.template.nunjucks);
-                content = nunjucks_1.default.render(this.$app.config.template.defaultMessageTpl, opt);
+                nunjucks_1.default.configure(path_1.default.resolve(Application_1.config.root.errors), Application_1.config.template.nunjucks);
+                content = nunjucks_1.default.render(Application_1.config.template.defaultMessageTpl, opt);
         }
         return content;
     }

@@ -22,39 +22,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HpyerUtils = exports.HpyerConfig = exports.HpyerMiddleware = exports.HpyerService = exports.HpyerModel = exports.HpyerController = exports.HpyerApplication = void 0;
-const Application_1 = __importDefault(require("./Core/Application"));
+exports.Service = exports.Model = exports.Controller = exports.Hpyer = exports.defineConfig = exports.defineMiddleware = void 0;
+const Application = __importStar(require("./Core/Application"));
 const Controller_1 = __importDefault(require("./Core/Controller"));
 const Model_1 = __importDefault(require("./Core/Model"));
 const Service_1 = __importDefault(require("./Core/Service"));
-const Middleware_1 = __importDefault(require("./Core/Middleware"));
-const Config_1 = __importDefault(require("./Support/Config"));
-const Utils = __importStar(require("./Support/Utils"));
+/**
+ * 声明中间件
+ * @param func koa2中间件
+ * @returns
+ */
+const defineMiddleware = function (func) {
+    return func;
+};
+exports.defineMiddleware = defineMiddleware;
+/**
+ * 声明配置
+ * @param func koa2中间件
+ * @returns
+ */
+const defineConfig = function (cfg) {
+    return cfg;
+};
+exports.defineConfig = defineConfig;
 /**
  * 框架
  */
-exports.HpyerApplication = Application_1.default;
+exports.Hpyer = Application;
 /**
  * 控制器基类
  */
-exports.HpyerController = Controller_1.default;
+exports.Controller = Controller_1.default;
 /**
  * 模型基类
  */
-exports.HpyerModel = Model_1.default;
+exports.Model = Model_1.default;
 /**
  * 服务基类
  */
-exports.HpyerService = Service_1.default;
-/**
- * 中间件封装方法
- */
-exports.HpyerMiddleware = Middleware_1.default;
-/**
- * 配置基类
- */
-exports.HpyerConfig = Config_1.default;
-/**
- * 工具集合
- */
-exports.HpyerUtils = Utils;
+exports.Service = Service_1.default;

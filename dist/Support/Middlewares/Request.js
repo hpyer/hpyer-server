@@ -32,8 +32,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Utils = __importStar(require("../Utils"));
+const Logger_1 = __importDefault(require("../Logger"));
 const request_ip_1 = __importDefault(require("request-ip"));
-const Middleware_1 = __importDefault(require("../../Core/Middleware"));
+const __1 = require("../../");
 const XssHandler = function (item) {
     if (Utils.isObject(item)) {
         let newItem = {};
@@ -56,13 +57,13 @@ const XssHandler = function (item) {
         return Utils.xssFilter(item);
     }
 };
-exports.default = new Middleware_1.default(function (ctx, next) {
+exports.default = __1.defineMiddleware(function (ctx, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (ctx.path == '/favicon.ico') {
             return false;
         }
         ctx.request.client_ip = request_ip_1.default.getClientIp(ctx.request);
-        ctx.$app.log.info('[' + ctx.request.client_ip + ']', ctx.request.method.toUpperCase(), ctx.request.url);
+        Logger_1.default.info('[' + ctx.request.client_ip + ']', ctx.request.method.toUpperCase(), ctx.request.url);
         ctx.request.query_raw = {};
         if (ctx.request.query) {
             for (let k in ctx.request.query) {

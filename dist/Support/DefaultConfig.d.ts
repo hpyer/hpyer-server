@@ -1,3 +1,2 @@
-import Config from './Config';
-declare const DefaultConfig: Config;
+declare const DefaultConfig: import("./Types/Hpyer").HpyerServerConfig;
 export default DefaultConfig;

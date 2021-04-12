@@ -1,10 +1,11 @@
 'use strict';
 
 import * as Utils from '../Utils';
+import Logger from '../Logger';
 import RequestIp from 'request-ip';
 import { Next } from 'koa';
-import Middleware from '../../Core/Middleware';
 import { HpyerServerKoaContext } from '../Types/Hpyer';
+import { defineMiddleware } from '../../';
 
 const XssHandler = function (item: any): any {
   if (Utils.isObject(item)) {
@@ -28,14 +29,14 @@ const XssHandler = function (item: any): any {
   }
 }
 
-export default new Middleware(async function (ctx: HpyerServerKoaContext, next: Next) {
+export default defineMiddleware(async function (ctx: HpyerServerKoaContext, next: Next) {
   if (ctx.path == '/favicon.ico') {
     return false;
   }
 
   ctx.request.client_ip = RequestIp.getClientIp(ctx.request);
 
-  ctx.$app.log.info('[' + ctx.request.client_ip + ']', ctx.request.method.toUpperCase(), ctx.request.url);
+  Logger.info('[' + ctx.request.client_ip + ']', ctx.request.method.toUpperCase(), ctx.request.url);
 
   ctx.request.query_raw = {};
   if (ctx.request.query) {

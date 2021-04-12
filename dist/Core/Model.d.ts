@@ -1,13 +1,8 @@
 import { HpyerServerConfigDbQueryOption } from '../Support/Types/Hpyer';
-import Application from './Application';
 /**
  * 模型基类
  */
 export default class Model {
-    /**
-     * 应用实例，框架会自动注入
-     */
-    $app: Application;
     /**
      * 表名
      */

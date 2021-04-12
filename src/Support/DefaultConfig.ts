@@ -1,9 +1,9 @@
 'use strict';
 
 import { HpyerApplicationEnv, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider } from "./Types/Hpyer";
-import Config from './Config';
+import { defineConfig } from "../";
 
-const DefaultConfig = new Config({
+const DefaultConfig = defineConfig({
   port: '8001',
   key: 'HpyerServer',
   env: HpyerApplicationEnv.DEVELOPMENT,
