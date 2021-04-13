@@ -1,11 +1,13 @@
 
 import { ConnectionConfig } from "mysql";
 import { ConfigureOptions } from "nunjucks";
-import { RedisOptions } from "ioredis";
+import IORedis, { RedisOptions } from "ioredis";
 import Model from "../../Core/Model";
 import Service from "../../Core/Service";
 import { DefaultContext, BaseRequest, DefaultState, Middleware as KoaMiddleware, ParameterizedContext, Next } from "koa";
 import ContractSql from "../Database/Contracts/ContractSql";
+import ContractCache from "../Cache/Contracts/ContractCache";
+import Templater from "../../Core/Templater";
 
 /**
  * Koa请求对象
@@ -460,3 +462,15 @@ export interface HpyerServerConfig {
 };
 
 export type HpyerDbSqlTransactionClosure = (db: ContractSql) => Promise<boolean>;
+
+export type HpyerCacheMapTemplater = {
+  [key: string]: Templater
+};
+
+export type HpyerCacheMapCacher = {
+  [key: string]: ContractCache
+};
+
+export type HpyerCacheMapRedis = {
+  [key: string]: IORedis.Redis
+};

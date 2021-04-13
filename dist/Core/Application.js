@@ -118,18 +118,26 @@ const transaction = function (closure, provider = null) {
     });
 };
 exports.transaction = transaction;
+let _redis = {};
 /**
  * 获取redis操作实例
  * @param  options redis选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new
+ * @param  tag 实例标识，默认：default
  */
-const getRedis = function (options = null) {
+const getRedis = function (options = null, tag = 'default') {
+    if (!exports.config.cache.enable)
+        return null;
     if (!options) {
         options = exports.config.cache['redis'];
     }
-    if (!exports.config.cache.enable)
-        return null;
+    if (!tag) {
+        tag = 'default';
+    }
     try {
-        return new ioredis_1.default(options);
+        if (!_redis[tag]) {
+            _redis[tag] = new ioredis_1.default(options);
+        }
+        return _redis[tag];
     }
     catch (e) {
         exports.log.error(`Fail to create Redis client.`, e);
@@ -356,7 +364,6 @@ const ControllerHandler = function (module, controller, action, ctx = null, next
     });
 };
 exports.ControllerHandler = ControllerHandler;
-let _redisClient = null;
 /**
  * 在redis中执行lua脚本
  * @param  content 脚本内容
@@ -382,10 +389,8 @@ const runLuaInRedis = function (script, params = null) {
             else {
                 args.push(0);
             }
-            if (!_redisClient) {
-                _redisClient = exports.getRedis();
-            }
-            let res = yield _redisClient.eval(args);
+            let redis = exports.getRedis();
+            let res = yield redis.eval(args);
             return res;
         }
         catch (e) {

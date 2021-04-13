@@ -1,6 +1,6 @@
 'use strict';
 
-import { HpyerServerConfig, HpyerLuaParams, HpyerModelMap, HpyerServiceMap, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider, HpyerServerKoaContext, HpyerServerKoaState, HpyerDbSqlTransactionClosure, HpyerServerKoaMiddleware } from '../Support/Types/Hpyer';
+import { HpyerServerConfig, HpyerLuaParams, HpyerModelMap, HpyerServiceMap, HpyerDbProvider, HpyerCacheProvider, HpyerTemplateProvider, HpyerServerKoaContext, HpyerServerKoaState, HpyerDbSqlTransactionClosure, HpyerCacheMapTemplater, HpyerCacheMapRedis, HpyerCacheMapCacher } from '../Support/Types/Hpyer';
 
 import Path from 'path';
 import ChildProcess from 'child_process';
@@ -58,7 +58,7 @@ export let config: HpyerServerConfig = null;
 export let $koa: Koa = null;
 
 
-let _templaters = {};
+let _templaters: HpyerCacheMapTemplater = {};
 /**
  * 获取模版操作实例
  * @param provider 模版供应商
@@ -101,17 +101,25 @@ export const transaction = async function(closure: HpyerDbSqlTransactionClosure,
   return res;
 }
 
+let _redis: HpyerCacheMapRedis = {};
 /**
  * 获取redis操作实例
  * @param  options redis选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new
+ * @param  tag 实例标识，默认：default
  */
-export const getRedis = function(options: IORedis.RedisOptions = null): IORedis.Redis {
+export const getRedis = function(options: IORedis.RedisOptions = null, tag: string = 'default'): IORedis.Redis {
+  if (!config.cache.enable) return null;
   if (!options) {
     options = config.cache['redis'];
   }
-  if (!config.cache.enable) return null;
+  if (!tag) {
+    tag = 'default';
+  }
   try {
-    return new IORedis(options);
+    if (!_redis[tag]) {
+      _redis[tag] = new IORedis(options);
+    }
+    return _redis[tag];
   }
   catch (e) {
     log.error(`Fail to create Redis client.`, e);
@@ -119,7 +127,7 @@ export const getRedis = function(options: IORedis.RedisOptions = null): IORedis.
   return null;
 }
 
-let _cachers = {};
+let _cachers: HpyerCacheMapCacher = {};
 /**
  * 获取缓存操作实例
  * @param  {string} provider 缓存驱动，可选值：file, redis
@@ -325,7 +333,6 @@ export const ControllerHandler = async function(module: string, controller: stri
 }
 
 
-let _redisClient: IORedis.Redis = null;
 /**
  * 在redis中执行lua脚本
  * @param  content 脚本内容
@@ -349,10 +356,8 @@ export const runLuaInRedis = async function(script: string, params: Array<HpyerL
     else {
       args.push(0);
     }
-    if (!_redisClient) {
-      _redisClient = getRedis();
-    }
-    let res = await _redisClient.eval(args);
+    let redis = getRedis();
+    let res = await redis.eval(args);
     return res;
   }
   catch (e) {

@@ -51,8 +51,9 @@ export declare const transaction: (closure: HpyerDbSqlTransactionClosure, provid
 /**
  * 获取redis操作实例
  * @param  options redis选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new
+ * @param  tag 实例标识，默认：default
  */
-export declare const getRedis: (options?: IORedis.RedisOptions) => IORedis.Redis;
+export declare const getRedis: (options?: IORedis.RedisOptions, tag?: string) => IORedis.Redis;
 /**
  * 获取缓存操作实例
  * @param  {string} provider 缓存驱动，可选值：file, redis
