@@ -47,6 +47,9 @@ const ioredis_1 = __importDefault(require("ioredis"));
 const bn_js_1 = __importDefault(require("bn.js"));
 let modelInstances = {};
 let serviceInstances = {};
+let _templaters = {};
+let _redis = {};
+let _cachers = {};
 /**
  * 版本号
  */
@@ -71,7 +74,6 @@ exports.config = null;
  * koa实例
  */
 exports.$koa = null;
-let _templaters = {};
 /**
  * 获取模版操作实例
  * @param provider 模版供应商
@@ -118,7 +120,6 @@ const transaction = function (closure, provider = null) {
     });
 };
 exports.transaction = transaction;
-let _redis = {};
 /**
  * 获取redis操作实例
  * @param  options redis选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new
@@ -145,7 +146,6 @@ const getRedis = function (options = null, tag = 'default') {
     return null;
 };
 exports.getRedis = getRedis;
-let _cachers = {};
 /**
  * 获取缓存操作实例
  * @param  {string} provider 缓存驱动，可选值：file, redis
@@ -282,6 +282,9 @@ const service = function (name) {
 exports.service = service;
 /**
  * Koa的控制器处理方法
+ * @param ctx
+ * @param next
+ * @returns
  */
 const KoaHandler = function (ctx, next) {
     let module = ctx.params.module || exports.config.defaultModuleName;
@@ -496,6 +499,7 @@ exports.parseUniqueId = parseUniqueId;
 /**
  * 启动服务
  * @param cfg 配置项
+ * @param cb 启动后的回调函数
  */
 const startup = function (cfg = null, cb = null) {
     return __awaiter(this, void 0, void 0, function* () {

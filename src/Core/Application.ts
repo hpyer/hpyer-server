@@ -26,6 +26,9 @@ import BN from 'bn.js';
 
 let modelInstances: HpyerModelMap = {};
 let serviceInstances: HpyerServiceMap = {};
+let _templaters: HpyerCacheMapTemplater = {};
+let _redis: HpyerCacheMapRedis = {};
+let _cachers: HpyerCacheMapCacher = {};
 
 /**
  * 版本号
@@ -58,7 +61,6 @@ export let config: HpyerServerConfig = null;
 export let $koa: Koa = null;
 
 
-let _templaters: HpyerCacheMapTemplater = {};
 /**
  * 获取模版操作实例
  * @param provider 模版供应商
@@ -101,7 +103,6 @@ export const transaction = async function(closure: HpyerDbSqlTransactionClosure,
   return res;
 }
 
-let _redis: HpyerCacheMapRedis = {};
 /**
  * 获取redis操作实例
  * @param  options redis选项，详见: https://github.com/luin/ioredis/blob/HEAD/API.md#new_Redis_new
@@ -127,7 +128,6 @@ export const getRedis = function(options: IORedis.RedisOptions = null, tag: stri
   return null;
 }
 
-let _cachers: HpyerCacheMapCacher = {};
 /**
  * 获取缓存操作实例
  * @param  {string} provider 缓存驱动，可选值：file, redis
@@ -249,6 +249,9 @@ export const service = function(name: string) {
 
 /**
  * Koa的控制器处理方法
+ * @param ctx
+ * @param next
+ * @returns
  */
 export const KoaHandler = function(ctx: Koa.Context, next: Koa.Next): Promise<Koa.Next> {
   let module = ctx.params.module || config.defaultModuleName;
@@ -460,6 +463,7 @@ export const parseUniqueId = function(id: string): object {
 /**
  * 启动服务
  * @param cfg 配置项
+ * @param cb 启动后的回调函数
  */
 export const startup = async function(cfg: HpyerServerConfig = null, cb: Function = null): Promise<void> {
   if (cfg) for (let k in cfg) {

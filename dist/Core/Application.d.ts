@@ -98,6 +98,9 @@ export declare const model: (name: string, module?: string) => Model;
 export declare const service: (name: string) => import("./Service").default;
 /**
  * Koa的控制器处理方法
+ * @param ctx
+ * @param next
+ * @returns
  */
 export declare const KoaHandler: (ctx: Koa.Context, next: Koa.Next) => Promise<Koa.Next>;
 /**
@@ -142,5 +145,6 @@ export declare const parseUniqueId: (id: string) => object;
 /**
  * 启动服务
  * @param cfg 配置项
+ * @param cb 启动后的回调函数
  */
 export declare const startup: (cfg?: HpyerServerConfig, cb?: Function) => Promise<void>;
