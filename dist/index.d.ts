@@ -18,7 +18,7 @@ export declare const defineConfig: (cfg: HpyerServerConfig) => HpyerServerConfig
 /**
  * 框架
  */
-export declare const Hpyer: typeof Application;
+export declare let Hpyer: typeof Application;
 /**
  * 控制器基类
  */

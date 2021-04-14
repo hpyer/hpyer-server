@@ -26,7 +26,7 @@ export const defineConfig = function (cfg: HpyerServerConfig): HpyerServerConfig
 /**
  * 框架
  */
-export const Hpyer = Application;
+export let Hpyer = Application;
 /**
  * 控制器基类
  */
