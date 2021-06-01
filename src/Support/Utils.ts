@@ -524,26 +524,35 @@ export const md5File = function (path: string | Stream.Readable): Promise<string
  * 发起http请求
  * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
  * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
+ * @param  logContent  是否在日志中打印返回内容，默认：false
  */
-export const doRequest = function(payload: AxiosRequestConfig, returnResponse: boolean = false): Promise <any> {
+export const doRequest = function (payload: AxiosRequestConfig, returnResponse: boolean = false, logContent: boolean = false): Promise <any> {
   let start_time = (new Date).getTime();
   Logger.info(`doRequest_${start_time}`, payload);
 
   return Axios.request(payload).then((res: AxiosResponse) => {
     let end_time = (new Date).getTime();
-    let log_data = res.data;
-    if (payload.responseType == 'stream') {
-      log_data = '[ReadableStream]';
+    let log_data = null;
+    if (logContent) {
+      log_data = res.data;
     }
-    else if (payload.responseType == 'arraybuffer') {
-      log_data = '[Buffer]';
+    else {
+      if (payload.responseType == 'stream') {
+        log_data = '[ReadableStream]';
+      }
+      else if (payload.responseType == 'arraybuffer') {
+        log_data = '[Buffer]';
+      }
+      else {
+        log_data = '[Content]';
+      }
     }
     Logger.info(`doRequest.success_${start_time}`, `${end_time - start_time}ms`, log_data);
 
     return returnResponse ? res : res.data;
   }).catch(err => {
     let end_time = (new Date).getTime();
-    Logger.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, err.response.status, err.response.data);
+    Logger.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, err);
     return null;
   });
 }
