@@ -222,8 +222,9 @@ export declare const md5File: (path: string | Stream.Readable) => Promise<string
  * 发起http请求
  * @param  payload  Axios请求参数，详见：https://www.npmjs.com/package/axios#request-config
  * @param  returnResponse  是否返回 AxiosResponse 对象，默认：false，表示直接返回 AxiosResponse.data
+ * @param  logContent  是否在日志中打印返回内容，默认：false
  */
-export declare const doRequest: (payload: AxiosRequestConfig, returnResponse?: boolean) => Promise<any>;
+export declare const doRequest: (payload: AxiosRequestConfig, returnResponse?: boolean, logContent?: boolean) => Promise<any>;
 /**
  * 编码html特殊符号
  * @param text 原字符串
