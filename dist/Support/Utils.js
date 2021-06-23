@@ -582,7 +582,7 @@ const doRequest = function (payload, returnResponse = false, logContent = false)
         return returnResponse ? res : res.data;
     }).catch(err => {
         let end_time = (new Date).getTime();
-        Logger_1.default.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, err);
+        Logger_1.default.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, `ERR_MSG: ${err.message}`);
         return null;
     });
 };

@@ -552,7 +552,7 @@ export const doRequest = function (payload: AxiosRequestConfig, returnResponse: 
     return returnResponse ? res : res.data;
   }).catch(err => {
     let end_time = (new Date).getTime();
-    Logger.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, err);
+    Logger.error(`doRequest.error_${start_time}`, `${end_time - start_time}ms`, `ERR_MSG: ${err.message}`);
     return null;
   });
 }
