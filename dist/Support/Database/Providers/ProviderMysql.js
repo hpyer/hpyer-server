@@ -238,11 +238,11 @@ class ProviderMysql extends ContractSql_1.default {
     create(table, data, fetch_last_id = true) {
         let fields = [], values = [];
         for (let k in data) {
-            if (data[k] == undefined || typeof data[k] == 'undefined') {
+            if (data[k] === undefined || typeof data[k] === 'undefined') {
                 continue;
             }
             fields.push('`' + k + '`');
-            if (data[k] == null) {
+            if (data[k] === null) {
                 values.push(`NULL`);
             }
             else {
@@ -255,11 +255,11 @@ class ProviderMysql extends ContractSql_1.default {
     replace(table, data) {
         let fields = [], values = [];
         for (let k in data) {
-            if (data[k] == undefined || typeof data[k] == 'undefined') {
+            if (data[k] === undefined || typeof data[k] === 'undefined') {
                 continue;
             }
             fields.push('`' + k + '`');
-            if (data[k] == null) {
+            if (data[k] === null) {
                 values.push(`NULL`);
             }
             else {
@@ -274,11 +274,11 @@ class ProviderMysql extends ContractSql_1.default {
             where = Utils.parseWhere(where);
             let dataArr = [];
             for (let k in data) {
-                if (data[k] == undefined || typeof data[k] == 'undefined') {
+                if (data[k] === undefined || typeof data[k] === 'undefined') {
                     continue;
                 }
                 let v = '';
-                if (data[k] == null) {
+                if (data[k] === null) {
                     v = 'NULL';
                 }
                 else if (Utils.isArray(data[k])) {

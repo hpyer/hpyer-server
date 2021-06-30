@@ -481,7 +481,7 @@ export const getRandomString = function (len: number = 16, type: string = 'strin
  * @param type 哈希方式，可选：sha1、md5等待，默认：sha1
  * @param target 生成的目标类型，可选：latin1、hex、base64，默认：hex
  */
-export const createHash = function (str: string, type: string = 'sha1', target: Crypto.HexBase64Latin1Encoding = 'hex'): string {
+export const createHash = function (str: string, type: string = 'sha1', target: Crypto.BinaryToTextEncoding = 'hex'): string {
   return Crypto.createHash(type).update(str).digest(target);
 }
 
@@ -491,7 +491,7 @@ export const createHash = function (str: string, type: string = 'sha1', target: 
  * @param type 加密方式，可选：sha256等待，默认：sha256
  * @param target 生成的目标类型，可选：latin1、hex、base64，默认：hex
  */
-export const createHmac = function (str: string, key: string, type: string = 'sha256', target: Crypto.HexBase64Latin1Encoding = 'hex'): string {
+export const createHmac = function (str: string, key: string, type: string = 'sha256', target: Crypto.BinaryToTextEncoding = 'hex'): string {
   return Crypto.createHmac(type, key).update(str).digest(target);
 }
 

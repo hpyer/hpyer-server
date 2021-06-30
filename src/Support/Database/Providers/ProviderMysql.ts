@@ -212,11 +212,11 @@ class ProviderMysql extends ContractSql {
   create(table: string, data: object, fetch_last_id: boolean = true): Promise<any> {
     let fields = [], values = [];
     for (let k in data) {
-      if (data[k] == undefined || typeof data[k] == 'undefined') {
+      if (data[k] === undefined || typeof data[k] === 'undefined') {
         continue;
       }
       fields.push('`' + k + '`');
-      if (data[k] == null) {
+      if (data[k] === null) {
         values.push(`NULL`);
       }
       else {
@@ -230,11 +230,11 @@ class ProviderMysql extends ContractSql {
   replace(table: string, data: object): Promise<any> {
     let fields = [], values = [];
     for (let k in data) {
-      if (data[k] == undefined || typeof data[k] == 'undefined') {
+      if (data[k] === undefined || typeof data[k] === 'undefined') {
         continue;
       }
       fields.push('`' + k + '`');
-      if (data[k] == null) {
+      if (data[k] === null) {
         values.push(`NULL`);
       }
       else {
@@ -249,11 +249,11 @@ class ProviderMysql extends ContractSql {
     where = Utils.parseWhere(where);
     let dataArr = [];
     for (let k in data) {
-      if (data[k] == undefined || typeof data[k] == 'undefined') {
+      if (data[k] === undefined || typeof data[k] === 'undefined') {
         continue;
       }
       let v = '';
-      if (data[k] == null) {
+      if (data[k] === null) {
         v = 'NULL';
       }
       else if (Utils.isArray(data[k])) {
