@@ -205,14 +205,14 @@ export declare const getRandomString: (len?: number, type?: string) => string;
  * @param type 哈希方式，可选：sha1、md5等待，默认：sha1
  * @param target 生成的目标类型，可选：latin1、hex、base64，默认：hex
  */
-export declare const createHash: (str: string, type?: string, target?: Crypto.HexBase64Latin1Encoding) => string;
+export declare const createHash: (str: string, type?: string, target?: Crypto.BinaryToTextEncoding) => string;
 /**
  * 计算加密字符串
  * @param str 原文字符串
  * @param type 加密方式，可选：sha256等待，默认：sha256
  * @param target 生成的目标类型，可选：latin1、hex、base64，默认：hex
  */
-export declare const createHmac: (str: string, key: string, type?: string, target?: Crypto.HexBase64Latin1Encoding) => string;
+export declare const createHmac: (str: string, key: string, type?: string, target?: Crypto.BinaryToTextEncoding) => string;
 /**
  * 计算文件的 md5 值
  * @param path 文件路径或文件可读流

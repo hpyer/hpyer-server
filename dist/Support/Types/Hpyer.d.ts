@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { ConnectionConfig } from "mysql";
 import { ConfigureOptions } from "nunjucks";
 import IORedis, { RedisOptions } from "ioredis";
@@ -7,6 +8,7 @@ import { DefaultContext, BaseRequest, DefaultState, Middleware as KoaMiddleware,
 import ContractSql from "../Database/Contracts/ContractSql";
 import ContractCache from "../Cache/Contracts/ContractCache";
 import Templater from "../../Core/Templater";
+import { ParsedUrlQuery } from "querystring";
 /**
  * Koa请求对象
  */
@@ -22,7 +24,7 @@ export interface HpyerServerKoaRequest extends BaseRequest {
     /**
      * query的数据
      */
-    query: object;
+    query: ParsedUrlQuery;
     /**
      * query的原始数据
      */
